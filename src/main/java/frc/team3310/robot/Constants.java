@@ -16,10 +16,11 @@ public class Constants {
     /* ROBOT PHYSICAL CONSTANTS */
 
     // Wheels
-    public static final double kDriveWheelTrackWidthInches = 25.54;
-    public static final double kDriveWheelDiameterInches = 3.92820959548 * 0.99;
+    //2018 Robot Values
+    public static final double kDriveWheelTrackWidthInches = 26.17;
+    public static final double kDriveWheelDiameterInches = 5.8;
     public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
-    public static final double kTrackScrubFactor = 1.0;  // Tune me!
+    public static final double kTrackScrubFactor = 0.924;  // Tune me!
 
     // Tuned dynamics
     public static final double kRobotLinearInertia = 60.0;  // kg TODO tune
@@ -30,12 +31,14 @@ public class Constants {
     public static final double kDriveKa = 0.012;  // V per rad/s^2
 
     // Geometry
-    public static final double kCenterToFrontBumperDistance = 38.25 / 2.0;
-    public static final double kCenterToRearBumperDistance = 38.25 / 2.0;
-    public static final double kCenterToSideBumperDistance = 33.75 / 2.0;
+    //2018 Robot Values
+    public static final double kCenterToFrontBumperDistance = 16.33;
+    public static final double kCenterToRearBumperDistance = 16.99; 
+    public static final double kCenterToSideBumperDistance = 17.225;
 
     // Pose of the LIDAR frame w.r.t. the robot frame
-    // TODO measure in CAD/on robot!
+    // TODO measure in CAD/on robot! 
+    //Dont Need we dont use Lidar (makes error in RobotStatus when removed)
     public static final double kLidarXOffset = -3.3211;
     public static final double kLidarYOffset = 0.0;
     public static final double kLidarYawAngleDegrees = 0.0;
@@ -69,32 +72,32 @@ public class Constants {
 
     // PID gains for drive velocity loop (LOW GEAR)
     // Units: setpoint, error, and output are in ticks per second.
-    public static final double kDriveLowGearVelocityKp = 0.9;
+    public static final double kDriveLowGearVelocityKp = 0.1;
     public static final double kDriveLowGearVelocityKi = 0.0;
-    public static final double kDriveLowGearVelocityKd = 10.0;
-    public static final double kDriveLowGearVelocityKf = 0.0;
-    public static final int kDriveLowGearVelocityIZone = 0;
-    //public static final double kDriveVoltageLowRampRate = 0.0;
+    public static final double kDriveLowGearVelocityKd = 0.04;
+    public static final double kDriveLowGearVelocityKf = 0.03;
+    public static final int kDriveLowGearVelocityIZone = 200;
+    public static final double kDriveVoltageLowRampRate = 0.02;
     
     //Added Not in Poofs
-    public static double kDriveLowGearVelocityRampRate = 0.02;
-    public static double kDriveLowGearNominalOutput = 0.1/12.0;
-    public static double kDriveLowGearMaxSetpoint = 10.0 * 12.0; // 8 fps
+    // public static double kDriveLowGearVelocityRampRate = 0.02;
+    // public static double kDriveLowGearNominalOutput = 0.1/12.0;
+    // public static double kDriveLowGearMaxSetpoint = 10.0 * 12.0; // 8 fps
 
 
     // PID gains for drive velocity loop (LOW GEAR)
     // Units: setpoint, error, and output are in ticks per second.
-    public static final double kDriveHighGearVelocityKp = 0.9;
+    public static final double kDriveHighGearVelocityKp = 0.2;
     public static final double kDriveHighGearVelocityKi = 0.0;
-    public static final double kDriveHighGearVelocityKd = 10.0;
-    public static final double kDriveHighGearVelocityKf = 0.0;
-    public static final int kDriveHighGearVelocityIZone = 0;
-    //public static final double kDriveVoltageRampRate = 0.0;
+    public static final double kDriveHighGearVelocityKd = 0.04;
+    public static final double kDriveHighGearVelocityKf = 0.07;
+    public static final int kDriveHighGearVelocityIZone = 200;
+    public static final double kDriveVoltageHighRampRate = 0.05;
 
     //Added Not in Poofs
-    public static double kDriveHighGearVelocityRampRate = 0.05; // 0.02
-    public static double kDriveHighGearNominalOutput = 0.5/12.0;
-    public static double kDriveHighGearMaxSetpoint = 17.0 * 12.0; // 17 fps
+    // public static double kDriveHighGearVelocityRampRate = 0.05; // 0.02
+    // public static double kDriveHighGearNominalOutput = 0.5/12.0;
+    // public static double kDriveHighGearMaxSetpoint = 17.0 * 12.0; // 17 fps
 
     // PID gains for elevator velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in native units per 100ms.

@@ -11,9 +11,7 @@ import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -21,12 +19,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.loops.Looper;
+import frc.team3310.robot.subsystems.AirCompressor;
 import frc.team3310.robot.subsystems.Drive;
 import frc.team3310.robot.subsystems.Drive.DriveSpeedShiftState;
-import frc.team3310.utility.lib.control.RobotStatus;
 import frc.team3310.robot.subsystems.Elevator;
 import frc.team3310.robot.subsystems.Intake;
 import frc.team3310.robot.subsystems.RobotStateEstimator;
+import frc.team3310.utility.lib.control.RobotStatus;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -42,6 +41,7 @@ public class Robot extends TimedRobot {
 	public static final Drive drive = Drive.getInstance();
 	public static final Elevator elevator = Elevator.getInstance();
 	public static final Intake intake = Intake.getInstance();
+	public static final AirCompressor compressor = AirCompressor.getInstance();
 	
 	// Control looper
 	public static final Looper controlLoop = new Looper();
@@ -67,11 +67,10 @@ public class Robot extends TimedRobot {
 
     public void zeroAllSensors() {
         drive.zeroSensors();
-    }
-
+	}
+ 
 	@Override
 	public void robotInit() {
-		
 		oi = OI.getInstance();
 		
     	controlLoop.register(drive);
@@ -87,13 +86,13 @@ public class Robot extends TimedRobot {
 
 		autonTaskChooser = new SendableChooser<AutonRouteChooser>();
 
-
 		SmartDashboard.putData("Auton Tasks", autonTaskChooser);
 		
 		LiveWindow.setEnabled(false);
 		LiveWindow.disableAllTelemetry();
 
 		zeroAllSensors();
+		compressor.turnCompressorOff(); 
 
 		drive.setLimeLED(false);
 		drive.setLimeCameraMode(false);

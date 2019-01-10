@@ -519,7 +519,8 @@ public class Drive extends Subsystem implements Loop {
             setVelocitySetpoint(0, 0);
             System.out.println("Oh NOOOO in velocity set point for camera track");
         }
-    } 
+	} 
+/*
 
 	   //OLD updatePathFollower CHANGED Poofs 
 /*     private void updatePathFollower(double timestamp) {
@@ -572,7 +573,7 @@ public class Drive extends Subsystem implements Loop {
      */
 	//OLD configure dont know if we need to keep this one Poofs 
    /*  public synchronized void setVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
-        setVelocity();
+        configureTalonsForSpeedControl();
         driveControlMode = DriveControlMode.VELOCITY_SETPOINT;
         updateVelocitySetpoint(left_inches_per_sec, right_inches_per_sec);
     } */
@@ -605,7 +606,8 @@ public class Drive extends Subsystem implements Loop {
      * Configures talons for velocity control
      */
 	//OLD configure dont know if we need to keep this one Poofs 
-/*     public void configureTalonsForSpeedControl() {
+	//Added Back in January 9th, 2019 (Said it was needed by Mr.Selle. Used in setVelocitySetpoint, setWantDrivePath, setCameraTrack,old updatePathFollower)
+     /* public void configureTalonsForSpeedControl() {
         if (!usesTalonVelocityControl(driveControlMode)) {
         	leftDrive1.enableVoltageCompensation(true);
         	leftDrive1.configVoltageCompSaturation(12.0, TalonSRXEncoder.TIMEOUT_MS);
@@ -642,7 +644,7 @@ public class Drive extends Subsystem implements Loop {
 	        	rightDrive1.configClosedloopRamp(Constants.kDriveLowGearVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
         	}
         }
-    } */
+    }  */
 //REMOVED Old Path Follower Poofs 
 /*     public synchronized boolean isDoneWithPath() {
         if (driveControlMode == DriveControlMode.ADAPTIVE_PURSUIT && mPathFollower != null) {
@@ -1103,6 +1105,20 @@ public synchronized void reloadGains() {
 	rightDrive1.config_kD(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKd, Constants.kLongCANTimeoutMs);
 	rightDrive1.config_kF(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKf, Constants.kLongCANTimeoutMs);
 	rightDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityIZone, Constants.kLongCANTimeoutMs);
+	
+	//High Gear 
+	//ADDED HIGH GEAR POOFS
+	leftDrive1.config_kP(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKp, Constants.kLongCANTimeoutMs);
+	leftDrive1.config_kI(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKi, Constants.kLongCANTimeoutMs);
+	leftDrive1.config_kD(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKd, Constants.kLongCANTimeoutMs);
+	leftDrive1.config_kF(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKf, Constants.kLongCANTimeoutMs);
+	leftDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityIZone, Constants.kLongCANTimeoutMs);
+
+	rightDrive1.config_kP(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKp, Constants.kLongCANTimeoutMs);
+	rightDrive1.config_kI(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKi, Constants.kLongCANTimeoutMs);
+	rightDrive1.config_kD(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKd, Constants.kLongCANTimeoutMs);
+	rightDrive1.config_kF(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKf, Constants.kLongCANTimeoutMs);
+	rightDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityIZone, Constants.kLongCANTimeoutMs);
 }
 
 public void writeToLog() {

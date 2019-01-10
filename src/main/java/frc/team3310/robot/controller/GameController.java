@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 /**
  * Contains functions for use with MOST controller (XBox, Playstation,Logitech).
  * @author Joshua Lewis joshlewi14@gmail.com
+ * @author bselle
  */
 public class GameController extends Joystick {
 

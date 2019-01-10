@@ -8,6 +8,8 @@
 package frc.team3310.robot;
 
 import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.InternalButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.commands.DriveSpeedShift;
 import frc.team3310.robot.commands.ElevatorSetMode;
 import frc.team3310.robot.commands.ElevatorSetPositionMP;
@@ -15,6 +17,8 @@ import frc.team3310.robot.commands.ElevatorSetZero;
 import frc.team3310.robot.commands.ElevatorSpeedShift;
 import frc.team3310.robot.commands.IntakeCubeAndLift;
 import frc.team3310.robot.commands.IntakeSetSpeed;
+import frc.team3310.robot.commands.ToggleCompressor;
+import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.controller.GameController;
 import frc.team3310.robot.controller.Xbox;
 import frc.team3310.robot.subsystems.Drive;
@@ -97,7 +101,21 @@ public class OI {
         elevatorScalePosition.whenPressed(new ElevatorSetPositionMP(Elevator.SCALE_LOW_POSITION_INCHES));
 
         Button elevatorSwitchPosition = m_operator.getButtonX();
-        elevatorSwitchPosition.whenPressed(new ElevatorSetPositionMP(Elevator.SWITCH_POSITION_INCHES));  
+        elevatorSwitchPosition.whenPressed(new ElevatorSetPositionMP(Elevator.SWITCH_POSITION_INCHES));
+        
+        //Smartdashboard
+        Button turnCompressorOff = new InternalButton();
+        turnCompressorOff.whenPressed(new TurnCompressorOff());
+        SmartDashboard.putData("Turn Compressor Off", turnCompressorOff);
+
+        Button turnCompressorOn = new InternalButton();
+        turnCompressorOn.whenPressed(new TurnCompressorOff());
+        SmartDashboard.putData("Turn Compressor On", turnCompressorOn);
+
+        Button toggleCompressor = new InternalButton();
+        toggleCompressor.whenPressed(new ToggleCompressor());
+        SmartDashboard.putData("Toggle Compressor", toggleCompressor);
+      
 
 }
 
