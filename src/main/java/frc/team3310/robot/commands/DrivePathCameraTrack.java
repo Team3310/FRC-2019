@@ -6,19 +6,19 @@ import frc.team3310.robot.Robot;
 
 public class DrivePathCameraTrack extends Command {
 	private double straightVelocity;
-	private double timeout;
+	//private double timeout;
 
-	public DrivePathCameraTrack(double straightVelocity, double timeout) {
+	public DrivePathCameraTrack(double straightVelocity) {
         this.straightVelocity = straightVelocity;
-        this.timeout = timeout;
+        // this.timeout = timeout;
 		requires(Robot.drive);
 	}
 
 	protected void initialize() {
 		System.out.println("Start camera track");
-		Robot.drive.setLimeLED(true);
-		//Robot.drive.setCameraTrack(straightVelocity); //TODO Add setCameraTrack Back
-		setTimeout(timeout);
+		//Robot.drive.setLimeLED(true);
+		Robot.drive.setCameraTrack(straightVelocity); //TODO Add setCameraTrack Back
+		//setTimeout(timeout);
 	}
 
 	protected void execute() {
@@ -30,7 +30,7 @@ public class DrivePathCameraTrack extends Command {
 
 	protected void end() {
 		System.out.println("camera track finished");
-		Robot.drive.setLimeLED(false);
+		//Robot.drive.setLimeLED(false);
 		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
 	}
 

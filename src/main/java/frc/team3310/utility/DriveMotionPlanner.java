@@ -139,6 +139,11 @@ public class DriveMotionPlanner implements CSVWritable {
         Trajectory<TimedState<Pose2dWithCurvature>> timed_trajectory = TimingUtil.timeParameterizeTrajectory
                 (reversed, new
                         DistanceView<>(trajectory), kMaxDx, all_constraints, start_vel, end_vel, max_vel, max_accel);
+
+        timed_trajectory.toCSV();
+        for (int i = 0; i < timed_trajectory.length(); i++) {
+            timed_trajectory.getState(i).toCSV();
+        }
         return timed_trajectory;
     }
 

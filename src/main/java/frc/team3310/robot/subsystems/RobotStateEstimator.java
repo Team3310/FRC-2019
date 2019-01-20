@@ -1,7 +1,7 @@
 package frc.team3310.robot.subsystems;
 
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.Kinematics;
 import frc.team3310.robot.loops.ILooper;
 import frc.team3310.robot.loops.Loop;
@@ -16,9 +16,12 @@ public class RobotStateEstimator extends Subsystem {
     private double left_encoder_prev_distance_ = 0.0;
     private double right_encoder_prev_distance_ = 0.0;
     private double back_encoder_prev_distance_ = 0.0;
+    
 
     RobotStateEstimator() {
     }
+
+
 
     @Override
     public void initDefaultCommand() {
@@ -68,13 +71,14 @@ public class RobotStateEstimator extends Subsystem {
                     predicted_velocity);
             left_encoder_prev_distance_ = left_distance;
             right_encoder_prev_distance_ = right_distance;
+            SmartDashboard.putNumber("Left Distance", left_distance);
+
         }
 
         @Override
         public void onStop(double timestamp) {
             // no-op
         }
-
     }
 }
 

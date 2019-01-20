@@ -7,8 +7,6 @@ import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.MotorSafety;
-
 /**
  * Creates TalonSRX objects and configures all the parameters we care about to factory defaults. Closed-loop and sensor
  * parameters are not set, as these are expected to be set by the application.

@@ -49,7 +49,7 @@ public class Drive extends Subsystem implements Loop {
 
 	public static enum DriveControlMode { // REMOVED ADAPTIVE_PURSUIT added PATH_FOLLOWING and OPEN_LOOP Poofs
 		JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, MANUAL, VELOCITY_SETPOINT, CAMERA_TRACK, PATH_FOLLOWING,
-		OPEN_LOOP
+		OPEN_LOOP,CAMERA_TRACK_DRIVE
 	};
 
 	public static enum DriveSpeedShiftState {
@@ -184,6 +184,7 @@ public class Drive extends Subsystem implements Loop {
 	private double mLastValidGyroAngle;
 	private double mCameraVelocity;
 	private double kCamera = 0.8;
+	private double kCameraDrive = 0.05;
 	
 	private double limeArea;
 	private double limeX;
@@ -200,6 +201,8 @@ public class Drive extends Subsystem implements Loop {
 	 private DriveMotionPlanner mMotionPlanner;
 	 private Rotation2d mGyroOffset = Rotation2d.identity();
 	 private boolean mOverrideTrajectory = false;
+
+	 
 	
     /**
      * Check if the drive talons are configured for velocity control
@@ -254,9 +257,11 @@ public class Drive extends Subsystem implements Loop {
 			
 			m_drive = new BHRDifferentialDrive(leftDrive1, rightDrive1);
 			m_drive.setSafetyEnabled(false);
+			mMotionPlanner = new DriveMotionPlanner();
+
 
 			gyroPigeon = new PigeonIMU(rightDrive2);
-//			gyroPigeon.clearStickyFaults(10);
+			//gyroPigeon.clearStickyFaults(10);
 			
 			speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_PCM_ID);
 									
@@ -446,12 +451,14 @@ public class Drive extends Subsystem implements Loop {
 					case PID_TURN:
 						setFinished(pidTurnController.controlLoopUpdate(getGyroAngleDeg())); 
 						break;
-						case PATH_FOLLOWING: //Removes ADAPTIVE_PURSUIT added PATH_FOLLOWING Poofs
-	                    updatePathFollower(); //ADDED updatePathFollower Method Below
-                        break;	                
+					case PATH_FOLLOWING: //Removes ADAPTIVE_PURSUIT added PATH_FOLLOWING Poofs
+						readPeriodicInputs();
+						updatePathFollower(); //ADDED updatePathFollower Method Below
+						writePeriodicOutputs();
+						break;	                
 				 	case CAMERA_TRACK:
-	                   // updateCameraTrack(); //Removed method not sure if needed
-	                    return; 
+	                    updateCameraTrack(); //Removed method not sure if needed
+						return;
 	                default:
 	                    System.out.println("Unknown drive control mode: " + currentControlMode);
 	                    break;
@@ -488,19 +495,19 @@ public class Drive extends Subsystem implements Loop {
      * Called periodically when the robot is in cmaera track mode.
      */
 	//REMOVED POOFS
-/*     private void updateCameraTrack() {
+     private void updateCameraTrack() {
     	updateLimelight();
     	double deltaVelocity = 0;
+		mLastValidGyroAngle = getGyroAngleDeg();
         if (isLimeValid) {
         	deltaVelocity = limeX * kCamera;
-            mLastValidGyroAngle = getGyroAngleDeg();
             System.out.println("Valid lime angle = " + limeX);
         } else {
         	deltaVelocity = (getGyroAngleDeg() - mLastValidGyroAngle) * kCamera;
             System.out.println("In Valid lime angle = " + limeX);
         }
         updateVelocitySetpoint(mCameraVelocity + deltaVelocity, mCameraVelocity - deltaVelocity);
-    } */
+    } 
 
     /**
      * Configures the drivebase to drive a path. Used for autonomous driving
@@ -508,10 +515,10 @@ public class Drive extends Subsystem implements Loop {
      * @see Path
      */
 	//REMOVED Poofs
-/*     public synchronized void setCameraTrack(double straightVelocity) {
+     public synchronized void setCameraTrack(double straightVelocity) {
         if (driveControlMode != DriveControlMode.CAMERA_TRACK) {
         	setFinished(false);
-            configureTalonsForSpeedControl(); Our Equivalent to Poofs SetVelocity?
+            configureTalonsForSpeedControl(); //Our Equivalent to Poofs SetVelocity?
             driveControlMode = DriveControlMode.CAMERA_TRACK;
             mLastValidGyroAngle = getGyroAngleDeg();
             mCameraVelocity = straightVelocity;
@@ -520,7 +527,7 @@ public class Drive extends Subsystem implements Loop {
             System.out.println("Oh NOOOO in velocity set point for camera track");
         }
 	} 
-/*
+
 
 	   //OLD updatePathFollower CHANGED Poofs 
 /*     private void updatePathFollower(double timestamp) {
@@ -572,11 +579,11 @@ public class Drive extends Subsystem implements Loop {
      * @param right_inches_per_sec
      */
 	//OLD configure dont know if we need to keep this one Poofs 
-   /*  public synchronized void setVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
+    public synchronized void setVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
         configureTalonsForSpeedControl();
         driveControlMode = DriveControlMode.VELOCITY_SETPOINT;
         updateVelocitySetpoint(left_inches_per_sec, right_inches_per_sec);
-    } */
+    } 
 
     /**
      * Adjust Velocity setpoint (if already in velocity mode)
@@ -585,7 +592,7 @@ public class Drive extends Subsystem implements Loop {
      * @param right_inches_per_sec
      */
 	//OLD configure dont know if we need to keep this one Poofs 
-/*     private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
+     private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
         if (usesTalonVelocityControl(driveControlMode)) {
             final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
             final double maxSetpoint = getShiftState() == DriveSpeedShiftState.HI ? Constants.kDriveHighGearMaxSetpoint : Constants.kDriveLowGearMaxSetpoint;
@@ -600,14 +607,14 @@ public class Drive extends Subsystem implements Loop {
             leftDrive1.set(ControlMode.Velocity, 0);
             rightDrive1.set(ControlMode.Velocity, 0);
         }
-    } */
+    } 
 
     /**
      * Configures talons for velocity control
      */
 	//OLD configure dont know if we need to keep this one Poofs 
 	//Added Back in January 9th, 2019 (Said it was needed by Mr.Selle. Used in setVelocitySetpoint, setWantDrivePath, setCameraTrack,old updatePathFollower)
-     /* public void configureTalonsForSpeedControl() {
+	public void configureTalonsForSpeedControl() {
         if (!usesTalonVelocityControl(driveControlMode)) {
         	leftDrive1.enableVoltageCompensation(true);
         	leftDrive1.configVoltageCompSaturation(12.0, TalonSRXEncoder.TIMEOUT_MS);
@@ -644,7 +651,7 @@ public class Drive extends Subsystem implements Loop {
 	        	rightDrive1.configClosedloopRamp(Constants.kDriveLowGearVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
         	}
         }
-    }  */
+    }  
 //REMOVED Old Path Follower Poofs 
 /*     public synchronized boolean isDoneWithPath() {
         if (driveControlMode == DriveControlMode.ADAPTIVE_PURSUIT && mPathFollower != null) {
@@ -691,6 +698,9 @@ public class Drive extends Subsystem implements Loop {
     public synchronized void driveWithJoystick() {
 		if(m_drive == null) return;
 
+		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getRightBumper().get();
+		boolean cameraTrackCargoButton = OI.getInstance().getDriverController().getButtonY().get();
+
 		m_moveInput = OI.getInstance().getDriverController().getLeftYAxis();
 		m_steerInput = -OI.getInstance().getDriverController().getRightXAxis();
 		
@@ -711,9 +721,42 @@ public class Drive extends Subsystem implements Loop {
 			System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
 		}
 
+		if(cameraTrackTapeButton){
+			updateLimelight();
+			double cameraSteer = 0;
+			mLastValidGyroAngle = getGyroAngleDeg();
+			if (isLimeValid) {
+				cameraSteer = limeX * kCameraDrive;
+				System.out.println("Valid lime angle = " + limeX);
+			} 
+			else {
+				//cameraSteer = (getGyroAngleDeg() - mLastValidGyroAngle) * kCameraDrive;
+				System.out.println("In Valid lime angle = " + limeX);
+				cameraSteer = -m_steerOutput;
+			}
+			m_steerOutput = -cameraSteer;
+		}
+
+		if(cameraTrackCargoButton){
+			NetworkTableInstance.getDefault().getTable("limelight").getEntry("").setNumber(5);
+			updateLimelight();
+			double cameraSteer = 0;
+			mLastValidGyroAngle = getGyroAngleDeg();
+			if (isLimeValid) {
+				cameraSteer = limeX * kCameraDrive;
+				System.out.println("CARGO FOUND = " + limeX);
+			} 
+			else {
+				//cameraSteer = (getGyroAngleDeg() - mLastValidGyroAngle) * kCameraDrive;
+				System.out.println("NO CARGO FOUND = " + limeX);
+				cameraSteer = -m_steerOutput;
+			}
+			m_steerOutput = -cameraSteer;
+		}
+
 		m_drive.arcadeDrive(-m_moveOutput, -m_steerOutput);	
 	}
-    
+	
     private double updatePitchWindow() {
 		double lastPitchAngle = pitchAverageWindow[windowIndex];
 		double currentPitchAngle = getGyroPitchAngle();
@@ -861,8 +904,7 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	private void updateLimelight() {
-		NetworkTable limeTable = getLimetable();
-		
+		NetworkTable limeTable = getLimetable();		
 		double valid = limeTable.getEntry("tv").getDouble(0); 
 		if (valid == 0) {
 			isLimeValid = false;
@@ -954,7 +996,7 @@ public double getRightVelocityNativeUnits() {
 }
 
 public double getRightLinearVelocity() {
-	return rotationsToInches(getRightVelocityNativeUnits() * 10.0 / ENCODER_TICKS_TO_INCHES); //Switched From DRIVE_ENCODER_PPR to E_T_T_I
+	return rotationsToInches(getRightVelocityNativeUnits() * 10.0 / DRIVE_ENCODER_PPR); 
 }
 
 public double getLeftVelocityNativeUnits() {
@@ -962,7 +1004,7 @@ public double getLeftVelocityNativeUnits() {
 }
 
 public double getLeftLinearVelocity() {
-	return rotationsToInches(getLeftVelocityNativeUnits() * 10.0 / ENCODER_TICKS_TO_INCHES); //Switched From DRIVE_ENCODER_PPR to E_T_T_I
+	return rotationsToInches(getLeftVelocityNativeUnits() * 10.0 / DRIVE_ENCODER_PPR); 
 }
 
 public double getLinearVelocity() {
@@ -1108,17 +1150,17 @@ public synchronized void reloadGains() {
 	
 	//High Gear 
 	//ADDED HIGH GEAR POOFS
-	leftDrive1.config_kP(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKp, Constants.kLongCANTimeoutMs);
-	leftDrive1.config_kI(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKi, Constants.kLongCANTimeoutMs);
-	leftDrive1.config_kD(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKd, Constants.kLongCANTimeoutMs);
-	leftDrive1.config_kF(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKf, Constants.kLongCANTimeoutMs);
-	leftDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityIZone, Constants.kLongCANTimeoutMs);
+	leftDrive1.config_kP(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKp, Constants.kLongCANTimeoutMs);
+	leftDrive1.config_kI(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKi, Constants.kLongCANTimeoutMs);
+	leftDrive1.config_kD(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKd, Constants.kLongCANTimeoutMs);
+	leftDrive1.config_kF(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKf, Constants.kLongCANTimeoutMs);
+	leftDrive1.config_IntegralZone(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityIZone, Constants.kLongCANTimeoutMs);
 
-	rightDrive1.config_kP(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKp, Constants.kLongCANTimeoutMs);
-	rightDrive1.config_kI(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKi, Constants.kLongCANTimeoutMs);
-	rightDrive1.config_kD(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKd, Constants.kLongCANTimeoutMs);
-	rightDrive1.config_kF(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityKf, Constants.kLongCANTimeoutMs);
-	rightDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveHighGearVelocityIZone, Constants.kLongCANTimeoutMs);
+	rightDrive1.config_kP(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKp, Constants.kLongCANTimeoutMs);
+	rightDrive1.config_kI(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKi, Constants.kLongCANTimeoutMs);
+	rightDrive1.config_kD(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKd, Constants.kLongCANTimeoutMs);
+	rightDrive1.config_kF(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKf, Constants.kLongCANTimeoutMs);
+	rightDrive1.config_IntegralZone(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityIZone, Constants.kLongCANTimeoutMs);
 }
 
 public void writeToLog() {

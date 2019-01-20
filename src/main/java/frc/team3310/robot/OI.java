@@ -10,6 +10,8 @@ package frc.team3310.robot;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.robot.commands.DrivePathCameraTrack;
+import frc.team3310.robot.commands.DrivePathCameraTrackStop;
 import frc.team3310.robot.commands.DriveSpeedShift;
 import frc.team3310.robot.commands.ElevatorSetMode;
 import frc.team3310.robot.commands.ElevatorSetPositionMP;
@@ -17,9 +19,9 @@ import frc.team3310.robot.commands.ElevatorSetZero;
 import frc.team3310.robot.commands.ElevatorSpeedShift;
 import frc.team3310.robot.commands.IntakeCubeAndLift;
 import frc.team3310.robot.commands.IntakeSetSpeed;
-import frc.team3310.robot.commands.ToggleCompressor;
 import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.controller.GameController;
+import frc.team3310.robot.controller.Playstation;
 import frc.team3310.robot.controller.Xbox;
 import frc.team3310.robot.subsystems.Drive;
 import frc.team3310.robot.subsystems.Elevator;
@@ -40,7 +42,7 @@ public class OI {
 	private GameController m_operator;
 
 
-  public static OI getInstance() {
+    public static OI getInstance() {
 		if(instance == null) {
 			instance = new OI();
 		}
@@ -49,36 +51,38 @@ public class OI {
 
 	private OI() {
 		// Driver controller
-		m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
+		m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
 		m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Xbox());
 
-		// //Driver Controls
+		//Driver Controls
 		Button shiftDrivetrain = m_driver.getLeftBumper();
 		shiftDrivetrain.whenPressed(new DriveSpeedShift(Drive.DriveSpeedShiftState.HI));
-		shiftDrivetrain.whenReleased(new DriveSpeedShift(Drive.DriveSpeedShiftState.LO));
+        shiftDrivetrain.whenReleased(new DriveSpeedShift(Drive.DriveSpeedShiftState.LO));
 
+        Button intakeLoadDriver = m_driver.getButtonX();
+        intakeLoadDriver.whenPressed(new IntakeSetSpeed(Intake.INTAKE_LOAD_SPEED));
+        intakeLoadDriver.whenReleased(new IntakeSetSpeed(Intake.INTAKE_HOLD_SPEED));
+            
+        
 		//Operator Controls
 		//Intake
-		Button intakeLoad = m_operator.getRightBumper();
-        intakeLoad.whenPressed(new IntakeSetSpeed(Intake.INTAKE_EJECT_SPEED));
-        intakeLoad.whenReleased(new IntakeSetSpeed(0.0));
+	    Button intakeLoad = m_operator.getRightBumper();
+        intakeLoad.whenPressed(new IntakeSetSpeed(Intake.INTAKE_LOAD_SPEED));
+        intakeLoad.whenReleased(new IntakeSetSpeed(Intake.INTAKE_HOLD_SPEED));
+        
+        Button intakeLoadSlow = m_operator.getRightTrigger();
+        intakeLoadSlow.whenPressed(new IntakeSetSpeed(Intake.INTAKE_LOAD_SLOW_SPEED));
+        intakeLoadSlow.whenReleased(new IntakeSetSpeed(Intake.INTAKE_HOLD_SPEED));
 		
         Button intakeEject = m_operator.getLeftBumper();
-        intakeEject.whenPressed(new IntakeSetSpeed(Intake.INTAKE_LOAD_SPEED));
-        intakeEject.whenReleased(new IntakeSetSpeed(Intake.INTAKE_HOLD_SPEED));
+        intakeEject.whenPressed(new IntakeSetSpeed(Intake.INTAKE_EJECT_SPEED));
+        intakeEject.whenReleased(new IntakeSetSpeed(0.0));
 		
-        Button intakeLoadSlow = m_operator.getRightTrigger();
-        intakeLoadSlow.whenPressed(new IntakeSetSpeed(Intake.INTAKE_EJECT_SLOW_SPEED));
-		intakeLoadSlow.whenReleased(new IntakeSetSpeed(0.0));
-				
-		Button intakeCube = m_operator.getButtonA();
-		intakeCube.whenPressed(new IntakeCubeAndLift());
+        Button intakeEjectSlow = m_operator.getLeftTrigger();
+        intakeEjectSlow.whenPressed(new IntakeSetSpeed(Intake.INTAKE_EJECT_SLOW_SPEED));
+        intakeEjectSlow.whenReleased(new IntakeSetSpeed(0.0));
 		
 		//Elevator
-        Button intakeEjectSlow = m_operator.getLeftTrigger();
-        intakeEjectSlow.whenPressed(new IntakeSetSpeed(Intake.INTAKE_LOAD_SLOW_SPEED));
-        intakeEjectSlow.whenReleased(new IntakeSetSpeed(Intake.INTAKE_HOLD_SPEED));
-
  		Button elevatorShiftHi = m_operator.getDPadUp();
         elevatorShiftHi.whenPressed(new ElevatorSpeedShift(Elevator.ElevatorSpeedShiftState.HI));
 
@@ -93,6 +97,9 @@ public class OI {
 
         Button elevatorReset = m_operator.getOptionsButton();
         elevatorReset.whenPressed(new ElevatorSetZero(Elevator.ZERO_POSITION_INCHES)); 
+                				
+		Button intakeCube = m_operator.getButtonA();
+		intakeCube.whenPressed(new IntakeCubeAndLift());
 
         Button elevatorMaxPosition = m_operator.getButtonY();
         elevatorMaxPosition.whenPressed(new ElevatorSetPositionMP(Elevator.MAX_POSITION_INCHES));
@@ -106,16 +113,19 @@ public class OI {
         //Smartdashboard
         Button turnCompressorOff = new InternalButton();
         turnCompressorOff.whenPressed(new TurnCompressorOff());
-        SmartDashboard.putData("Turn Compressor Off", turnCompressorOff);
+        SmartDashboard.putData("Compressor Off", turnCompressorOff);
 
         Button turnCompressorOn = new InternalButton();
         turnCompressorOn.whenPressed(new TurnCompressorOff());
-        SmartDashboard.putData("Turn Compressor On", turnCompressorOn);
-
-        Button toggleCompressor = new InternalButton();
-        toggleCompressor.whenPressed(new ToggleCompressor());
-        SmartDashboard.putData("Toggle Compressor", toggleCompressor);
+        SmartDashboard.putData("Compressor On", turnCompressorOn);
       
+        Button cameraTrack = new InternalButton();
+        cameraTrack.whenPressed(new DrivePathCameraTrack(75));
+        SmartDashboard.putData("Camera Track", cameraTrack);
+
+        Button cameraTrackStop = new InternalButton();
+        cameraTrackStop.whenPressed(new DrivePathCameraTrackStop());
+        SmartDashboard.putData("Camera Track Stop", cameraTrackStop);
 
 }
 

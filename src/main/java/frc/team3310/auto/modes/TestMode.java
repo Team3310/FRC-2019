@@ -13,6 +13,7 @@ public class TestMode extends AutoModeBase {
         Drive.getInstance().startLogging();
 
         runAction(new DriveTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().sideStartToFarScale.get(true), true));
+        
 
         Drive.getInstance().stopLogging();
 
@@ -22,7 +23,7 @@ public class TestMode extends AutoModeBase {
                         new Pose2d(new Translation2d(96.0, -48.0), Rotation2d.fromDegrees(-90.0)),
                         new Pose2d(new Translation2d(96.0, -96.0), Rotation2d.fromDegrees(-90.0))),
                 Arrays.asList(new CentripetalAccelerationConstraint(80.0)),
-                120.0, 120.0, 10.0),true));*/
+                120.0, 120.0, 10.0),true));
 
 /*
         runAction(new DriveTrajectory(TrajectoryGenerator.getInstance().generateTrajectory(

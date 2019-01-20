@@ -80,12 +80,11 @@ public class Constants {
     public static final double kDriveVoltageLowRampRate = 0.02;
     
     //Added Not in Poofs
-    // public static double kDriveLowGearVelocityRampRate = 0.02;
-    // public static double kDriveLowGearNominalOutput = 0.1/12.0;
-    // public static double kDriveLowGearMaxSetpoint = 10.0 * 12.0; // 8 fps
+    public static double kDriveLowGearVelocityRampRate = 0.02;
+    public static double kDriveLowGearNominalOutput = 0.1/12.0;
+    public static double kDriveLowGearMaxSetpoint = 10.0 * 12.0; // 8 fps
 
-
-    // PID gains for drive velocity loop (LOW GEAR)
+    // PID gains for drive velocity loop (LOW GEAR) //ADDED Poofs
     // Units: setpoint, error, and output are in ticks per second.
     public static final double kDriveHighGearVelocityKp = 0.2;
     public static final double kDriveHighGearVelocityKi = 0.0;
@@ -95,9 +94,9 @@ public class Constants {
     public static final double kDriveVoltageHighRampRate = 0.05;
 
     //Added Not in Poofs
-    // public static double kDriveHighGearVelocityRampRate = 0.05; // 0.02
-    // public static double kDriveHighGearNominalOutput = 0.5/12.0;
-    // public static double kDriveHighGearMaxSetpoint = 17.0 * 12.0; // 17 fps
+    public static double kDriveHighGearVelocityRampRate = 0.05; // 0.02
+    public static double kDriveHighGearNominalOutput = 0.5/12.0;
+    public static double kDriveHighGearMaxSetpoint = 17.0 * 12.0; // 17 fps
 
     // PID gains for elevator velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in native units per 100ms.

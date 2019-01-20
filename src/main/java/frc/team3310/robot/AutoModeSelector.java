@@ -57,13 +57,13 @@ public class AutoModeSelector {
         mModeChooser.addOption("Simple switch", DesiredMode.SIMPLE_SWITCH);
         mModeChooser.addOption("Scale AND Switch", DesiredMode.SCALE_AND_SWITCH);
         mModeChooser.addOption("Only Scale", DesiredMode.ONLY_SCALE);
-        SmartDashboard.putData("Auto mode", mModeChooser);
+        //SmartDashboard.putData("Auto mode", mModeChooser);
 
         mStartPositionChooser = new SendableChooser<>();
         mStartPositionChooser.setDefaultOption("Right", StartingPosition.RIGHT);
         mStartPositionChooser.addOption("Center", StartingPosition.CENTER);
         mStartPositionChooser.addOption("Left", StartingPosition.LEFT);
-        SmartDashboard.putData("Starting Position", mStartPositionChooser);
+        //SmartDashboard.putData("Starting Position", mStartPositionChooser);
 
         mSwitchScalePositionChooser = new SendableChooser<>();
         mSwitchScalePositionChooser.setDefaultOption("Use FMS Data", SwitchScalePosition.USE_FMS_DATA);
@@ -71,7 +71,7 @@ public class AutoModeSelector {
         mSwitchScalePositionChooser.addOption("Left Switch Right Scale", SwitchScalePosition.LEFT_SWITCH_RIGHT_SCALE);
         mSwitchScalePositionChooser.addOption("Right Switch Left Scale", SwitchScalePosition.RIGHT_SWITCH_LEFT_SCALE);
         mSwitchScalePositionChooser.addOption("Right Switch Right Scale", SwitchScalePosition.RIGHT_SWITCH_RIGHT_SCALE);
-        SmartDashboard.putData("Switch and Scale Position", mSwitchScalePositionChooser);
+        //SmartDashboard.putData("Switch and Scale Position", mSwitchScalePositionChooser);
 
     }
 
