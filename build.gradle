@@ -1,6 +1,20 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.3'
+        classpath 'gov.nist.math:jama:1.0.3'
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.0'
+    }
+}
+
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2019.1.1"
+    id "eclipse"
+    id 'war'
 }
 
 def ROBOT_MAIN_CLASS = "frc.team3310.robot.Main"
@@ -43,6 +57,9 @@ repositories {
     mavenCentral()
 }
 
+apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'com.bmuschko.tomcat'
+
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
@@ -55,8 +72,23 @@ dependencies {
     compile group: 'gov.nist.math', name: 'jama', version: '1.0.3'
 
     testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3")
+    testImplementation(
+        'org.junit.jupiter:junit-jupiter-api:5.2.0'
+    )
+    testRuntimeOnly(
+        'org.junit.jupiter:junit-jupiter-engine:5.2.0'
+    )
 
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.3")
+
+    compile("gov.nist.math:jama:1.0.3")
+
+    def tomcatVersion = '7.0.57'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
 
     compile("org.springframework:spring-webmvc:4.3.0.RELEASE")
 
@@ -66,10 +98,33 @@ dependencies {
 
 }
 
+// context where tomcat is deployed, by default localhost:8080/
+tomcatRun.contextPath = '/'
+tomcatRunWar.contextPath = '/'
+
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
 // in order to make them all available at runtime. Also adding the manifest so WPILib
 // knows where to look for our Robot Class.
 jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+}
+
+compileTestJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.compilerArgs += '-parameters'
+}
+
+junitPlatform {
+    filters {
+        engines {
+        }
+        tags {
+            exclude 'slow'
+        }
+    }
+}
+test {
+    useJUnitPlatform()
 }

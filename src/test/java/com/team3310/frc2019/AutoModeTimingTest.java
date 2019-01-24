@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Test;
 import frc.team3310.auto.AutoConstants;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 
-public class AutoModeTiming {
+public class AutoModeTimingTest {
     TrajectoryGenerator mTrajectoryGenerator = TrajectoryGenerator.getInstance();
     boolean mStartedLeft = true;
 
     @Test
-    void checkTiming() {
+    void checkTimingTest() {
         mTrajectoryGenerator.generateTrajectories();
 
         double nearScaleDuration = mTrajectoryGenerator.getTrajectorySet().sideStartToNearScale.get(mStartedLeft).getLastState().t() +
