@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import frc.team3310.utility.DriveMotionPlanner;
+import frc.team3310.robot.planners.DriveMotionPlanner;
 import frc.team3310.utility.lib.geometry.Pose2d;
 import frc.team3310.utility.lib.geometry.Pose2dWithCurvature;
 import frc.team3310.utility.lib.geometry.Rotation2d;
@@ -412,7 +412,7 @@ public class TrajectoryGenerator {
             waypoints.add(kCenterStartPose);
             waypoints.add(kLeftSwitchPose);
 
-            return generateTrajectory(true, waypoints, Arrays.asList(new CentripetalAccelerationConstraint(kMaxCentripetalAccel)),
+            return generateTrajectory(false, waypoints, Arrays.asList(new CentripetalAccelerationConstraint(kMaxCentripetalAccel)),
                     kMaxVelocity, kMaxAccel, kMaxVoltage);
         }
 

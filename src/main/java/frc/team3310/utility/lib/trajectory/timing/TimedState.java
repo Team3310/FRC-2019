@@ -65,6 +65,11 @@ public class TimedState<S extends State<S>> implements State<TimedState<S>> {
     }
 
     @Override
+    public String toCSVHeader() {
+        return state().toCSVHeader() + ",t,velocity,acceleration";
+    }
+
+    @Override
     public TimedState<S> interpolate(TimedState<S> other, double x) {
         final double new_t = Util.interpolate(t(), other.t(), x);
         final double delta_t = new_t - t();

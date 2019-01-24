@@ -143,6 +143,11 @@ public class Rotation2d implements IRotation2d<Rotation2d> {
     }
 
     @Override
+    public String toCSVHeader() {
+        return "rotation_degrees";
+    }
+
+    @Override
     public double distance(final Rotation2d other) {
         return inverse().rotateBy(other).getRadians();
     }

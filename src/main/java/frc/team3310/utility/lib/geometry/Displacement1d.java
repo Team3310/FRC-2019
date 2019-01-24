@@ -47,4 +47,9 @@ public class Displacement1d implements State<Displacement1d> {
         final DecimalFormat fmt = new DecimalFormat("#0.000");
         return fmt.format(x());
     }
+
+    @Override
+    public String toCSVHeader() {
+        return "displacement_x";
+    }
 }

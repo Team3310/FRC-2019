@@ -153,6 +153,12 @@ public class DriveMotionPlanner implements CSVWritable {
                 mSetpoint.toCSV();
     }
 
+    @Override
+    public String toCSVHeader() {
+         return "left_velocity,right_velocity,left_feedforward_voltage,right_feedforward_voltage," +
+                mSetpoint.toCSVHeader();
+    }
+
     public static class Output {
         public Output() {
         }

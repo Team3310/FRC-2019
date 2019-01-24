@@ -192,6 +192,11 @@ public class Pose2d implements IPose2d<Pose2d> {
     }
 
     @Override
+    public String toCSVHeader() {
+        return translation_.toCSVHeader() + "," + rotation_.toCSVHeader();
+    }
+
+    @Override
     public double distance(final Pose2d other) {
         return Pose2d.log(inverse().transformBy(other)).norm();
     }

@@ -101,6 +101,11 @@ public class Trajectory<S extends State<S>> implements CSVWritable {
         return builder.toString();
     }
 
+    @Override
+    public String toCSVHeader() {
+        return "index," + getState(0).toCSVHeader();
+    }
+
     public class IndexView implements TrajectoryView<S> {
         @Override
         public TrajectorySamplePoint<S> sample(double index) {

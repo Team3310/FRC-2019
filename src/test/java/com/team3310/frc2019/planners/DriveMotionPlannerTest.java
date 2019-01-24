@@ -4,8 +4,10 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
+import frc.team3310.robot.Constants;
 import frc.team3310.robot.Kinematics;
-import frc.team3310.utility.DriveMotionPlanner;
+import frc.team3310.robot.paths.TrajectoryGenerator;
+import frc.team3310.robot.planners.DriveMotionPlanner;
 import frc.team3310.utility.lib.geometry.Pose2d;
 import frc.team3310.utility.lib.geometry.Rotation2d;
 import frc.team3310.utility.lib.geometry.Translation2d;
@@ -13,11 +15,31 @@ import frc.team3310.utility.lib.geometry.Twist2d;
 import frc.team3310.utility.lib.trajectory.TimedView;
 import frc.team3310.utility.lib.trajectory.TrajectoryIterator;
 import frc.team3310.utility.lib.trajectory.timing.CentripetalAccelerationConstraint;
-import frc.team3310.robot.Constants;
 
 public class DriveMotionPlannerTest {
 
     @Test
+    public void testStraight() {
+        TrajectoryGenerator.getInstance().generateTrajectories();
+
+        DriveMotionPlanner motion_planner = new DriveMotionPlanner();
+        motion_planner.setFollowerType(DriveMotionPlanner.FollowerType.PURE_PURSUIT);
+        motion_planner.setTrajectory(new TrajectoryIterator<>(new TimedView<>(TrajectoryGenerator.getInstance().getTrajectorySet().centerStartToLeftSwitch)));
+
+        double t = 0.0;
+        Pose2d pose = motion_planner.setpoint().state().getPose();
+        System.out.println("t," + motion_planner.toCSVHeader());
+        while (!motion_planner.isDone()) {
+            motion_planner.update(t, pose);
+            pose = motion_planner.mSetpoint.state().getPose();//.transformBy(new Pose2d(new Translation2d(0.0, 1.0),
+            // Rotation2d.fromDegrees(2.0)));
+
+            System.out.println(t + "," + motion_planner.toCSV());
+            t += 0.01;// + (2.0 * Math.random() - 1.0) * 0.002;
+        }
+    }
+
+   @Test
     public void testForwardSwerveRight() {
         DriveMotionPlanner motion_planner = new DriveMotionPlanner();
         motion_planner.setFollowerType(DriveMotionPlanner.FollowerType.PURE_PURSUIT);
@@ -30,6 +52,7 @@ public class DriveMotionPlannerTest {
 
         double t = 0.0;
         Pose2d pose = motion_planner.setpoint().state().getPose();
+        System.out.println("t," + motion_planner.toCSVHeader());
         while (!motion_planner.isDone()) {
             motion_planner.update(t, pose);
             pose = motion_planner.mSetpoint.state().getPose();//.transformBy(new Pose2d(new Translation2d(0.0, 1.0),

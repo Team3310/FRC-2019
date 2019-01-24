@@ -383,5 +383,10 @@ public class DifferentialDrive {
             return curvature + "," + dcurvature + "," + chassis_velocity + ", " + chassis_acceleration + ", " + wheel_velocity + ", " + wheel_acceleration
                     + ", " + voltage + ", " + wheel_torque;
         }
+
+        @Override
+        public String toCSVHeader() {
+            return "curvature,dcurvature,chassis_velocity,chassis_acceleration,wheel_velocity,wheel_acceleration,voltage,wheel_torque";
+        }
     }
 }
