@@ -1,4 +1,4 @@
-package frc.team3310.test.java.com.team3310.lib.trajectory.timing;
+package com.team3310.lib.trajectory.timing;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

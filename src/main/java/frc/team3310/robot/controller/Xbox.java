@@ -11,8 +11,8 @@ public Xbox() {
 
     this.AXIS_LEFT_X = 0;
 	this.AXIS_LEFT_Y = 1;
-	this.AXIS_RIGHT_TRIGGER = 2;
-	this.AXIS_LEFT_TRIGGER = 3;
+	this.AXIS_LEFT_TRIGGER = 2;
+	this.AXIS_RIGHT_TRIGGER = 3;
 	this.AXIS_RIGHT_X= 4;
     this.AXIS_RIGHT_Y= 5;
     

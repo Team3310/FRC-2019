@@ -1,13 +1,14 @@
-package frc.team3310.test.java.com.team3310.frc2019.planners;
+package com.team3310.frc2019.planners;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.team3310.util.test.ControlledActuatorLinearSim;
 
 import org.junit.jupiter.api.Test;
 
 import frc.team3310.robot.planners.SuperstructureMotionPlanner;
 import frc.team3310.robot.states.SuperstructureConstants;
 import frc.team3310.robot.states.SuperstructureState;
-import frc.team3310.test.java.com.team3310.util.test.ControlledActuatorLinearSim;
 
 public class SuperstructureMotionPlannerTest {
     static final double ELEVATOR_MAX_HEIGHT = SuperstructureConstants.kElevatorMaxHeight;

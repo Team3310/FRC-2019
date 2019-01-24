@@ -15,6 +15,6 @@ public class DriveMotion extends CommandGroup {
    * Add your docs here.
    */
   public DriveMotion() {
-    addSequential((new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true)));
+//    addSequential((new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true)));
   }
 }

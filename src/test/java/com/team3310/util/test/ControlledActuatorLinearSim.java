@@ -1,4 +1,4 @@
-package frc.team3310.test.java.com.team3310.util.test;
+package com.team3310.util.test;
 
 public class ControlledActuatorLinearSim {
     double mMinPosition, mMaxPosition, mVelocity;

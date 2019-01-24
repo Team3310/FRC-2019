@@ -56,26 +56,27 @@ public class Drive extends Subsystem implements Loop {
 		HI, LO
 	};
 
-	public static enum ClimberState {
-		DEPLOYED, RETRACTED
-	};
+	// public static enum ClimberState { //Delete
+	// 	DEPLOYED, RETRACTED
+	// };
 
 	// One revolution of the wheel = Pi * D inches = 60/24 revs due to gears * 36/12
 	// revs due mag encoder gear on ball shifter * 4096 ticks
 	public static final double ENCODER_TICKS_TO_INCHES = (36.0 / 12.0) * (60.0 / 24.0) * 4096.0 / (5.8 * Math.PI);
-	private static final double DRIVE_ENCODER_PPR = 4096.; // Poofs Equvialant to ENCODER_TICKS_TO_INCHES??
+	public static final double ENCODER_REVS_TO_WHEEL_REVS = (36.0 / 12.0) * (60.0 / 24.0);
+	private static final double DRIVE_ENCODER_PPR = 4096.;
 	public static final double TRACK_WIDTH_INCHES = 24.56; // 26.937;
 
-	// Motion profile max velocities and accel times
-	public static final double MAX_TURN_RATE_DEG_PER_SEC = 320;
-	public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 140; // 72;
-	public static final double MP_AUTON_MAX_LO_GEAR_STRAIGHT_VELOCITY_INCHES_PER_SEC = 320;
-	public static final double MP_AUTON_MAX_HIGH_GEAR_STRAIGHT_VELOCITY_INCHES_PER_SEC = 400;
-	public static final double MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC = 270;
-	public static final double MP_SLOW_VELOCITY_INCHES_PER_SEC = 25;
-	public static final double MP_SLOW_MEDIUM_VELOCITY_INCHES_PER_SEC = 50;
-	public static final double MP_MEDIUM_VELOCITY_INCHES_PER_SEC = 80;
-	public static final double MP_FAST_VELOCITY_INCHES_PER_SEC = 100;
+	// Motion profile max velocities and accel times //Delete
+	// public static final double MAX_TURN_RATE_DEG_PER_SEC = 320;
+	// public static final double MP_AUTON_MAX_STRAIGHT_VELOCITY_INCHES_PER_SEC = 140; // 72;
+	// public static final double MP_AUTON_MAX_LO_GEAR_STRAIGHT_VELOCITY_INCHES_PER_SEC = 320;
+	// public static final double MP_AUTON_MAX_HIGH_GEAR_STRAIGHT_VELOCITY_INCHES_PER_SEC = 400;
+	// public static final double MP_AUTON_MAX_TURN_RATE_DEG_PER_SEC = 270;
+	// public static final double MP_SLOW_VELOCITY_INCHES_PER_SEC = 25;
+	// public static final double MP_SLOW_MEDIUM_VELOCITY_INCHES_PER_SEC = 50;
+	// public static final double MP_MEDIUM_VELOCITY_INCHES_PER_SEC = 80;
+	// public static final double MP_FAST_VELOCITY_INCHES_PER_SEC = 100;
 
 	public static final double MP_STRAIGHT_T1 = 600;
 	public static final double MP_STRAIGHT_T2 = 300;
@@ -113,14 +114,14 @@ public class Drive extends Subsystem implements Loop {
 	private Solenoid speedShift;
 	private DriveSpeedShiftState shiftState = DriveSpeedShiftState.HI;
 
-	// Input devices
-	public static final int DRIVER_INPUT_JOYSTICK_ARCADE = 0;
-	public static final int DRIVER_INPUT_JOYSTICK_TANK = 1;
-	public static final int DRIVER_INPUT_JOYSTICK_CHEESY = 2;
-	public static final int DRIVER_INPUT_XBOX_CHEESY = 3;
-	public static final int DRIVER_INPUT_XBOX_ARCADE_LEFT = 4;
-	public static final int DRIVER_INPUT_XBOX_ARCADE_RIGHT = 5;
-	public static final int DRIVER_INPUT_WHEEL = 6;
+	// Input devices //Delete
+	// public static final int DRIVER_INPUT_JOYSTICK_ARCADE = 0;
+	// public static final int DRIVER_INPUT_JOYSTICK_TANK = 1;
+	// public static final int DRIVER_INPUT_JOYSTICK_CHEESY = 2;
+	// public static final int DRIVER_INPUT_XBOX_CHEESY = 3;
+	// public static final int DRIVER_INPUT_XBOX_ARCADE_LEFT = 4;
+	// public static final int DRIVER_INPUT_XBOX_ARCADE_RIGHT = 5;
+	// public static final int DRIVER_INPUT_WHEEL = 6;
 
 	public static final double STEER_NON_LINEARITY = 0.5;
 	public static final double MOVE_NON_LINEARITY = 1.0;
@@ -168,10 +169,6 @@ public class Drive extends Subsystem implements Loop {
 	
 	private SoftwarePIDController pidTurnController;
 	private PIDParams pidTurnPIDParams = new PIDParams(0.04, 0.001, 0.4, 0, 0, 0.0, 100); //i=0.0008
-
-//	private PIDParams adaptivePursuitPIDParams = new PIDParams(0.1, 0.00, 1, 0.44); 
-// private PathFollower mPathFollower;	REMOVED PathFollower class Poofs
-    private Path mCurrentPath = null;
 	
 	private PigeonIMU gyroPigeon;
 	private double[] yprPigeon = new double[3];
@@ -201,8 +198,6 @@ public class Drive extends Subsystem implements Loop {
 	 private DriveMotionPlanner mMotionPlanner;
 	 private Rotation2d mGyroOffset = Rotation2d.identity();
 	 private boolean mOverrideTrajectory = false;
-
-	 
 	
     /**
      * Check if the drive talons are configured for velocity control
@@ -261,7 +256,7 @@ public class Drive extends Subsystem implements Loop {
 
 
 			gyroPigeon = new PigeonIMU(rightDrive2);
-			//gyroPigeon.clearStickyFaults(10);
+			// gyroPigeon.clearStickyFaults(10);
 			
 			speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_PCM_ID);
 									
@@ -278,36 +273,6 @@ public class Drive extends Subsystem implements Loop {
 		leftDrive1.configOpenloopRamp(timeTo12VSec, TalonSRXEncoder.TIMEOUT_MS);
 		rightDrive1.configOpenloopRamp(timeTo12VSec, TalonSRXEncoder.TIMEOUT_MS);
     }
-//REMOVED New Version Poofs 
-/*     public synchronized void loadGains() {
-        leftDrive1.setPIDFIZone(kLowGearVelocityControlSlot, 
-        		Constants.kDriveLowGearVelocityKp, 
-        		Constants.kDriveLowGearVelocityKi,
-                Constants.kDriveLowGearVelocityKd, 
-                Constants.kDriveLowGearVelocityKf,
-                Constants.kDriveLowGearVelocityIZone);
-        
-        rightDrive1.setPIDFIZone(kLowGearVelocityControlSlot, 
-        		Constants.kDriveLowGearVelocityKp, 
-        		Constants.kDriveLowGearVelocityKi,
-                Constants.kDriveLowGearVelocityKd, 
-                Constants.kDriveLowGearVelocityKf,
-                Constants.kDriveLowGearVelocityIZone);
-        
-        leftDrive1.setPIDFIZone(kHighGearVelocityControlSlot, 
-        		Constants.kDriveHighGearVelocityKp, 
-        		Constants.kDriveHighGearVelocityKi,
-                Constants.kDriveHighGearVelocityKd, 
-                Constants.kDriveHighGearVelocityKf,
-                Constants.kDriveHighGearVelocityIZone);
-        
-        rightDrive1.setPIDFIZone(kHighGearVelocityControlSlot, 
-        		Constants.kDriveHighGearVelocityKp, 
-        		Constants.kDriveHighGearVelocityKi,
-                Constants.kDriveHighGearVelocityKd, 
-                Constants.kDriveHighGearVelocityKf,
-                Constants.kDriveHighGearVelocityIZone);        
-    } */
 
     @Override
 	public void initDefaultCommand() {
@@ -329,7 +294,7 @@ public class Drive extends Subsystem implements Loop {
 		}
 		return false;
 	}
-	
+		
 	public synchronized void resetGyro() {
 		gyroPigeon.setYaw(0, TalonSRXEncoder.TIMEOUT_MS);
 		gyroPigeon.setFusedHeading(0, TalonSRXEncoder.TIMEOUT_MS);
@@ -428,14 +393,15 @@ public class Drive extends Subsystem implements Loop {
 
 	@Override
 	public void onStop(double timestamp) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 
 	@Override
 	public void onLoop(double timestamp) {
 		synchronized (Drive.this) {
 			DriveControlMode currentControlMode = getControlMode();
+
+			readPeriodicInputs();
 
 			if (currentControlMode == DriveControlMode.JOYSTICK) {
 				driveWithJoystick();
@@ -451,13 +417,12 @@ public class Drive extends Subsystem implements Loop {
 					case PID_TURN:
 						setFinished(pidTurnController.controlLoopUpdate(getGyroAngleDeg())); 
 						break;
-					case PATH_FOLLOWING: //Removes ADAPTIVE_PURSUIT added PATH_FOLLOWING Poofs
-						readPeriodicInputs();
-						updatePathFollower(); //ADDED updatePathFollower Method Below
+					case PATH_FOLLOWING: 
+						updatePathFollower();
 						writePeriodicOutputs();
 						break;	                
 				 	case CAMERA_TRACK:
-	                    updateCameraTrack(); //Removed method not sure if needed
+	                    updateCameraTrack(); 
 						return;
 	                default:
 	                    System.out.println("Unknown drive control mode: " + currentControlMode);
@@ -481,20 +446,19 @@ public class Drive extends Subsystem implements Loop {
 		}
 	}
 	
-	public synchronized void setGyroLock(boolean useGyroLock, boolean snapToAbsolute0or180) {
-		if (snapToAbsolute0or180) {
-			gyroLockAngleDeg = BHRMathUtils.adjustAccumAngleToClosest180(getGyroAngleDeg());
-		}
-		else {
-			gyroLockAngleDeg = getGyroAngleDeg();
-		}
-		this.useGyroLock = useGyroLock;
-	}
+	// public synchronized void setGyroLock(boolean useGyroLock, boolean snapToAbsolute0or180) { //Delete
+	// 	if (snapToAbsolute0or180) {
+	// 		gyroLockAngleDeg = BHRMathUtils.adjustAccumAngleToClosest180(getGyroAngleDeg());
+	// 	}
+	// 	else {
+	// 		gyroLockAngleDeg = getGyroAngleDeg();
+	// 	}
+	// 	this.useGyroLock = useGyroLock;
+	// }
 
     /**
      * Called periodically when the robot is in cmaera track mode.
      */
-	//REMOVED POOFS
      private void updateCameraTrack() {
     	updateLimelight();
     	double deltaVelocity = 0;
@@ -514,7 +478,6 @@ public class Drive extends Subsystem implements Loop {
      * 
      * @see Path
      */
-	//REMOVED Poofs
      public synchronized void setCameraTrack(double straightVelocity) {
         if (driveControlMode != DriveControlMode.CAMERA_TRACK) {
         	setFinished(false);
@@ -528,57 +491,12 @@ public class Drive extends Subsystem implements Loop {
         }
 	} 
 
-
-	   //OLD updatePathFollower CHANGED Poofs 
-/*     private void updatePathFollower(double timestamp) {
-        RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
-        Twist2d command = mPathFollower.update(timestamp, robot_pose,
-                RobotState.getInstance().getDistanceDriven(), RobotState.getInstance().getPredictedVelocity().dx);
-        if (!mPathFollower.isFinished()) {
-            Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
-            updateVelocitySetpoint(setpoint.left, setpoint.right);
-        } else {
-            updateVelocitySetpoint(0, 0);
-        }
-    } */
-
-    /**
-     * Configures the drivebase to drive a path. Used for autonomous driving
-     * 
-     * @see Path
-     */
-
-//REMOVED Old Path Following Poofs 
-/*     public synchronized void setWantDrivePath(Path path, boolean reversed) {
-        if (mCurrentPath != path || driveControlMode != DriveControlMode.ADAPTIVE_PURSUIT) {
-            configureTalonsForSpeedControl();
-            RobotState.getInstance().resetDistanceDriven();
-            mPathFollower = new PathFollower(path, reversed,
-                    new PathFollower.Parameters(
-                            new Lookahead(Constants.kMinLookAhead, Constants.kMaxLookAhead,
-                                    Constants.kMinLookAheadSpeed, Constants.kMaxLookAheadSpeed),
-                            Constants.kInertiaSteeringGain, Constants.kPathFollowingProfileKp,
-                            Constants.kPathFollowingProfileKi, Constants.kPathFollowingProfileKv,
-                            Constants.kPathFollowingProfileKffv, Constants.kPathFollowingProfileKffa,
-                            Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel,
-                            Constants.kPathFollowingGoalPosTolerance, Constants.kPathFollowingGoalVelTolerance,
-                            Constants.kPathStopSteeringDistance));
-
-            driveControlMode = DriveControlMode.ADAPTIVE_PURSUIT;
-            mCurrentPath = path;
-        } else {
-            setVelocitySetpoint(0, 0);
-            System.out.println("Oh NOOOO in velocity set point");
-        }
-    } */
-
     /**
      * Start up velocity mode. This sets the drive train in high gear as well.
      * 
      * @param left_inches_per_sec
      * @param right_inches_per_sec
      */
-	//OLD configure dont know if we need to keep this one Poofs 
     public synchronized void setVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
         configureTalonsForSpeedControl();
         driveControlMode = DriveControlMode.VELOCITY_SETPOINT;
@@ -591,7 +509,6 @@ public class Drive extends Subsystem implements Loop {
      * @param left_inches_per_sec
      * @param right_inches_per_sec
      */
-	//OLD configure dont know if we need to keep this one Poofs 
      private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
         if (usesTalonVelocityControl(driveControlMode)) {
             final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
@@ -612,8 +529,7 @@ public class Drive extends Subsystem implements Loop {
     /**
      * Configures talons for velocity control
      */
-	//OLD configure dont know if we need to keep this one Poofs 
-	//Added Back in January 9th, 2019 (Said it was needed by Mr.Selle. Used in setVelocitySetpoint, setWantDrivePath, setCameraTrack,old updatePathFollower)
+
 	public void configureTalonsForSpeedControl() {
         if (!usesTalonVelocityControl(driveControlMode)) {
         	leftDrive1.enableVoltageCompensation(true);
@@ -652,32 +568,6 @@ public class Drive extends Subsystem implements Loop {
         	}
         }
     }  
-//REMOVED Old Path Follower Poofs 
-/*     public synchronized boolean isDoneWithPath() {
-        if (driveControlMode == DriveControlMode.ADAPTIVE_PURSUIT && mPathFollower != null) {
-            return mPathFollower.isFinished();
-        } else {
-            System.out.println("Robot is not in path following mode 1");
-            return true;
-        }
-    }
-
-    public synchronized void forceDoneWithPath() {
-        if (driveControlMode == DriveControlMode.ADAPTIVE_PURSUIT && mPathFollower != null) {
-            mPathFollower.forceFinish();
-        } else {
-            System.out.println("Robot is not in path following mode 2, control mode = " + driveControlMode);
-        }
-    }
-
-    public synchronized boolean hasPassedMarker(String marker) {
-        if (driveControlMode == DriveControlMode.ADAPTIVE_PURSUIT && mPathFollower != null) {
-            return mPathFollower.hasPassedMarker(marker);
-        } else {
-            System.out.println("Robot is not in path following mode 3. Control mode = " + driveControlMode);
-            return false;
-        }
-    } */
 
     public boolean isBrakeMode() {
         return mIsBrakeMode;
@@ -730,7 +620,6 @@ public class Drive extends Subsystem implements Loop {
 				System.out.println("Valid lime angle = " + limeX);
 			} 
 			else {
-				//cameraSteer = (getGyroAngleDeg() - mLastValidGyroAngle) * kCameraDrive;
 				System.out.println("In Valid lime angle = " + limeX);
 				cameraSteer = -m_steerOutput;
 			}
@@ -747,7 +636,6 @@ public class Drive extends Subsystem implements Loop {
 				System.out.println("CARGO FOUND = " + limeX);
 			} 
 			else {
-				//cameraSteer = (getGyroAngleDeg() - mLastValidGyroAngle) * kCameraDrive;
 				System.out.println("NO CARGO FOUND = " + limeX);
 				cameraSteer = -m_steerOutput;
 			}
@@ -863,25 +751,33 @@ public class Drive extends Subsystem implements Loop {
         return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);
     }
 
-    public static double rpmToInchesPerSecond(double rpm) {
-        return rotationsToInches(rpm) / 60;
-    }
+    // public static double rpmToInchesPerSecond(double rpm) { //Delete
+    //     return rotationsToInches(rpm) / 60;
+    // }
 
-    public static double inchesToRotations(double inches) {
-        return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
-    }
+    // public static double inchesToRotations(double inches) { //Delete
+    //     return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
+    // }
 
-    public static double inchesPerSecondToRpm(double inches_per_second) {
-        return inchesToRotations(inches_per_second) * 60;
-    }
+    // public static double inchesPerSecondToRpm(double inches_per_second) { //Delete
+    //     return inchesToRotations(inches_per_second) * 60;
+    // }
     
-    public double getRightPositionInches() {
+    // public double getRightPositionInches() { //Delete
+    // 	return rightDrive1.getPositionWorld();
+    // }
+
+    // public double getLeftPositionInches() { //Delete
+    // 	return leftDrive1.getPositionWorld();
+	// }
+	
+	public double getRightPositionInches() {
     	return rightDrive1.getPositionWorld();
     }
 
     public double getLeftPositionInches() {
-    	return leftDrive1.getPositionWorld();
-    }
+		return leftDrive1.getPositionWorld();
+	}
 
     public double getRightVelocityInchesPerSec() {
     	return rightDrive1.getVelocityWorld();
@@ -959,7 +855,22 @@ public class Drive extends Subsystem implements Loop {
 			catch (Exception e) {
 			}
 		}
-	}	
+		else if (operationMode == Robot.OperationMode.COMPETITION) {
+			// SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
+			// SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_ticks);
+			// SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_ticks);
+			// SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
+			// SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
+			// SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
+	
+			SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
+			SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());
+			SmartDashboard.putNumber("theta err", mPeriodicIO.error.getRotation().getDegrees());
+			if (getHeading() != null) {
+				SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
+			}
+		}	
+	}
 	
 	public static Drive getInstance() {
 		if(instance == null) {
@@ -983,12 +894,20 @@ public double getRightEncoderRotations() {
 	return mPeriodicIO.right_position_ticks / DRIVE_ENCODER_PPR;
 }
 
-public double getLeftEncoderDistance() {
-	return rotationsToInches(getLeftEncoderRotations());
+public double getLeftWheelRotations() {
+	return getLeftEncoderRotations() / ENCODER_REVS_TO_WHEEL_REVS; 
 }
 
-public double getRightEncoderDistance() {
-	return rotationsToInches(getRightEncoderRotations());
+public double getRightWheelRotations() {
+	return getRightEncoderRotations() / ENCODER_REVS_TO_WHEEL_REVS; 
+}
+
+public double getLeftWheelDistance() {
+	return rotationsToInches(getLeftWheelRotations());
+}
+
+public double getRightWheelDistance() {
+	return rotationsToInches(getRightWheelRotations());
 }
 
 public double getRightVelocityNativeUnits() {
@@ -996,7 +915,7 @@ public double getRightVelocityNativeUnits() {
 }
 
 public double getRightLinearVelocity() {
-	return rotationsToInches(getRightVelocityNativeUnits() * 10.0 / DRIVE_ENCODER_PPR); 
+	return rotationsToInches(getRightVelocityNativeUnits() * 10.0 / DRIVE_ENCODER_PPR / ENCODER_REVS_TO_WHEEL_REVS); 
 }
 
 public double getLeftVelocityNativeUnits() {
@@ -1004,7 +923,7 @@ public double getLeftVelocityNativeUnits() {
 }
 
 public double getLeftLinearVelocity() {
-	return rotationsToInches(getLeftVelocityNativeUnits() * 10.0 / DRIVE_ENCODER_PPR); 
+	return rotationsToInches(getLeftVelocityNativeUnits() * 10.0 / DRIVE_ENCODER_PPR / ENCODER_REVS_TO_WHEEL_REVS); 
 }
 
 public double getLinearVelocity() {
@@ -1069,10 +988,12 @@ public double getAngularVelocity() {
         return mMotionPlanner.isDone() || mOverrideTrajectory;
     }
 
+	//Delete
     public boolean isHighGear() {
         return mIsHighGear;
     }
 
+	//Delete
     public synchronized void setHighGear(boolean wantsHighGear) {
         if (wantsHighGear != mIsHighGear) {
             mIsHighGear = wantsHighGear;
@@ -1123,7 +1044,7 @@ private void updatePathFollower() {
 		DriverStation.reportError("Drive is not in path following state", false);
 	}
 }
-//I dont think we need this but if so not difficult to add Poofs
+//I dont think we need this but if so not difficult to add Poofs //Delete?
  private void handleAutoShift() {
 	final double linear_velocity = Math.abs(getLinearVelocity());
 	final double angular_velocity = Math.abs(getAngularVelocity());
@@ -1177,16 +1098,16 @@ public synchronized void readPeriodicInputs() {
 
 	double deltaLeftTicks = ((mPeriodicIO.left_position_ticks - prevLeftTicks) / 4096.0) * Math.PI;
 	if (deltaLeftTicks > 0.0) {
-		mPeriodicIO.left_distance += deltaLeftTicks * Constants.kDriveWheelDiameterInches;
+		mPeriodicIO.left_distance += deltaLeftTicks * Constants.kDriveWheelDiameterInches / ENCODER_REVS_TO_WHEEL_REVS;
 	} else {
-		mPeriodicIO.left_distance += deltaLeftTicks * Constants.kDriveWheelDiameterInches;
+		mPeriodicIO.left_distance += deltaLeftTicks * Constants.kDriveWheelDiameterInches / ENCODER_REVS_TO_WHEEL_REVS;
 	}
 
 	double deltaRightTicks = ((mPeriodicIO.right_position_ticks - prevRightTicks) / 4096.0) * Math.PI;
 	if (deltaRightTicks > 0.0) {
-		mPeriodicIO.right_distance += deltaRightTicks * Constants.kDriveWheelDiameterInches;
+		mPeriodicIO.right_distance += deltaRightTicks * Constants.kDriveWheelDiameterInches / ENCODER_REVS_TO_WHEEL_REVS;
 	} else {
-		mPeriodicIO.right_distance += deltaRightTicks * Constants.kDriveWheelDiameterInches;
+		mPeriodicIO.right_distance += deltaRightTicks * Constants.kDriveWheelDiameterInches / ENCODER_REVS_TO_WHEEL_REVS;
 	}
 
 	if (mCSVWriter != null) {

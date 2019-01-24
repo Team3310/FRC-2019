@@ -1,4 +1,4 @@
-package frc.team3310.test.java.com.team3310.lib.physics;
+package com.team3310.lib.physics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -14,10 +14,10 @@ import frc.team3310.robot.commands.DrivePathCameraTrack;
 import frc.team3310.robot.commands.DrivePathCameraTrackStop;
 import frc.team3310.robot.commands.DriveSpeedShift;
 import frc.team3310.robot.commands.ElevatorSetMode;
-import frc.team3310.robot.commands.ElevatorSetPositionMP;
 import frc.team3310.robot.commands.ElevatorSetZero;
 import frc.team3310.robot.commands.ElevatorSpeedShift;
-import frc.team3310.robot.commands.IntakeCubeAndLift;
+import frc.team3310.robot.commands.IntakeBallArms;
+import frc.team3310.robot.commands.IntakeHatchArms;
 import frc.team3310.robot.commands.IntakeSetSpeed;
 import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.controller.GameController;
@@ -28,6 +28,8 @@ import frc.team3310.robot.subsystems.Elevator;
 import frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.team3310.robot.subsystems.Elevator.ElevatorSpeedShiftState;
 import frc.team3310.robot.subsystems.Intake;
+import frc.team3310.robot.subsystems.Intake.BallArmState;
+import frc.team3310.robot.subsystems.Intake.HatchArmState;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -51,7 +53,7 @@ public class OI {
 
 	private OI() {
 		// Driver controller
-		m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
+		m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
 		m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Xbox());
 
 		//Driver Controls
@@ -81,8 +83,20 @@ public class OI {
         Button intakeEjectSlow = m_operator.getLeftTrigger();
         intakeEjectSlow.whenPressed(new IntakeSetSpeed(Intake.INTAKE_EJECT_SLOW_SPEED));
         intakeEjectSlow.whenReleased(new IntakeSetSpeed(0.0));
-		
-		//Elevator
+        
+        Button ballArmsIn = m_operator.getButtonA();
+		ballArmsIn.whenPressed(new IntakeBallArms(BallArmState.IN));
+
+        Button ballArmsOut = m_operator.getButtonY();
+        ballArmsOut.whenPressed(new IntakeBallArms(BallArmState.OUT));
+        
+        Button hatchArmsIn = m_operator.getButtonX();
+		hatchArmsIn.whenPressed(new IntakeHatchArms(HatchArmState.IN));
+
+        Button hatchArmsOut = m_operator.getButtonB();
+		hatchArmsOut.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
+        
+        //Elevator
  		Button elevatorShiftHi = m_operator.getDPadUp();
         elevatorShiftHi.whenPressed(new ElevatorSpeedShift(Elevator.ElevatorSpeedShiftState.HI));
 
@@ -98,17 +112,17 @@ public class OI {
         Button elevatorReset = m_operator.getOptionsButton();
         elevatorReset.whenPressed(new ElevatorSetZero(Elevator.ZERO_POSITION_INCHES)); 
                 				
-		Button intakeCube = m_operator.getButtonA();
-		intakeCube.whenPressed(new IntakeCubeAndLift());
+		// Button intakeCube = m_operator.getButtonA();
+		// intakeCube.whenPressed(new IntakeCubeAndLift());
 
-        Button elevatorMaxPosition = m_operator.getButtonY();
-        elevatorMaxPosition.whenPressed(new ElevatorSetPositionMP(Elevator.MAX_POSITION_INCHES));
+        // Button elevatorMaxPosition = m_operator.getButtonY();
+        // elevatorMaxPosition.whenPressed(new ElevatorSetPositionMP(Elevator.MAX_POSITION_INCHES));
 
-        Button elevatorScalePosition = m_operator.getButtonB();
-        elevatorScalePosition.whenPressed(new ElevatorSetPositionMP(Elevator.SCALE_LOW_POSITION_INCHES));
+        // Button elevatorScalePosition = m_operator.getButtonB();
+        // elevatorScalePosition.whenPressed(new ElevatorSetPositionMP(Elevator.SCALE_LOW_POSITION_INCHES));
 
-        Button elevatorSwitchPosition = m_operator.getButtonX();
-        elevatorSwitchPosition.whenPressed(new ElevatorSetPositionMP(Elevator.SWITCH_POSITION_INCHES));
+        // Button elevatorSwitchPosition = m_operator.getButtonX();
+        // elevatorSwitchPosition.whenPressed(new ElevatorSetPositionMP(Elevator.SWITCH_POSITION_INCHES));
         
         //Smartdashboard
         Button turnCompressorOff = new InternalButton();

@@ -1,4 +1,4 @@
-package frc.team3310.test.java.com.team3310.frc2019;
+package com.team3310.frc2019;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

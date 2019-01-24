@@ -1,7 +1,7 @@
 package frc.team3310.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.Kinematics;
 import frc.team3310.robot.loops.ILooper;
 import frc.team3310.robot.loops.Loop;
@@ -58,21 +58,19 @@ public class RobotStateEstimator extends Subsystem {
 
         @Override
         public synchronized void onLoop(double timestamp) {
-            final double left_distance = drive_.getLeftPositionInches();
-            final double right_distance = drive_.getRightPositionInches();
+            final double left_distance = drive_.getLeftWheelDistance();
+            final double right_distance = drive_.getRightWheelDistance();
             final double delta_left = left_distance - left_encoder_prev_distance_;
             final double delta_right = right_distance - right_encoder_prev_distance_;
             final Rotation2d gyro_angle = drive_.getHeading();
             final Twist2d odometry_velocity = robot_state_.generateOdometryFromSensors(
                     delta_left, delta_right, gyro_angle);
-            final Twist2d predicted_velocity = Kinematics.forwardKinematics(drive_.getLeftVelocityInchesPerSec(),
-                    drive_.getRightVelocityInchesPerSec());
+            final Twist2d predicted_velocity = Kinematics.forwardKinematics(drive_.getLeftLinearVelocity(),
+                    drive_.getRightLinearVelocity());
             robot_state_.addObservations(timestamp, odometry_velocity,
                     predicted_velocity);
             left_encoder_prev_distance_ = left_distance;
             right_encoder_prev_distance_ = right_distance;
-            SmartDashboard.putNumber("Left Distance", left_distance);
-
         }
 
         @Override

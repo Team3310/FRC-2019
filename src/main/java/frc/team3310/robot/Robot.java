@@ -94,7 +94,9 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 
 		autonTaskChooser = new SendableChooser<Command>();
-		autonTaskChooser.addOption("Test Motion", new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true));
+//		autonTaskChooser.addOption("Test Motion", new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true));
+		autonTaskChooser.addOption("Test Motion", new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().centerPyramidCubeToScaleLeft, true));
+
 		//autonTaskChooser.addOption("Test Motion", new DriveMotion());
 
 		SmartDashboard.putData("Auton Tasks", autonTaskChooser);

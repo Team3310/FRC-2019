@@ -1,4 +1,4 @@
-package frc.team3310.test.java.com.team3310.frc2019.statemachines;
+package com.team3310.frc2019.statemachines;
 
 public class TestIntakeStateMachine {
     /*

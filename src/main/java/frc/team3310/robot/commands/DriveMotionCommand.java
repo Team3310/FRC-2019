@@ -7,13 +7,14 @@
 
 package frc.team3310.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.Robot;
+import frc.team3310.robot.paths.TrajectoryGenerator.TrajectorySet.MirroredTrajectory;
 import frc.team3310.robot.subsystems.Drive;
 import frc.team3310.utility.lib.control.RobotStatus;
 import frc.team3310.utility.lib.geometry.Pose2dWithCurvature;
 import frc.team3310.utility.lib.trajectory.TimedView;
-import frc.team3310.utility.lib.trajectory.Trajectory;
 import frc.team3310.utility.lib.trajectory.TrajectoryIterator;
 import frc.team3310.utility.lib.trajectory.timing.TimedState;
 
@@ -22,9 +23,10 @@ public class DriveMotionCommand extends Command {
   private final TrajectoryIterator<TimedState<Pose2dWithCurvature>> mTrajectory;
   private final boolean mResetPose;
 
-  public DriveMotionCommand(Trajectory<TimedState<Pose2dWithCurvature>> trajectory, boolean resetPose) {
-    mTrajectory = new TrajectoryIterator<>(new TimedView<>(trajectory));
+  public DriveMotionCommand(MirroredTrajectory trajectory, boolean resetPose) {
+    mTrajectory = new TrajectoryIterator<>(new TimedView<>(trajectory.left));
     mResetPose = resetPose;
+    System.out.println(mTrajectory.getState().toCSV());
 }
 
   // Called just before this Command runs the first time
