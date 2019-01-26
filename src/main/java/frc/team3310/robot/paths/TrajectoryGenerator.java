@@ -127,7 +127,7 @@ public class TrajectoryGenerator {
     public static final Pose2d kCenterStartPose = new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0));
     public static final Pose2d kSimpleSwitchStartPose = new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0));
     public static final Pose2d kRightSwitchPose = new Pose2d(new Translation2d(100.0, 0.0), Rotation2d.fromDegrees(0.0));
-    public static final Pose2d kLeftSwitchPose = new Pose2d(new Translation2d(100.0, 0.0), Rotation2d.fromDegrees(0.0));
+    public static final Pose2d kLeftSwitchPose = new Pose2d(new Translation2d(100.0, -36.0), Rotation2d.fromDegrees(0.0));
 
     // public static final Pose2d kCenterStartPose = new Pose2d(0.0, -4.0, Rotation2d.fromDegrees(180.0));
     // public static final Pose2d kSimpleSwitchStartPose = new Pose2d(0.0, -2.0, Rotation2d.fromDegrees(180.0));
@@ -430,7 +430,7 @@ public class TrajectoryGenerator {
             waypoints.add(kSimpleSwitchStartPose);
             waypoints.add(kRightSwitchPose);
 
-            return generateTrajectory(true, waypoints, Arrays.asList(new CentripetalAccelerationConstraint(kSimpleSwitchMaxCentripetalAccel)),
+            return generateTrajectory(false, waypoints, Arrays.asList(new CentripetalAccelerationConstraint(kSimpleSwitchMaxCentripetalAccel)),
                     kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
         }
 
@@ -439,7 +439,7 @@ public class TrajectoryGenerator {
             waypoints.add(kSimpleSwitchStartPose);
             waypoints.add(kLeftSwitchPose);
 
-            return generateTrajectory(true, waypoints, Arrays.asList(new CentripetalAccelerationConstraint(kSimpleSwitchMaxCentripetalAccel)),
+            return generateTrajectory(false, waypoints, Arrays.asList(new CentripetalAccelerationConstraint(kSimpleSwitchMaxCentripetalAccel)),
                     kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
         }
 

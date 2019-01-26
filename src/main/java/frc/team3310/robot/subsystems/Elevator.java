@@ -60,6 +60,11 @@ public class Elevator extends Subsystem implements Loop {
 	public static final double CLIMB_HIGH_POSITION_INCHES = 10.0;
 	public static final double CLIMB_ASSIST_POSITION_INCHES = 50.0;
 
+	//2019
+	public static final double ROCKET_LEVEL_1 = 23;
+	public static final double ROCKET_LEVEL_2 = 52; //Switch Position for First Cube APR
+	public static final double ROCKET_LEVEL_3 = 78;
+
 	// Motion profile max velocities and accel times
 	public static final double MP_MAX_VELOCITY_INCHES_PER_SEC =  60; 
 	public static final double MP_T1 = 400;  // Fast = 300

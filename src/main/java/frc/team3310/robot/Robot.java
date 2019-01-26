@@ -94,8 +94,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 
 		autonTaskChooser = new SendableChooser<Command>();
-//		autonTaskChooser.addOption("Test Motion", new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true));
-		autonTaskChooser.addOption("Test Motion", new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().centerPyramidCubeToScaleLeft, true));
+		autonTaskChooser.addOption("Test Motion", new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true));
+		//autonTaskChooser.addOption("Test Motion", new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().centerPyramidCubeToScaleLeft.left, true));
 
 		//autonTaskChooser.addOption("Test Motion", new DriveMotion());
 
@@ -119,6 +119,8 @@ public class Robot extends TimedRobot {
 	// Called every loop for all modes
 	public void robotPeriodic() {
 		updateStatus();
+		SmartDashboard.putNumber("Elevator Position Inches", Robot.elevator.getPositionInches());
+
 	}
 
 	@Override

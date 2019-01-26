@@ -2,21 +2,19 @@ package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.Robot;
-import frc.team3310.robot.subsystems.Drive.DriveSpeedShiftState;
+import frc.team3310.robot.subsystems.Intake.HatchArmState;
 
-public class DriveSpeedShift extends Command {
-	private DriveSpeedShiftState state;
+public class ToggleHatchArms extends Command {
+	private HatchArmState state;
 	
-	public DriveSpeedShift(DriveSpeedShiftState state) {
+	public ToggleHatchArms() {
 //		requires(Robot.drive);
-		this.state = state;
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.drive.setShiftState(state);
-		//Robot.drive.configureTalonsForSpeedControl(); //TODO see if this is needed
-		System.out.println("Shift " + state);
+		System.out.println("Hatch Arms Out");
+		Robot.intake.setHatchArmState(HatchArmState.OUT);
 	}
 
 	@Override
@@ -31,7 +29,9 @@ public class DriveSpeedShift extends Command {
 
 	@Override
 	protected void end() {
-		
+		System.out.println("Hatch Arms In");
+		Robot.intake.setHatchArmState(HatchArmState.IN);
+
 	}
 
 	@Override

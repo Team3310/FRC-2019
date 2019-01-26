@@ -1,23 +1,25 @@
 package frc.team3310.robot.commands;
 
 import frc.team3310.robot.Robot;
+import frc.team3310.robot.subsystems.Intake;
+import frc.team3310.robot.subsystems.Intake.BallArmState;
 
 /**
  *
  */
-public class IntakeSetSpeedFrontSensorOff extends ExtraTimeoutCommand {
+public class IntakeBallSensor extends ExtraTimeoutCommand {
 	
 	private double speed;
-	private boolean cubeDetected;
+	private boolean ballDetected;
 	private double EXTRA_INTAKE_TIME = 0.05;
 	private static final double TIMEOUT = 10.0;
 
-    public IntakeSetSpeedFrontSensorOff(double speed) {
+    public IntakeBallSensor(double speed) {
     	this.speed = speed;
         requires(Robot.intake);
     }
 
-    public IntakeSetSpeedFrontSensorOff(double speed, double extraTimeout) {
+    public IntakeBallSensor(double speed, double extraTimeout) {
     	this.speed = speed;
     	EXTRA_INTAKE_TIME = extraTimeout;
         requires(Robot.intake);
@@ -28,16 +30,17 @@ public class IntakeSetSpeedFrontSensorOff extends ExtraTimeoutCommand {
     	System.out.println("Intake sensor off started");
     	resetExtraTimer();
     	setTimeout(TIMEOUT);
-		cubeDetected = false;
-    	Robot.intake.setSpeed(speed);
+		ballDetected = false;
+        Robot.intake.setSpeed(speed);
+        Robot.intake.setBallArmState(BallArmState.OUT);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	if (cubeDetected == false && (Robot.intake.getFrontIRIntakeSensor() || Robot.intake.getFrontVEXIntakeSensor())) {
+    	if (ballDetected == false && (Robot.intake.getFrontVEXIntakeSensor())) {
     		startExtraTimeout(EXTRA_INTAKE_TIME);
-    		cubeDetected = true;
-    		System.out.println("CUBE DETECTED!!!!!");
+    		ballDetected = true;
+    		System.out.println("BALL DETECTED!!!!!");
     	}
     }
 
@@ -48,13 +51,15 @@ public class IntakeSetSpeedFrontSensorOff extends ExtraTimeoutCommand {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.intake.setSpeed(0.03);
+        Robot.intake.setBallArmState(BallArmState.IN);
+    	Robot.intake.setSpeed(Intake.INTAKE_HOLD_SPEED);
     	System.out.println("Intake sensor off end!!!!");
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	System.out.println("IntakeSetSpeedFrontSensorOff interrupted");
+        System.out.println("IntakeSetSpeedFrontSensorOff interrupted");
+        Robot.intake.setSpeed(0.0);
     }
 }

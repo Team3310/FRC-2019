@@ -588,8 +588,8 @@ public class Drive extends Subsystem implements Loop {
     public synchronized void driveWithJoystick() {
 		if(m_drive == null) return;
 
-		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getRightBumper().get();
-		boolean cameraTrackCargoButton = OI.getInstance().getDriverController().getButtonY().get();
+		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getButtonB().get();
+		boolean cameraTrackCargoButton = OI.getInstance().getDriverController().getButtonX().get();
 
 		m_moveInput = OI.getInstance().getDriverController().getLeftYAxis();
 		m_steerInput = -OI.getInstance().getDriverController().getRightXAxis();
