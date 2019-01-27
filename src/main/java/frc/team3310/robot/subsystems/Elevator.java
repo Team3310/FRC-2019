@@ -13,6 +13,7 @@ import frc.team3310.robot.Constants;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.RobotMap;
 import frc.team3310.robot.loops.Loop;
+import frc.team3310.robot.subsystems.Intake.HatchArmState;
 import frc.team3310.utility.MPTalonPIDController;
 import frc.team3310.utility.PIDParams;
 import frc.team3310.utility.lib.drivers.TalonSRXEncoder;
@@ -61,9 +62,10 @@ public class Elevator extends Subsystem implements Loop {
 	public static final double CLIMB_ASSIST_POSITION_INCHES = 50.0;
 
 	//2019
+	public static final double GRAB_HATCH_STATION = 12;
 	public static final double ROCKET_LEVEL_1 = 23;
-	public static final double ROCKET_LEVEL_2 = 52; //Switch Position for First Cube APR
-	public static final double ROCKET_LEVEL_3 = 78;
+	public static final double ROCKET_LEVEL_2 = 51; //Switch Position for First Cube APR
+	public static final double ROCKET_LEVEL_3 = 79;
 
 	// Motion profile max velocities and accel times
 	public static final double MP_MAX_VELOCITY_INCHES_PER_SEC =  60; 
@@ -99,9 +101,11 @@ public class Elevator extends Subsystem implements Loop {
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;	
 	private boolean isFinished;
 	private ElevatorControlMode elevatorControlMode = ElevatorControlMode.JOYSTICK_MANUAL;
-	private double targetPositionInchesPID = 0;
 	private boolean firstMpPoint;
 	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
+	public double targetPositionInchesPID = 0;
+	public boolean toLow;
+
 	
 	private Elevator() {
 		try {
@@ -206,9 +210,11 @@ public class Elevator extends Subsystem implements Loop {
 			switch( getElevatorControlMode() ) {
 				case JOYSTICK_PID: 
 					controlPidWithJoystick();
+					checkInchesIntake();
 					break;
 				case JOYSTICK_MANUAL:
 					controlManualWithJoystick();
+					checkInchesIntake();
 					break;
 				case MOTION_PROFILE: 
 					if (!isFinished()) {
@@ -238,6 +244,15 @@ public class Elevator extends Subsystem implements Loop {
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
 		setSpeedJoystick(joyStickSpeed);
+	}
+
+	private void checkInchesIntake(){
+		if (targetPositionInchesPID < 5) {
+			toLow = true;
+		}
+		else {
+			toLow = false;
+		}
 	}
 	
 	public void setShiftState(ElevatorSpeedShiftState state) {

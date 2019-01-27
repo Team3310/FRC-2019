@@ -82,7 +82,8 @@ public class Robot extends TimedRobot {
 		oi = OI.getInstance();
 		
     	controlLoop.register(drive);
-    	controlLoop.register(elevator);
+		controlLoop.register(elevator);
+		controlLoop.register(intake);
 		RobotStateEstimator.getInstance().registerEnabledLoops(controlLoop);
  		mTrajectoryGenerator.generateTrajectories();
 

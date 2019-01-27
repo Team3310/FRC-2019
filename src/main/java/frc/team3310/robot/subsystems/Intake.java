@@ -10,12 +10,13 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.robot.loops.Loop;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.RobotMap;
 import frc.team3310.utility.lib.drivers.TalonSRXChecker;
 import frc.team3310.utility.lib.drivers.TalonSRXFactory;
 
-public class Intake extends Subsystem {
+public class Intake extends Subsystem implements Loop {
 	private static Intake instance;
 
 	public static final double INTAKE_REAR_EJECT_FAST_SPEED = 1.0;
@@ -27,6 +28,8 @@ public class Intake extends Subsystem {
 	public static final double INTAKE_EJECT_SLOW_SPEED = 0.4;
 	public static final double INTAKE_ADJUST_SPEED = 0.3;
 	public static final double INTAKE_HOLD_SPEED = -0.15;
+	private boolean isFinished;
+
 
 	private TalonSRX leftArm;
 	private TalonSRX rightArm;
@@ -39,10 +42,16 @@ public class Intake extends Subsystem {
 		IN, OUT
 	};
 
+	public static enum IntakeControlMode {
+		NORMAL, MANAGE_HATCH
+	};
+
 
 	// Sensors
 	private DigitalInput frontIRIntakeSensor;
 	private DigitalInput frontVEXIntakeSensor;
+	private IntakeControlMode intakeControlMode = IntakeControlMode.MANAGE_HATCH;
+
 
 	private Solenoid ballArms;
 	private Solenoid hatchArms;
@@ -72,6 +81,40 @@ public class Intake extends Subsystem {
 		}
 	}
 
+	@Override
+	public void onStart(double timestamp) {
+        synchronized (Intake.this) {
+
+        }
+	}
+	@Override
+	public void onStop(double timestamp) {
+		// TODO Auto-generated method stub		
+	}
+
+	@Override
+	public void onLoop(double timestamp) {
+		synchronized (Intake.this) {
+			IntakeControlMode currentControlMode = getIntakeControlMode();
+			if (currentControlMode == IntakeControlMode.MANAGE_HATCH) {
+				//forceHatchArmsIn();
+			}
+			else if (!isFinished()) {
+				switch (currentControlMode) {			
+					case NORMAL:
+	                    break;
+
+	                default:
+	                    System.out.println("Unknown drive control mode: " + currentControlMode);
+	                    break;
+                }
+			}
+			else {
+				// hold in current state
+			}
+		}
+	}
+
 	public void setBallArmState(BallArmState state) {
 		System.out.println("Ball arm state = " + state);
 		if(state == BallArmState.IN) {
@@ -83,7 +126,7 @@ public class Intake extends Subsystem {
 	}
 
 	public void setHatchArmState(HatchArmState state) {
-		System.out.println("Hatch arm state = " + state);
+		//System.out.println("Hatch arm state = " + state);
 		if(state == HatchArmState.IN) {
 			hatchArms.set(false);
 		}
@@ -92,8 +135,24 @@ public class Intake extends Subsystem {
 		}
 	}
 
+	// public void forceHatchArmsIn(){
+	// 	if(Robot.elevator.toLow == true){
+	// 		hatchArms.set(false);
+	// 		//System.out.println("Hatch Arms are In because the elevator is to low");
+
+	// 	}
+	// 	else{
+	// 		//System.out.println("You can deploy the fingers");
+
+	// 	}
+	// }
+
 	@Override
 	public void initDefaultCommand() {
+	}
+
+	private synchronized IntakeControlMode getIntakeControlMode() {
+		return this.intakeControlMode;
 	}
 	
 	public void setSpeed(double speed) {
@@ -127,6 +186,14 @@ public class Intake extends Subsystem {
 	
 	public boolean getFrontVEXIntakeSensor() {
 		return !frontVEXIntakeSensor.get();   
+	}
+
+	public synchronized boolean isFinished() {
+		return isFinished;
+	}
+	
+	public synchronized void setFinished(boolean isFinished) {
+		this.isFinished = isFinished;
 	}
 	
 	public void updateStatus(Robot.OperationMode operationMode) {

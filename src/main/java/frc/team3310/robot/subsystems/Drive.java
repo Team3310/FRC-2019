@@ -588,7 +588,7 @@ public class Drive extends Subsystem implements Loop {
     public synchronized void driveWithJoystick() {
 		if(m_drive == null) return;
 
-		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getButtonB().get();
+		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getButtonY().get();
 		boolean cameraTrackCargoButton = OI.getInstance().getDriverController().getButtonX().get();
 
 		m_moveInput = OI.getInstance().getDriverController().getLeftYAxis();
@@ -855,13 +855,13 @@ public class Drive extends Subsystem implements Loop {
 			catch (Exception e) {
 			}
 		}
-		else if (operationMode == Robot.OperationMode.COMPETITION) {
-			// SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
-			// SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_ticks);
-			// SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_ticks);
-			// SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
-			// SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
-			// SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
+		else if (operationMode == Robot.OperationMode.TEST) {
+			SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
+			SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_ticks);
+			SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_ticks);
+			SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
+			SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
+			SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
 	
 			SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
 			SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());
