@@ -8,17 +8,17 @@ import frc.team3310.robot.subsystems.Intake;
  *
  */
 public class IntakeSetSpeed extends Command {
-	
-	private double speed;
+
+    private double speed;
 
     public IntakeSetSpeed(double speed) {
-    	this.speed = speed;
+        this.speed = speed;
         requires(Robot.intake);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.intake.setSpeed(speed);
+        Robot.intake.setSpeed(speed);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -32,6 +32,7 @@ public class IntakeSetSpeed extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+
     }
 
     // Called when another command which requires one or more of the same

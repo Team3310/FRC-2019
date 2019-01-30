@@ -1,3 +1,4 @@
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -27,10 +28,6 @@ import frc.team3310.robot.subsystems.Intake;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
 
-/**
- * This class is the glue that binds the controls on the physical operator
- * interface to the commands and command groups that allow control of the robot.
- */
 public class OI {
 
   private static OI instance;
@@ -78,6 +75,7 @@ public class OI {
         //Intake
         Button IntakeHatch = m_operator.getRightBumper();
         IntakeHatch.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
+        IntakeHatch.whenPressed(new IntakeBallArms(BallArmState.IN));
         IntakeHatch.whenPressed(new ElevatorSetPositionMP(Elevator.GRAB_HATCH_STATION));
         IntakeHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
 

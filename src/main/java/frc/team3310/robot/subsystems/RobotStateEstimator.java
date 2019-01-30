@@ -1,6 +1,5 @@
 package frc.team3310.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team3310.robot.Kinematics;
 import frc.team3310.robot.loops.ILooper;
@@ -17,11 +16,8 @@ public class RobotStateEstimator extends Subsystem {
     private double right_encoder_prev_distance_ = 0.0;
     private double back_encoder_prev_distance_ = 0.0;
     
-
     RobotStateEstimator() {
     }
-
-
 
     @Override
     public void initDefaultCommand() {

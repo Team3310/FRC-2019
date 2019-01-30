@@ -52,7 +52,8 @@ public class IntakeBallSensor extends ExtraTimeoutCommand {
     // Called once after isFinished returns true
     protected void end() {
         Robot.intake.setBallArmState(BallArmState.IN);
-    	Robot.intake.setSpeed(Intake.INTAKE_HOLD_SPEED);
+        Robot.intake.setSpeed(Intake.INTAKE_HOLD_SPEED);
+        Robot.vision.setLimeLED(2);
     	System.out.println("Intake sensor off end!!!!");
     }
 
