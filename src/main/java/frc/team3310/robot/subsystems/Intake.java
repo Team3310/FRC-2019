@@ -10,26 +10,24 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team3310.robot.loops.Loop;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.RobotMap;
+import frc.team3310.robot.loops.Loop;
 import frc.team3310.utility.lib.drivers.TalonSRXChecker;
 import frc.team3310.utility.lib.drivers.TalonSRXFactory;
 
-public class Intake extends Subsystem implements Loop {
+public class Intake extends Subsystem {
 	private static Intake instance;
 
 	public static final double INTAKE_REAR_EJECT_FAST_SPEED = 1.0;
-	public static final double INTAKE_REAR_EJECT_MEDIUM_SPEED = 0.8; //0.7 //0.8
+	public static final double INTAKE_REAR_EJECT_MEDIUM_SPEED = 0.8; // 0.7 //0.8
 	public static final double INTAKE_LOAD_SPEED = -.99;
 	public static final double INTAKE_LOAD_SLOW_SPEED = -0.4;
 	public static final double INTAKE_EJECT_SPEED = 0.8;
-	public static final double INTAKE_EJECT_FAST_SPEED = 1.0; //Intake Eject Speed for first cube APR
+	public static final double INTAKE_EJECT_FAST_SPEED = 1.0; // Intake Eject Speed for first cube APR
 	public static final double INTAKE_EJECT_SLOW_SPEED = 0.4;
 	public static final double INTAKE_ADJUST_SPEED = 0.3;
 	public static final double INTAKE_HOLD_SPEED = -0.15;
-	private boolean isFinished;
-
 
 	private TalonSRX leftArm;
 	private TalonSRX rightArm;
@@ -42,119 +40,55 @@ public class Intake extends Subsystem implements Loop {
 		IN, OUT
 	};
 
-	public static enum IntakeControlMode {
-		NORMAL, MANAGE_HATCH
-	};
-
-
 	// Sensors
 	private DigitalInput frontIRIntakeSensor;
 	private DigitalInput frontVEXIntakeSensor;
-	private IntakeControlMode intakeControlMode = IntakeControlMode.MANAGE_HATCH;
-
 
 	private Solenoid ballArms;
 	private Solenoid hatchArms;
-
-	
 
 	private Intake() {
 		try {
 			leftArm = TalonSRXFactory.createDefaultTalon(RobotMap.INTAKE_LEFT_CAN_ID);
 			leftArm.setNeutralMode(NeutralMode.Brake);
 			leftArm.setInverted(true);
-			
+
 			rightArm = TalonSRXFactory.createDefaultTalon(RobotMap.INTAKE_RIGHT_CAN_ID);
 			rightArm.setNeutralMode(NeutralMode.Brake);
 
 			frontIRIntakeSensor = new DigitalInput(RobotMap.INTAKE_FRONT_IR_SENSOR_DIO_ID);
-			frontVEXIntakeSensor = new DigitalInput(RobotMap.INTAKE_FRONT_VEX_SENSOR_DIO_ID);	
-			
+			frontVEXIntakeSensor = new DigitalInput(RobotMap.INTAKE_FRONT_VEX_SENSOR_DIO_ID);
+
 			ballArms = new Solenoid(7);
 			hatchArms = new Solenoid(6);
 
-			
-
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.err.println("An error occurred in the Intake constructor");
-		}
-	}
-
-	@Override
-	public void onStart(double timestamp) {
-        synchronized (Intake.this) {
-
-        }
-	}
-	@Override
-	public void onStop(double timestamp) {
-		// TODO Auto-generated method stub		
-	}
-
-	@Override
-	public void onLoop(double timestamp) {
-		synchronized (Intake.this) {
-			IntakeControlMode currentControlMode = getIntakeControlMode();
-			if (currentControlMode == IntakeControlMode.MANAGE_HATCH) {
-				//forceHatchArmsIn();
-			}
-			else if (!isFinished()) {
-				switch (currentControlMode) {			
-					case NORMAL:
-	                    break;
-
-	                default:
-	                    System.out.println("Unknown drive control mode: " + currentControlMode);
-	                    break;
-                }
-			}
-			else {
-				// hold in current state
-			}
 		}
 	}
 
 	public void setBallArmState(BallArmState state) {
 		System.out.println("Ball arm state = " + state);
-		if(state == BallArmState.IN) {
+		if (state == BallArmState.IN) {
 			ballArms.set(false);
-		}
-		else if(state == BallArmState.OUT) {
+		} else if (state == BallArmState.OUT) {
 			ballArms.set(true);
 		}
 	}
 
 	public void setHatchArmState(HatchArmState state) {
-		//System.out.println("Hatch arm state = " + state);
-		if(state == HatchArmState.IN) {
+		System.out.println("Hatch arm state = " + state);
+		if (state == HatchArmState.IN) {
 			hatchArms.set(false);
-		}
-		else if(state == HatchArmState.OUT) {
+		} else if (state == HatchArmState.OUT) {
 			hatchArms.set(true);
 		}
 	}
-
-	// public void forceHatchArmsIn(){
-	// 	if(Robot.elevator.toLow == true){
-	// 		hatchArms.set(false);
-	// 		//System.out.println("Hatch Arms are In because the elevator is to low");
-
-	// 	}
-	// 	else{
-	// 		//System.out.println("You can deploy the fingers");
-
-	// 	}
-	// }
 
 	@Override
 	public void initDefaultCommand() {
 	}
 
-	private synchronized IntakeControlMode getIntakeControlMode() {
-		return this.intakeControlMode;
-	}
-	
 	public void setSpeed(double speed) {
 		leftArm.set(ControlMode.PercentOutput, speed);
 		rightArm.set(ControlMode.PercentOutput, -speed);
@@ -162,19 +96,23 @@ public class Intake extends Subsystem implements Loop {
 
 	public void setSpeedShootLeft(double speed) {
 		rightArm.set(ControlMode.PercentOutput, -speed);
+		leftArm.set(ControlMode.PercentOutput, speed);
+
 	}
 
 	public void setSpeedShootRight(double speed) {
 		leftArm.set(ControlMode.PercentOutput, speed);
+		rightArm.set(ControlMode.PercentOutput, -speed);
+
 	}
-		
+
 	public void setSpeedAsymmetric(double speedLeft, double speedRight) {
 		leftArm.set(ControlMode.PercentOutput, speedLeft);
 		rightArm.set(ControlMode.PercentOutput, -speedRight);
 	}
-		
+
 	public static Intake getInstance() {
-		if(instance == null) {
+		if (instance == null) {
 			instance = new Intake();
 		}
 		return instance;
@@ -183,19 +121,11 @@ public class Intake extends Subsystem implements Loop {
 	public boolean getFrontIRIntakeSensor() {
 		return frontIRIntakeSensor.get();
 	}
-	
+
 	public boolean getFrontVEXIntakeSensor() {
-		return !frontVEXIntakeSensor.get();   
+		return !frontVEXIntakeSensor.get();
 	}
 
-	public synchronized boolean isFinished() {
-		return isFinished;
-	}
-	
-	public synchronized void setFinished(boolean isFinished) {
-		this.isFinished = isFinished;
-	}
-	
 	public void updateStatus(Robot.OperationMode operationMode) {
 		if (operationMode == Robot.OperationMode.TEST) {
 			try {
@@ -203,41 +133,38 @@ public class Intake extends Subsystem implements Loop {
 				SmartDashboard.putBoolean("Intake Front IR Sensor", getFrontIRIntakeSensor());
 				SmartDashboard.putNumber("Left Intake Amps", leftArm.getOutputCurrent());
 				SmartDashboard.putNumber("Right Intake Amps", rightArm.getOutputCurrent());
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 			}
 		}
 	}
-	
-    public boolean checkSystem() {
 
-        return TalonSRXChecker.CheckTalons(this,
+	public boolean checkSystem() {
 
-                new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
+		return TalonSRXChecker.CheckTalons(this,
 
-                    {
+				new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
 
+					{
 
+						add(new TalonSRXChecker.TalonSRXConfig("intake right master", rightArm));
 
-                        add(new TalonSRXChecker.TalonSRXConfig("intake right master", rightArm));
+						add(new TalonSRXChecker.TalonSRXConfig("intake left master", leftArm));
 
-                        add(new TalonSRXChecker.TalonSRXConfig("intake left master", leftArm));
+					}
 
-                    }
+				}, new TalonSRXChecker.CheckerConfig() {
 
-                }, new TalonSRXChecker.CheckerConfig() {
+					{
 
-                    {
+						mCurrentFloor = 2;
 
-                        mCurrentFloor = 2;
+						mCurrentEpsilon = 2.0;
 
-                        mCurrentEpsilon = 2.0;
+						mRPMSupplier = null;
 
-                        mRPMSupplier = null;
+					}
 
-                    }
+				});
 
-                });
-
-    }
+	}
 }

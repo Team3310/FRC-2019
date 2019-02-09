@@ -145,20 +145,11 @@ public class GameController extends Joystick {
 	public JoystickButton getStartButton() {
 		return new JoystickButton(this, map.BUTTON_START);
 	}
- 
-	/**
-	 * Gets the state of the left bumper
-	 * @return the state of the left bumper
-	 */
+
 	public JoystickButton getLeftBumper() {
 		return new JoystickButton(this, map.BUTTON_LEFT_BUMPER);
 	}
 
-
-	/**
-	 * Gets the state of the right bumper
-	 * @return the state of the right bumper
-	 */
 	public Button getRightBumper() {
 		return new JoystickButton(this, map.BUTTON_RIGHT_BUMPER);
 	}

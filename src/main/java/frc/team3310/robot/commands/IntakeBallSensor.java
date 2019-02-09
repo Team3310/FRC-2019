@@ -8,40 +8,40 @@ import frc.team3310.robot.subsystems.Intake.BallArmState;
  *
  */
 public class IntakeBallSensor extends ExtraTimeoutCommand {
-	
-	private double speed;
-	private boolean ballDetected;
-	private double EXTRA_INTAKE_TIME = 0.05;
-	private static final double TIMEOUT = 10.0;
+
+    private double speed;
+    private boolean ballDetected;
+    private double EXTRA_INTAKE_TIME = 0.05;
+    private static final double TIMEOUT = 10.0;
 
     public IntakeBallSensor(double speed) {
-    	this.speed = speed;
+        this.speed = speed;
         requires(Robot.intake);
     }
 
     public IntakeBallSensor(double speed, double extraTimeout) {
-    	this.speed = speed;
-    	EXTRA_INTAKE_TIME = extraTimeout;
+        this.speed = speed;
+        EXTRA_INTAKE_TIME = extraTimeout;
         requires(Robot.intake);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	System.out.println("Intake sensor off started");
-    	resetExtraTimer();
-    	setTimeout(TIMEOUT);
-		ballDetected = false;
+        System.out.println("Intake sensor off started");
+        resetExtraTimer();
+        setTimeout(TIMEOUT);
+        ballDetected = false;
         Robot.intake.setSpeed(speed);
         Robot.intake.setBallArmState(BallArmState.OUT);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	if (ballDetected == false && (Robot.intake.getFrontVEXIntakeSensor())) {
-    		startExtraTimeout(EXTRA_INTAKE_TIME);
-    		ballDetected = true;
-    		System.out.println("BALL DETECTED!!!!!");
-    	}
+        if (ballDetected == false && (Robot.intake.getFrontVEXIntakeSensor())) {
+            startExtraTimeout(EXTRA_INTAKE_TIME);
+            ballDetected = true;
+            System.out.println("BALL DETECTED!!!!!");
+        }
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -53,8 +53,7 @@ public class IntakeBallSensor extends ExtraTimeoutCommand {
     protected void end() {
         Robot.intake.setBallArmState(BallArmState.IN);
         Robot.intake.setSpeed(Intake.INTAKE_HOLD_SPEED);
-        Robot.vision.setLimeLED(2);
-    	System.out.println("Intake sensor off end!!!!");
+        System.out.println("Intake sensor off end!!!!");
     }
 
     // Called when another command which requires one or more of the same

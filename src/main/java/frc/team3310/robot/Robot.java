@@ -26,7 +26,6 @@ import frc.team3310.robot.subsystems.Drive.DriveSpeedShiftState;
 import frc.team3310.robot.subsystems.Elevator;
 import frc.team3310.robot.subsystems.Intake;
 import frc.team3310.robot.subsystems.RobotStateEstimator;
-import frc.team3310.robot.subsystems.Vision;
 import frc.team3310.utility.lib.control.RobotStatus;
 
 public class Robot extends TimedRobot {
@@ -36,7 +35,6 @@ public class Robot extends TimedRobot {
 	public static final Drive drive = Drive.getInstance();
 	public static final Elevator elevator = Elevator.getInstance();
 	public static final Intake intake = Intake.getInstance();
-	public static final Vision vision = Vision.getInstance();
 	public static final AirCompressor compressor = AirCompressor.getInstance();
 	public static final RobotStateEstimator estimator = RobotStateEstimator.getInstance();
 	private TrajectoryGenerator mTrajectoryGenerator = TrajectoryGenerator.getInstance();
@@ -77,7 +75,6 @@ public class Robot extends TimedRobot {
 
 		controlLoop.register(drive);
 		controlLoop.register(elevator);
-		controlLoop.register(intake);
 		RobotStateEstimator.getInstance().registerEnabledLoops(controlLoop);
 		mTrajectoryGenerator.generateTrajectories();
 
@@ -101,7 +98,8 @@ public class Robot extends TimedRobot {
 		zeroAllSensors();
 		compressor.turnCompressorOff();
 
-		vision.setLimeLED(0);
+		drive.setLimeLED(0);
+		drive.setAutomatic();
 
 	}
 
@@ -109,7 +107,9 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic() {
 		updateStatus();
 		SmartDashboard.putNumber("Elevator Position Inches", elevator.getPositionInches());
-		SmartDashboard.putBoolean("On Target", vision.onTarget());
+		SmartDashboard.putNumber("Ultrasonic Distance", Robot.drive.ultrasonicLeft.getRangeInches());
+		SmartDashboard.putNumber("Ultrasonic Distance Right", drive.ultrasonicRightDistance());
+		SmartDashboard.putBoolean("On Target", drive.onTarget());
 	}
 
 	// Called once when is disabled

@@ -17,6 +17,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.Constants;
@@ -158,9 +159,8 @@ public class Drive extends Subsystem implements Loop {
 	private double mCameraVelocity;
 	private double kCamera = 0.8;
 	private double kCameraDrive = 0.05;
-
-	public double cameraX = Robot.vision.limeX;
-	public boolean isValid = Robot.vision.isLimeValid;
+	private double kUltraDriveNear = .13; // .15
+	private double kUltraDriveFar = .04; // .6
 
 	// Hardware states //Poofs
 	private PeriodicIO mPeriodicIO;
@@ -169,6 +169,19 @@ public class Drive extends Subsystem implements Loop {
 	private DriveMotionPlanner mMotionPlanner;
 	private Rotation2d mGyroOffset = Rotation2d.identity();
 	private boolean mOverrideTrajectory = false;
+
+	// Vision
+	public double limeArea;
+	public double limeX;
+	public double limeY;
+	public double limeSkew;
+	public boolean isLimeValid;
+	public double LEDMode;
+	public double camMode;
+
+	// Ultrasonic
+	public Ultrasonic ultrasonicLeft = new Ultrasonic(2, 9);
+	public Ultrasonic ultrasonicRight = new Ultrasonic(7, 8);
 
 	@Override
 	public void onStart(double timestamp) {
@@ -820,8 +833,10 @@ public class Drive extends Subsystem implements Loop {
 		if (m_drive == null)
 			return;
 
-		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getButtonY().get();
-		boolean cameraTrackCargoButton = OI.getInstance().getDriverController().getButtonX().get();
+		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getRightBumper().get();
+		boolean cameraTrackCargoButton = OI.getInstance().getDriverController().getLeftBumper().get();
+		boolean ultrasonicTrackWallLeft = OI.getInstance().getDriverController().getButtonY().get();
+		boolean ultrasonicTrackWallRight = OI.getInstance().getDriverController().getButtonX().get();
 
 		m_moveInput = OI.getInstance().getDriverController().getLeftYAxis();
 		m_steerInput = -OI.getInstance().getDriverController().getRightXAxis();
@@ -843,32 +858,76 @@ public class Drive extends Subsystem implements Loop {
 		}
 
 		if (cameraTrackTapeButton) {
-			Robot.vision.setPipeline(3);
-			Robot.vision.setLimeLED(0);
-			Robot.vision.updateLimelight();
+			setPipeline(3);
+			setLimeLED(0);
+			updateLimelight();
 			double cameraSteer = 0;
 			mLastValidGyroAngle = getGyroAngleDeg();
-			if (isValid) {
-				cameraSteer = cameraX * kCameraDrive;
-				System.out.println("Valid lime angle = " + cameraX);
+			if (isLimeValid) {
+				cameraSteer = limeX * kCameraDrive;
+				System.out.println("Valid lime angle = " + limeX);
 			} else {
-				System.out.println("In Valid lime angle = " + cameraX);
+				System.out.println("In Valid lime angle = " + limeX);
 				cameraSteer = -m_steerOutput;
 			}
 			m_steerOutput = -cameraSteer;
 		}
 
 		if (cameraTrackCargoButton) {
-			Robot.vision.setPipeline(5);
-			Robot.vision.setLimeLED(0);
-			Robot.vision.updateLimelight();
+			setPipeline(5);
+			setLimeLED(0);
+			updateLimelight();
 			double cameraSteer = 0;
 			mLastValidGyroAngle = getGyroAngleDeg();
-			if (isValid) {
-				cameraSteer = cameraX * kCameraDrive;
-				System.out.println("CARGO FOUND = " + cameraX);
+			if (isLimeValid) {
+				cameraSteer = limeX * kCameraDrive;
+				System.out.println("CARGO FOUND = " + limeX);
 			} else {
-				System.out.println("NO CARGO FOUND = " + cameraX);
+				System.out.println("NO CARGO FOUND = " + limeX);
+				cameraSteer = -m_steerOutput;
+			}
+			m_steerOutput = -cameraSteer;
+		}
+
+		if (ultrasonicTrackWallLeft) {
+			double cameraSteer = 0;
+			double ULTRA_DISTANCE_TARGET = 12;
+			double currentUltraDistance = ultrasonicLeftDistance();
+			double error = currentUltraDistance - ULTRA_DISTANCE_TARGET;
+			if (error > 5 && error < 30) {
+				cameraSteer = (ULTRA_DISTANCE_TARGET - currentUltraDistance) * kUltraDriveFar;
+				System.out.println("WALL FOUND FAR = " + currentUltraDistance);
+			}
+
+			else if (error < 5) {
+				cameraSteer = (ULTRA_DISTANCE_TARGET - currentUltraDistance) * kUltraDriveNear;
+				System.out.println("WALL FOUND NEAR = " + currentUltraDistance);
+			}
+
+			else {
+				System.out.println("TO FAR FROM WALL = " + currentUltraDistance);
+				cameraSteer = -m_steerOutput;
+			}
+			m_steerOutput = -cameraSteer;
+		}
+
+		if (ultrasonicTrackWallRight) {
+			double cameraSteer = 0;
+			double ULTRA_DISTANCE_TARGET = 12;
+			double currentUltraDistance = ultrasonicRightDistance();
+			double error = currentUltraDistance - ULTRA_DISTANCE_TARGET;
+			if (error > 5 && error < 30) {
+				cameraSteer = (ULTRA_DISTANCE_TARGET - currentUltraDistance) * kUltraDriveFar;
+				System.out.println("WALL FOUND FAR = " + currentUltraDistance);
+			}
+
+			else if (error < 5) {
+				cameraSteer = (ULTRA_DISTANCE_TARGET - currentUltraDistance) * kUltraDriveNear;
+				System.out.println("WALL FOUND NEAR = " + currentUltraDistance);
+			}
+
+			else {
+				System.out.println("TO FAR FROM WALL = " + currentUltraDistance);
 				cameraSteer = -m_steerOutput;
 			}
 			m_steerOutput = -cameraSteer;
@@ -980,19 +1039,81 @@ public class Drive extends Subsystem implements Loop {
 	}
 	// End
 
+	// Vision
+	public NetworkTable getLimetable() {
+		return NetworkTableInstance.getDefault().getTable("limelight");
+	}
+
+	// Set the LED mode of the limelight
+	/*
+	 * 0- Default setting in pipeline 1- Force Off 2- Force Blink 3- Force On
+	 */
+
+	public void setLimeLED(int ledMode) {
+		getLimetable().getEntry("ledMode").setNumber(ledMode);
+	}
+
+	// Set the camera mode
+	/*
+	 * 0- Vision Mode 1- Driver Mode
+	 */
+	public void setLimeCameraMode(int camMode) {
+		getLimetable().getEntry("camMode").setNumber(camMode);
+	}
+
+	// Set vision pipeline
+	// 0-9
+	public void setPipeline(int pipeline) {
+		getLimetable().getEntry("pipeline").setNumber(pipeline);
+	}
+
+	/**
+	 * stream Sets limelight’s streaming mode
+	 * 
+	 * kStandard - Side-by-side streams if a webcam is attached to Limelight
+	 * kPiPMain - The secondary camera stream is placed in the lower-right corner of
+	 * the primary camera stream kPiPSecondary - The primary camera stream is placed
+	 * in the lower-right corner of the secondary camera stream
+	 * 
+	 * @param stream
+	 */
+	public void setStream(String stream) {
+		getLimetable().getEntry("stream").setString(stream);
+	}
+
+	// Checks if vison targets are found
+	public boolean onTarget() {
+		return isLimeValid;
+	}
+
+	public void updateLimelight() {
+		NetworkTable limeTable = getLimetable();
+		double valid = limeTable.getEntry("tv").getDouble(0);
+		if (valid == 0) {
+			isLimeValid = false;
+		} else if (valid == 1) {
+			isLimeValid = true;
+		}
+
+		limeX = limeTable.getEntry("tx").getDouble(0);
+		limeY = limeTable.getEntry("ty").getDouble(0);
+		limeArea = limeTable.getEntry("ta").getDouble(0);
+		limeSkew = limeTable.getEntry("ts").getDouble(0);
+	}
+
 	/**
 	 * Called periodically when the robot is in camera track mode.
 	 */
 	private void updateCameraTrack() {
-		Robot.vision.updateLimelight();
+		updateLimelight();
 		double deltaVelocity = 0;
 		mLastValidGyroAngle = getGyroAngleDeg();
-		if (Robot.vision.isLimeValid) {
-			deltaVelocity = Robot.vision.limeX * kCamera;
-			System.out.println("Valid lime angle = " + Robot.vision.limeX);
+		if (isLimeValid) {
+			deltaVelocity = limeX * kCamera;
+			System.out.println("Valid lime angle = " + limeX);
 		} else {
 			deltaVelocity = (getGyroAngleDeg() - mLastValidGyroAngle) * kCamera;
-			System.out.println("In Valid lime angle = " + Robot.vision.limeX);
+			System.out.println("In Valid lime angle = " + limeX);
 		}
 		updateVelocitySetpoint(mCameraVelocity + deltaVelocity, mCameraVelocity - deltaVelocity);
 	}
@@ -1013,6 +1134,19 @@ public class Drive extends Subsystem implements Loop {
 			setVelocitySetpoint(0, 0);
 			System.out.println("Oh NOOOO in velocity set point for camera track");
 		}
+	}
+
+	public void setAutomatic() {
+		ultrasonicLeft.setAutomaticMode(true); // turns on automatic mode
+		ultrasonicRight.setAutomaticMode(true);
+	}
+
+	public double ultrasonicLeftDistance() {
+		return ultrasonicLeft.getRangeInches(); // reads the range on the ultrasonic sensor
+	}
+
+	public double ultrasonicRightDistance() {
+		return ultrasonicRight.getRangeInches(); // reads the range on the ultrasonic sensor
 	}
 	// End
 
@@ -1096,13 +1230,15 @@ public class Drive extends Subsystem implements Loop {
 				SmartDashboard.putNumber("Limelight Area", table.getEntry("ta").getDouble(0));
 			} catch (Exception e) {
 			}
-		} else if (operationMode == Robot.OperationMode.TEST) {
-			SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
-			SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_ticks);
-			SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_ticks);
-			SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
-			SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
-			SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
+		} else if (operationMode == Robot.OperationMode.COMPETITION) {
+			// SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
+			// SmartDashboard.putNumber("Right Drive Ticks",
+			// mPeriodicIO.right_position_ticks);
+			// SmartDashboard.putNumber("Left Drive Ticks",
+			// mPeriodicIO.left_position_ticks);
+			// SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
+			// SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
+			// SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
 
 			SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
 			SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());

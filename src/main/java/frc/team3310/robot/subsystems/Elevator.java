@@ -63,9 +63,13 @@ public class Elevator extends Subsystem implements Loop {
 
 	// 2019
 	public static final double GRAB_HATCH_STATION = 12;
-	public static final double ROCKET_LEVEL_1 = 21.5;
-	public static final double ROCKET_LEVEL_2 = 50; // Switch Position for First Cube APR
-	public static final double ROCKET_LEVEL_3 = 80;
+	public static final double ROCKET_LEVEL_1 = 16.5;
+	public static final double ROCKET_LEVEL_2 = 45;
+	public static final double ROCKET_LEVEL_3 = 75;
+	public static final double ROCKET_BALL_OFFSET = 5;
+	public boolean Hatch_Level_1;
+	public boolean Hatch_Level_2;
+	public boolean Hatch_Level_3;
 
 	// Motion profile max velocities and accel times
 	public static final double MP_MAX_VELOCITY_INCHES_PER_SEC = 60;
@@ -101,9 +105,9 @@ public class Elevator extends Subsystem implements Loop {
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;
 	private boolean isFinished;
 	private ElevatorControlMode elevatorControlMode = ElevatorControlMode.JOYSTICK_MANUAL;
+	private double targetPositionInchesPID = 0;
 	private boolean firstMpPoint;
 	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
-	public double targetPositionInchesPID = 0;
 	public boolean toLow;
 
 	private Elevator() {
@@ -214,11 +218,11 @@ public class Elevator extends Subsystem implements Loop {
 			switch (getElevatorControlMode()) {
 			case JOYSTICK_PID:
 				controlPidWithJoystick();
-				checkInchesIntake();
+				// checkInchesIntake();
 				break;
 			case JOYSTICK_MANUAL:
 				controlManualWithJoystick();
-				checkInchesIntake();
+				// checkInchesIntake();
 				break;
 			case MOTION_PROFILE:
 				if (!isFinished()) {
@@ -250,13 +254,13 @@ public class Elevator extends Subsystem implements Loop {
 		setSpeedJoystick(joyStickSpeed);
 	}
 
-	private void checkInchesIntake() {
-		if (targetPositionInchesPID < 5) {
-			toLow = true;
-		} else {
-			toLow = false;
-		}
-	}
+	// private void checkInchesIntake() {
+	// if (targetPositionInchesPID < 5) {
+	// toLow = true;
+	// } else {
+	// toLow = false;
+	// }
+	// }
 
 	public void setShiftState(ElevatorSpeedShiftState state) {
 		shiftState = state;
@@ -287,6 +291,10 @@ public class Elevator extends Subsystem implements Loop {
 
 	public double getAverageMotorCurrent() {
 		return (motor1.getOutputCurrent() + motor2.getOutputCurrent() + motor3.getOutputCurrent()) / 3;
+	}
+
+	public void getElevatorLevel() {
+
 	}
 
 	public synchronized boolean isFinished() {
