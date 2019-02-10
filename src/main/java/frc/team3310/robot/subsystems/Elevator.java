@@ -29,6 +29,18 @@ public class Elevator extends Subsystem implements Loop {
 		HI, LO
 	};
 
+	public static enum FrontLegShiftState {
+		IN, OUT
+	}
+
+	public static enum BackLegShiftState {
+		IN, OUT
+	}
+
+	public static enum ElevatorClimbShiftState {
+		IN, OUT
+	}
+
 	// One revolution of the 30T Drive 1.880" PD pulley = Pi * PD inches = 36/24
 	// revs due to pulleys * 34/24 revs due to gears * 36/12 revs due mag encoder
 	// gear on ball shifter * 4096 ticks
@@ -50,23 +62,16 @@ public class Elevator extends Subsystem implements Loop {
 	public static final double MIN_POSITION_INCHES = 0.0;
 	public static final double MAX_POSITION_INCHES = 83.4;
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
-
-	public static final double SWITCH_POSITION_INCHES = 24.0;
-	public static final double SWITCH_POSITION_HIGH_INCHES = 36.0; // Switch Position for First Cube APR
-	public static final double SCALE_LOW_POSITION_INCHES = 56.0;
-	public static final double SCALE_FIRST_CUBE_POSITION_INCHES = 78.0; // 72.0
-	public static final double SCALE_SECOND_CUBE_POSITION_INCHES = 77.0;
-	public static final double SCALE_HIGH_POSITION_INCHES = MAX_POSITION_INCHES;
-	public static final double CLIMB_BAR_POSITION_INCHES = 70.0;
-	public static final double CLIMB_HIGH_POSITION_INCHES = 10.0;
-	public static final double CLIMB_ASSIST_POSITION_INCHES = 50.0;
-
-	// 2019
-	public static final double GRAB_HATCH_STATION = 12;
-	public static final double ROCKET_LEVEL_1 = 16.5;
-	public static final double ROCKET_LEVEL_2 = 45;
-	public static final double ROCKET_LEVEL_3 = 75;
-	public static final double ROCKET_BALL_OFFSET = 5;
+	public static final double GRAB_HATCH_STATION = 13;
+	public static final double HATCH_LEVEL_1 = 13;
+	public static final double HATCH_LEVEL_2 = 44;
+	public static final double HATCH_LEVEL_3 = 72;
+	public static double ROCKET_LEVEL_1;
+	public static double ROCKET_LEVEL_2;
+	public static double ROCKET_LEVEL_3;
+	public static double BALL_LEVEL;
+	public static boolean ballScoring;
+	public static boolean hatchScoring;
 	public boolean Hatch_Level_1;
 	public boolean Hatch_Level_2;
 	public boolean Hatch_Level_3;
@@ -98,8 +103,15 @@ public class Elevator extends Subsystem implements Loop {
 	private long periodMs = (long) (Constants.kLooperDt * 1000.0);
 
 	// Pneumatics
-	private Solenoid speedShift;
+	// private Solenoid speedShift;
+	private Solenoid elevatorShift = new Solenoid(RobotMap.ELEVATOR_CLIMB_SHIFT_PCM_ID);
+	private Solenoid frontLegShift = new Solenoid(RobotMap.FRONT_LEG_SHIFT_PCM_ID);
+	private Solenoid backLegShift = new Solenoid(RobotMap.BACK_LEG_SHIFT_PCM_ID);
+
 	private ElevatorSpeedShiftState shiftState = ElevatorSpeedShiftState.LO; // Default position
+	private FrontLegShiftState frontShiftState = FrontLegShiftState.IN;
+	private BackLegShiftState backShiftState = BackLegShiftState.IN;
+	private ElevatorClimbShiftState elevatorClimbShiftState = ElevatorClimbShiftState.OUT;
 
 	// Misc
 	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;
@@ -131,7 +143,7 @@ public class Elevator extends Subsystem implements Loop {
 
 			motorControllers.add(motor1);
 
-			speedShift = new Solenoid(RobotMap.ELEVATOR_SPEEDSHIFT_PCM_ID);
+			// speedShift = new Solenoid(RobotMap.ELEVATOR_SPEEDSHIFT_PCM_ID);
 		} catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");
 		}
@@ -225,6 +237,8 @@ public class Elevator extends Subsystem implements Loop {
 				// checkInchesIntake();
 				break;
 			case MOTION_PROFILE:
+				setScoringLocation();
+				checkScoringPosition();
 				if (!isFinished()) {
 					if (firstMpPoint) {
 						mpController.setPIDSlot(MP_SLOT);
@@ -254,6 +268,30 @@ public class Elevator extends Subsystem implements Loop {
 		setSpeedJoystick(joyStickSpeed);
 	}
 
+	private void checkScoringPosition() {
+		if (Hatch_Level_1 == true && Hatch_Level_2 == false && Hatch_Level_3 == false) {
+			BALL_LEVEL = 22;
+		} else if (Hatch_Level_1 == false && Hatch_Level_2 == true && Hatch_Level_3 == false) {
+			BALL_LEVEL = 50;
+		}
+
+		else if (Hatch_Level_1 == false && Hatch_Level_2 == false && Hatch_Level_3 == true) {
+			BALL_LEVEL = 80;
+		}
+	}
+
+	private void setScoringLocation() {
+		if (hatchScoring == true && ballScoring == false) {
+			ROCKET_LEVEL_1 = 13;
+			ROCKET_LEVEL_2 = 44;
+			ROCKET_LEVEL_3 = 75;
+		} else if (hatchScoring == false && ballScoring == true) {
+			ROCKET_LEVEL_1 = 21.5;
+			ROCKET_LEVEL_2 = 50;
+			ROCKET_LEVEL_3 = 80;
+		}
+	}
+
 	// private void checkInchesIntake() {
 	// if (targetPositionInchesPID < 5) {
 	// toLow = true;
@@ -262,21 +300,66 @@ public class Elevator extends Subsystem implements Loop {
 	// }
 	// }
 
-	public void setShiftState(ElevatorSpeedShiftState state) {
-		shiftState = state;
-		if (state == ElevatorSpeedShiftState.HI) {
-			joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_HI;
-			speedShift.set(true);
-			mpController.setPID(pidPIDParamsHiGear, PID_SLOT);
-		} else if (state == ElevatorSpeedShiftState.LO) {
-			joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
-			speedShift.set(false);
-			mpController.setPID(pidPIDParamsLoGear, PID_SLOT);
+	// public void setShiftState(ElevatorSpeedShiftState state) {
+	// shiftState = state;
+	// if (state == ElevatorSpeedShiftState.HI) {
+	// joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_HI;
+	// speedShift.set(true);
+	// mpController.setPID(pidPIDParamsHiGear, PID_SLOT);
+	// } else if (state == ElevatorSpeedShiftState.LO) {
+	// joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
+	// speedShift.set(false);
+	// mpController.setPID(pidPIDParamsLoGear, PID_SLOT);
+	// }
+	// }
+
+	public void setFrontLegState(FrontLegShiftState state) {
+		frontShiftState = state;
+		if (state == FrontLegShiftState.IN) {
+			frontLegShift.set(false);
+			System.out.println("FL IN");
+		} else if (state == FrontLegShiftState.OUT) {
+			frontLegShift.set(true);
+			System.out.println("FL OUT");
+		}
+	}
+
+	public void setBackLegState(BackLegShiftState state) {
+		backShiftState = state;
+		if (state == BackLegShiftState.IN) {
+			backLegShift.set(false);
+			System.out.println("BL IN");
+		} else if (state == BackLegShiftState.OUT) {
+			backLegShift.set(true);
+			System.out.println("BL OUT");
+		}
+	}
+
+	public void setElevatorClimbState(ElevatorClimbShiftState state) {
+		elevatorClimbShiftState = state;
+		if (state == ElevatorClimbShiftState.IN) {
+			elevatorShift.set(false);
+			System.out.println("GG IN");
+		} else if (state == ElevatorClimbShiftState.OUT) {
+			elevatorShift.set(true);
+			System.out.println("GG OUT");
 		}
 	}
 
 	public ElevatorSpeedShiftState getShiftState() {
 		return shiftState;
+	}
+
+	public FrontLegShiftState getFrontShiftState() {
+		return frontShiftState;
+	}
+
+	public BackLegShiftState getBackShiftState() {
+		return backShiftState;
+	}
+
+	public ElevatorClimbShiftState getClimbShiftState() {
+		return elevatorClimbShiftState;
 	}
 
 	public double getPositionInches() {

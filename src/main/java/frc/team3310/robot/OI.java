@@ -10,24 +10,20 @@ package frc.team3310.robot;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.robot.commands.BackLegShift;
+import frc.team3310.robot.commands.DriveForwardClimb;
 import frc.team3310.robot.commands.DrivePathCameraTrack;
 import frc.team3310.robot.commands.DrivePathCameraTrackStop;
-import frc.team3310.robot.commands.DriveSpeedShift;
-import frc.team3310.robot.commands.EjectBallLeft;
-import frc.team3310.robot.commands.EjectBallRight;
-import frc.team3310.robot.commands.ElevatorSetPositionMP;
-import frc.team3310.robot.commands.IntakeBallAndLift;
-import frc.team3310.robot.commands.IntakeBallArms;
-import frc.team3310.robot.commands.IntakeHatchArms;
-import frc.team3310.robot.commands.IntakeSetSpeed;
+import frc.team3310.robot.commands.ElevatorClimbShift;
+import frc.team3310.robot.commands.ElevatorSetSpeed;
+import frc.team3310.robot.commands.FrontLegShift;
 import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.controller.GameController;
 import frc.team3310.robot.controller.Playstation;
-import frc.team3310.robot.subsystems.Drive.DriveSpeedShiftState;
-import frc.team3310.robot.subsystems.Elevator;
-import frc.team3310.robot.subsystems.Intake;
-import frc.team3310.robot.subsystems.Intake.BallArmState;
-import frc.team3310.robot.subsystems.Intake.HatchArmState;
+import frc.team3310.robot.controller.Xbox;
+import frc.team3310.robot.subsystems.Elevator.BackLegShiftState;
+import frc.team3310.robot.subsystems.Elevator.ElevatorClimbShiftState;
+import frc.team3310.robot.subsystems.Elevator.FrontLegShiftState;
 
 public class OI {
 
@@ -45,66 +41,81 @@ public class OI {
 
   private OI() {
     // Driver controller
-    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
+    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
     m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Playstation());
 
     // Driver Controls
-    Button shiftSpeed = m_driver.getRightTrigger();
-    shiftSpeed.whenPressed(new DriveSpeedShift(DriveSpeedShiftState.HI));
-    shiftSpeed.whenReleased(new DriveSpeedShift(DriveSpeedShiftState.LO));
+    // Button ejectHatch = m_driver.getButtonA();
+    // ejectHatch.whenPressed(new IntakeHatchArms(HatchArmState.IN));
+    // ejectHatch.whenPressed(new IntakeBallArms(BallArmState.OUT));
+    // ejectHatch.whenReleased(new IntakeBallArms(BallArmState.IN));
 
-    Button ejectHatch = m_driver.getButtonA();
-    ejectHatch.whenPressed(new IntakeHatchArms(HatchArmState.IN));
-    ejectHatch.whenPressed(new IntakeBallArms(BallArmState.OUT));
-    ejectHatch.whenReleased(new IntakeBallArms(BallArmState.IN));
+    // // Operator Controls
+    // // Elevator
+    // Button intakeBallAndLift = m_operator.getButtonX();
+    // intakeBallAndLift.whenPressed(new IntakeBallAndLift());
 
-    Button ejectLeft = m_driver.getL3();
-    ejectLeft.whenPressed(new EjectBallLeft());
-    ejectLeft.whenReleased(new IntakeSetSpeed(0));
+    // Button elevatorLowHatchPosition = m_operator.getButtonA();
+    // elevatorLowHatchPosition.whenPressed(new ElevatorSetPositionMP(Elevator.HATCH_LEVEL_1));
 
-    Button ejectRight = m_driver.getR3();
-    ejectRight.whenPressed(new EjectBallRight());
-    ejectRight.whenReleased(new IntakeSetSpeed(0));
+    // Button elevatorMidHatchPosition = m_operator.getButtonB();
+    // elevatorMidHatchPosition.whenPressed(new ElevatorSetPositionMP(Elevator.HATCH_LEVEL_2));
 
-    // Operator Controls
-    // Elevator
-    Button intakeBallAndLift = m_operator.getButtonX();
-    intakeBallAndLift.whenPressed(new IntakeBallAndLift());
+    // Button elevatorMaxHatchPosition = m_operator.getButtonY();
+    // elevatorMaxHatchPosition.whenPressed(new ElevatorSetPositionMP(Elevator.HATCH_LEVEL_3));
 
-    Button elevatorLowHatchPosition = m_operator.getButtonA();
-    elevatorLowHatchPosition.whenPressed(new ElevatorSetPositionMP(Elevator.ROCKET_LEVEL_1));
+    // Button elevatorOffsetPosition = m_operator.getButtonPad();
+    // elevatorOffsetPosition.whenPressed(new ElevatorSetOffsetMP());
 
-    Button elevatorMidBallPosition = m_operator.getButtonB();
-    elevatorMidBallPosition.whenPressed(new ElevatorSetPositionMP(Elevator.ROCKET_LEVEL_2));
+    // // Intake
+    // Button IntakeHatch = m_operator.getRightBumper();
+    // IntakeHatch.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
+    // IntakeHatch.whenPressed(new IntakeBallArms(BallArmState.IN));
+    // IntakeHatch.whenPressed(new ElevatorSetPositionMP(Elevator.GRAB_HATCH_STATION));
+    // IntakeHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
 
-    Button elevatorMaxBallPosition = m_operator.getButtonY();
-    elevatorMaxBallPosition.whenPressed(new ElevatorSetPositionMP(Elevator.ROCKET_LEVEL_3));
+    // Button IntakeBallManual = m_operator.getRightTrigger();
+    // IntakeBallManual.whenPressed(new IntakeHatchArms(HatchArmState.IN));
+    // IntakeBallManual.whenPressed(new IntakeBallArms(BallArmState.OUT));
+    // IntakeBallManual.whenPressed(new IntakeSetSpeed(Intake.INTAKE_LOAD_SPEED));
+    // IntakeBallManual.whenReleased(new IntakeBallArms(BallArmState.IN));
+    // IntakeBallManual.whenReleased(new IntakeSetSpeed(Intake.INTAKE_HOLD_SPEED));
 
-    // Intake
-    Button IntakeHatch = m_operator.getRightBumper();
-    IntakeHatch.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
-    IntakeHatch.whenPressed(new IntakeBallArms(BallArmState.IN));
-    IntakeHatch.whenPressed(new ElevatorSetPositionMP(Elevator.GRAB_HATCH_STATION));
-    IntakeHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
+    // Button ejectBall = m_operator.getLeftBumper();
+    // ejectBall.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
+    // ejectBall.whenPressed(new IntakeSetSpeed(Intake.INTAKE_EJECT_SPEED));
+    // ejectBall.whenReleased(new IntakeHatchArms(HatchArmState.IN));
+    // ejectBall.whenReleased(new IntakeSetSpeed(0.0));
 
-    Button IntakeBallManual = m_operator.getRightTrigger();
-    IntakeBallManual.whenPressed(new IntakeHatchArms(HatchArmState.IN));
-    IntakeBallManual.whenPressed(new IntakeBallArms(BallArmState.OUT));
-    IntakeBallManual.whenPressed(new IntakeSetSpeed(Intake.INTAKE_LOAD_SPEED));
-    IntakeBallManual.whenReleased(new IntakeBallArms(BallArmState.IN));
-    IntakeBallManual.whenReleased(new IntakeSetSpeed(Intake.INTAKE_HOLD_SPEED));
+    // Button ejectBallSlow = m_operator.getLeftTrigger();
+    // ejectBallSlow.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
+    // ejectBallSlow.whenPressed(new IntakeSetSpeed(Intake.INTAKE_EJECT_SLOW_SPEED));
+    // ejectBallSlow.whenReleased(new IntakeHatchArms(HatchArmState.IN));
+    // ejectBallSlow.whenReleased(new IntakeSetSpeed(0.0));
 
-    Button ejectBall = m_operator.getLeftBumper();
-    ejectBall.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
-    ejectBall.whenPressed(new IntakeSetSpeed(Intake.INTAKE_EJECT_SPEED));
-    ejectBall.whenReleased(new IntakeHatchArms(HatchArmState.IN));
-    ejectBall.whenReleased(new IntakeSetSpeed(0.0));
+    Button driveFowardClimb = m_driver.getButtonA();
+    driveFowardClimb.whenPressed(new DriveForwardClimb(.5));
+    driveFowardClimb.whenReleased(new DriveForwardClimb(0));
 
-    Button ejectBallSlow = m_operator.getLeftTrigger();
-    ejectBallSlow.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
-    ejectBallSlow.whenPressed(new IntakeSetSpeed(Intake.INTAKE_EJECT_SLOW_SPEED));
-    ejectBallSlow.whenReleased(new IntakeHatchArms(HatchArmState.IN));
-    ejectBallSlow.whenReleased(new IntakeSetSpeed(0.0));
+    Button shiftFrontLeg = m_operator.getButtonA();
+    shiftFrontLeg.whenPressed(new FrontLegShift(FrontLegShiftState.OUT));
+    shiftFrontLeg.whenReleased(new FrontLegShift(FrontLegShiftState.IN));
+
+    Button shiftBackLeg = m_operator.getButtonB();
+    shiftBackLeg.whenPressed(new BackLegShift(BackLegShiftState.OUT));
+    shiftBackLeg.whenReleased(new BackLegShift(BackLegShiftState.IN));
+
+    Button lowerGGG = m_operator.getLeftBumper();
+    lowerGGG.whenPressed(new ElevatorSetSpeed(.5));
+    lowerGGG.whenReleased(new ElevatorSetSpeed(0));
+
+    Button raiseGGG = m_operator.getLeftTrigger();
+    raiseGGG.whenPressed(new ElevatorSetSpeed(-.5));
+    raiseGGG.whenReleased(new ElevatorSetSpeed(0));
+
+    Button shiftGGG = m_driver.getButtonB();
+    shiftGGG.whenPressed(new ElevatorClimbShift(ElevatorClimbShiftState.IN));
+    shiftGGG.whenReleased(new ElevatorClimbShift(ElevatorClimbShiftState.OUT));
 
     // Smartdashboard
     Button turnCompressorOff = new InternalButton();

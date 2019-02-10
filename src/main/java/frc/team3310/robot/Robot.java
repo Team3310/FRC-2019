@@ -22,8 +22,10 @@ import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.AirCompressor;
 import frc.team3310.robot.subsystems.Drive;
 import frc.team3310.robot.subsystems.Drive.DriveControlMode;
-import frc.team3310.robot.subsystems.Drive.DriveSpeedShiftState;
 import frc.team3310.robot.subsystems.Elevator;
+import frc.team3310.robot.subsystems.Elevator.BackLegShiftState;
+import frc.team3310.robot.subsystems.Elevator.ElevatorClimbShiftState;
+import frc.team3310.robot.subsystems.Elevator.FrontLegShiftState;
 import frc.team3310.robot.subsystems.Intake;
 import frc.team3310.robot.subsystems.RobotStateEstimator;
 import frc.team3310.utility.lib.control.RobotStatus;
@@ -99,7 +101,6 @@ public class Robot extends TimedRobot {
 		compressor.turnCompressorOff();
 
 		drive.setLimeLED(0);
-		drive.setAutomatic();
 
 	}
 
@@ -107,8 +108,6 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic() {
 		updateStatus();
 		SmartDashboard.putNumber("Elevator Position Inches", elevator.getPositionInches());
-		SmartDashboard.putNumber("Ultrasonic Distance", Robot.drive.ultrasonicLeft.getRangeInches());
-		SmartDashboard.putNumber("Ultrasonic Distance Right", drive.ultrasonicRightDistance());
 		SmartDashboard.putBoolean("On Target", drive.onTarget());
 	}
 
@@ -122,7 +121,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		zeroAllSensors();
+		// zeroAllSensors();
 
 	}
 
@@ -131,10 +130,6 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		controlLoop.start();
 		drive.setIsRed(getAlliance().equals(Alliance.Red));
-		drive.setShiftState(DriveSpeedShiftState.LO);
-		elevator.setShiftState(Elevator.ElevatorSpeedShiftState.HI);
-		elevator.resetZeroPosition(Elevator.ZERO_POSITION_INCHES);
-		zeroAllSensors();
 
 		autonomousCommand = autonTaskChooser.getSelected();
 
@@ -160,17 +155,19 @@ public class Robot extends TimedRobot {
 		operationMode = operationModeChooser.getSelected();
 		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
 
+		elevator.setElevatorClimbState(ElevatorClimbShiftState.OUT);
+		elevator.setFrontLegState(FrontLegShiftState.IN);
+		elevator.setBackLegState(BackLegShiftState.IN);
+
 		controlLoop.start();
-		drive.setShiftState(Drive.DriveSpeedShiftState.LO);
 		drive.endGyroCalibration();
-		elevator.setShiftState(Elevator.ElevatorSpeedShiftState.HI);//
 		zeroAllSensors();
 
-		if (operationMode != OperationMode.COMPETITION) {
-			Scheduler.getInstance().add(new ElevatorAutoZero(false));
-		} else {
-			elevator.setPositionPID(elevator.getPositionInches());
-		}
+		// if (operationMode != OperationMode.COMPETITION) {
+		// Scheduler.getInstance().add(new ElevatorAutoZero(false));
+		// } else {
+		// elevator.setPositionPID(elevator.getPositionInches());
+		// }
 	}
 
 	// Called constantly through teleOp

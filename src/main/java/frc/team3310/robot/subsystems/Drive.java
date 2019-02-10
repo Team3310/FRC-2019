@@ -53,10 +53,6 @@ public class Drive extends Subsystem implements Loop {
 		OPEN_LOOP, CAMERA_TRACK_DRIVE
 	};
 
-	public static enum DriveSpeedShiftState {
-		HI, LO
-	};
-
 	// One revolution of the wheel = Pi * D inches = 60/24 revs due to gears * 36/12
 	// revs due mag encoder gear on ball shifter * 4096 ticks
 	public static final double ENCODER_TICKS_TO_INCHES = (36.0 / 12.0) * (60.0 / 24.0) * 4096.0 / (5.8 * Math.PI);
@@ -85,6 +81,8 @@ public class Drive extends Subsystem implements Loop {
 	private TalonSRX rightDrive2;
 	private TalonSRX rightDrive3;
 
+	private TalonSRX middleDrive;
+
 	private BHRDifferentialDrive m_drive;
 
 	private boolean isRed = true;
@@ -94,10 +92,6 @@ public class Drive extends Subsystem implements Loop {
 	private long periodMs = (long) (Constants.kLooperDt * 1000.0);
 
 	protected Rotation2d mAngleAdjustment = Rotation2d.identity();
-
-	// Pneumatics
-	private Solenoid speedShift;
-	private DriveSpeedShiftState shiftState = DriveSpeedShiftState.HI;
 
 	public static final double STEER_NON_LINEARITY = 0.5;
 	public static final double MOVE_NON_LINEARITY = 1.0;
@@ -134,20 +128,21 @@ public class Drive extends Subsystem implements Loop {
 	private static final int kLowGearVelocityControlSlot = 2;
 
 	private MPTalonPIDController mpStraightController;
-	// private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03,
-	// 0.15); // 4 colsons
-	private PIDParams mpStraightPIDParams = new PIDParams(0.05, 0, 0, 0.0008, 0.004, 0.03); // 4 omni
+	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.15); // 4 colsons
+	// private PIDParams mpStraightPIDParams = new PIDParams(0.05, 0, 0, 0.0008,
+	// 0.004, 0.03); // 4 omni
 	private PIDParams mpHoldPIDParams = new PIDParams(1, 0, 0, 0.0, 0.0, 0.0);
 
 	private MPSoftwarePIDController mpTurnController; // p i d a v g izone
-	// private PIDParams mpTurnPIDParams = new PIDParams(0.07, 0.00002, 0.5,
-	// 0.00025, 0.008, 0.0, 100); // 4 colson wheels
-	private PIDParams mpTurnPIDParams = new PIDParams(0.03, 0.00002, 0.4, 0.0004, 0.0030, 0.0, 100); // 4 omni
+	private PIDParams mpTurnPIDParams = new PIDParams(0.07, 0.00002, 0.5, 0.00025, 0.008, 0.0, 100); // 4 colson wheels
+	// private PIDParams mpTurnPIDParams = new PIDParams(0.03, 0.00002, 0.4, 0.0004,
+	// 0.0030, 0.0, 100); // 4 omni
 
 	private SoftwarePIDController pidTurnController;
 	private PIDParams pidTurnPIDParams = new PIDParams(0.04, 0.001, 0.4, 0, 0, 0.0, 100); // i=0.0008
 
 	private PigeonIMU gyroPigeon;
+	private Solenoid speedShift;
 	private double[] yprPigeon = new double[3];
 	private boolean useGyroLock;
 	private double gyroLockAngleDeg;
@@ -159,8 +154,6 @@ public class Drive extends Subsystem implements Loop {
 	private double mCameraVelocity;
 	private double kCamera = 0.8;
 	private double kCameraDrive = 0.05;
-	private double kUltraDriveNear = .13; // .15
-	private double kUltraDriveFar = .04; // .6
 
 	// Hardware states //Poofs
 	private PeriodicIO mPeriodicIO;
@@ -251,36 +244,16 @@ public class Drive extends Subsystem implements Loop {
 			rightDrive1.configPeakOutputForward(+1.0f, TalonSRXEncoder.TIMEOUT_MS);
 			rightDrive1.configPeakOutputReverse(-1.0f, TalonSRXEncoder.TIMEOUT_MS);
 
-			if (getShiftState() == DriveSpeedShiftState.HI) {
-				System.out.println("configureTalonsForSpeedControl HI");
-				leftDrive1.selectProfileSlot(kHighGearVelocityControlSlot, TalonSRXEncoder.PID_IDX);
-				leftDrive1.configNominalOutputForward(Constants.kDriveHighGearNominalOutput,
-						TalonSRXEncoder.TIMEOUT_MS);
-				leftDrive1.configNominalOutputReverse(-Constants.kDriveHighGearNominalOutput,
-						TalonSRXEncoder.TIMEOUT_MS);
-				leftDrive1.configClosedloopRamp(Constants.kDriveHighGearVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
+			System.out.println("configureTalonsForSpeedControl");
+			leftDrive1.selectProfileSlot(kHighGearVelocityControlSlot, TalonSRXEncoder.PID_IDX);
+			leftDrive1.configNominalOutputForward(Constants.kDriveLowGearNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
+			leftDrive1.configNominalOutputReverse(-Constants.kDriveLowGearNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
+			leftDrive1.configClosedloopRamp(Constants.kDriveLowGearVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
 
-				rightDrive1.selectProfileSlot(kHighGearVelocityControlSlot, TalonSRXEncoder.PID_IDX);
-				rightDrive1.configNominalOutputForward(Constants.kDriveHighGearNominalOutput,
-						TalonSRXEncoder.TIMEOUT_MS);
-				rightDrive1.configNominalOutputReverse(-Constants.kDriveHighGearNominalOutput,
-						TalonSRXEncoder.TIMEOUT_MS);
-				rightDrive1.configClosedloopRamp(Constants.kDriveHighGearVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
-			} else {
-				System.out.println("configureTalonsForSpeedControl LO");
-				leftDrive1.selectProfileSlot(kLowGearVelocityControlSlot, TalonSRXEncoder.PID_IDX);
-				leftDrive1.configNominalOutputForward(Constants.kDriveLowGearNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
-				leftDrive1.configNominalOutputReverse(-Constants.kDriveLowGearNominalOutput,
-						TalonSRXEncoder.TIMEOUT_MS);
-				leftDrive1.configClosedloopRamp(Constants.kDriveLowGearVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
-
-				rightDrive1.selectProfileSlot(kLowGearVelocityControlSlot, TalonSRXEncoder.PID_IDX);
-				rightDrive1.configNominalOutputForward(Constants.kDriveLowGearNominalOutput,
-						TalonSRXEncoder.TIMEOUT_MS);
-				rightDrive1.configNominalOutputReverse(-Constants.kDriveLowGearNominalOutput,
-						TalonSRXEncoder.TIMEOUT_MS);
-				rightDrive1.configClosedloopRamp(Constants.kDriveLowGearVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
-			}
+			rightDrive1.selectProfileSlot(kHighGearVelocityControlSlot, TalonSRXEncoder.PID_IDX);
+			rightDrive1.configNominalOutputForward(Constants.kDriveLowGearNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
+			rightDrive1.configNominalOutputReverse(-Constants.kDriveLowGearNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
+			rightDrive1.configClosedloopRamp(Constants.kDriveLowGearVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
 		}
 	}
 
@@ -301,6 +274,8 @@ public class Drive extends Subsystem implements Loop {
 					RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID);
 			rightDrive3 = TalonSRXFactory.createPermanentSlaveTalon(RobotMap.DRIVETRAIN_RIGHT_MOTOR3_CAN_ID,
 					RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID);
+
+			middleDrive = TalonSRXFactory.createDefaultTalon(RobotMap.DRIVE_MIDDLE_CLIMB_WHEEL);
 
 			leftDrive1.setSafetyEnabled(false);
 			leftDrive1.setSensorPhase(false);
@@ -324,8 +299,6 @@ public class Drive extends Subsystem implements Loop {
 			mMotionPlanner = new DriveMotionPlanner();
 
 			gyroPigeon = new PigeonIMU(rightDrive2);
-
-			speedShift = new Solenoid(RobotMap.DRIVETRAIN_SPEEDSHIFT_PCM_ID);
 
 			reloadGains();
 			setBrakeMode(true);
@@ -567,8 +540,7 @@ public class Drive extends Subsystem implements Loop {
 	private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
 		if (usesTalonVelocityControl(driveControlMode)) {
 			final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
-			final double maxSetpoint = getShiftState() == DriveSpeedShiftState.HI ? Constants.kDriveHighGearMaxSetpoint
-					: Constants.kDriveLowGearMaxSetpoint;
+			final double maxSetpoint = Constants.kDriveLowGearMaxSetpoint;
 			final double scale = max_desired > maxSetpoint ? maxSetpoint / max_desired : 1.0;
 
 			leftDrive1.setVelocityWorld(left_inches_per_sec * scale);
@@ -635,19 +607,6 @@ public class Drive extends Subsystem implements Loop {
 		return mMotionPlanner.isDone() || mOverrideTrajectory;
 	}
 
-	// Delete
-	public boolean isHighGear() {
-		return mIsHighGear;
-	}
-
-	// Delete
-	public synchronized void setHighGear(boolean wantsHighGear) {
-		if (wantsHighGear != mIsHighGear) {
-			mIsHighGear = wantsHighGear;
-			speedShift.set(wantsHighGear);
-		}
-	}
-
 	public void overrideTrajectory(boolean value) {
 		mOverrideTrajectory = value;
 	}
@@ -683,7 +642,7 @@ public class Drive extends Subsystem implements Loop {
 		}
 	}
 
-	private void handleAutoShift() {
+	private void handleAutoShift() { // Check
 		final double linear_velocity = Math.abs(getLinearVelocity());
 		final double angular_velocity = Math.abs(getAngularVelocity());
 		if (mIsHighGear && linear_velocity < Constants.kDriveDownShiftVelocity
@@ -717,29 +676,6 @@ public class Drive extends Subsystem implements Loop {
 		rightDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityIZone,
 				Constants.kLongCANTimeoutMs);
 
-		// High Gear
-		// ADDED HIGH GEAR POOFS
-		leftDrive1.config_kP(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKp,
-				Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kI(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKi,
-				Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kD(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKd,
-				Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kF(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKf,
-				Constants.kLongCANTimeoutMs);
-		leftDrive1.config_IntegralZone(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityIZone,
-				Constants.kLongCANTimeoutMs);
-
-		rightDrive1.config_kP(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKp,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kI(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKi,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kD(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKd,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kF(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityKf,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_IntegralZone(kHighGearVelocityControlSlot, Constants.kDriveHighGearVelocityIZone,
-				Constants.kLongCANTimeoutMs);
 	}
 
 	public void writeToLog() {
@@ -829,14 +765,16 @@ public class Drive extends Subsystem implements Loop {
 		}
 	}
 
+	public void driveForwardClimb(double speed) {
+		middleDrive.set(ControlMode.PercentOutput, speed);
+	}
+
 	public synchronized void driveWithJoystick() {
 		if (m_drive == null)
 			return;
 
 		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getRightBumper().get();
 		boolean cameraTrackCargoButton = OI.getInstance().getDriverController().getLeftBumper().get();
-		boolean ultrasonicTrackWallLeft = OI.getInstance().getDriverController().getButtonY().get();
-		boolean ultrasonicTrackWallRight = OI.getInstance().getDriverController().getButtonX().get();
 
 		m_moveInput = OI.getInstance().getDriverController().getLeftYAxis();
 		m_steerInput = -OI.getInstance().getDriverController().getRightXAxis();
@@ -888,52 +826,19 @@ public class Drive extends Subsystem implements Loop {
 			}
 			m_steerOutput = -cameraSteer;
 		}
+	}
 
-		if (ultrasonicTrackWallLeft) {
-			double cameraSteer = 0;
-			double ULTRA_DISTANCE_TARGET = 12;
-			double currentUltraDistance = ultrasonicLeftDistance();
-			double error = currentUltraDistance - ULTRA_DISTANCE_TARGET;
-			if (error > 5 && error < 30) {
-				cameraSteer = (ULTRA_DISTANCE_TARGET - currentUltraDistance) * kUltraDriveFar;
-				System.out.println("WALL FOUND FAR = " + currentUltraDistance);
-			}
+	// Delete
+	public boolean isHighGear() {
+		return mIsHighGear;
+	}
 
-			else if (error < 5) {
-				cameraSteer = (ULTRA_DISTANCE_TARGET - currentUltraDistance) * kUltraDriveNear;
-				System.out.println("WALL FOUND NEAR = " + currentUltraDistance);
-			}
-
-			else {
-				System.out.println("TO FAR FROM WALL = " + currentUltraDistance);
-				cameraSteer = -m_steerOutput;
-			}
-			m_steerOutput = -cameraSteer;
+	// Delete
+	public synchronized void setHighGear(boolean wantsHighGear) {
+		if (wantsHighGear != mIsHighGear) {
+			mIsHighGear = wantsHighGear;
+			speedShift.set(wantsHighGear);
 		}
-
-		if (ultrasonicTrackWallRight) {
-			double cameraSteer = 0;
-			double ULTRA_DISTANCE_TARGET = 12;
-			double currentUltraDistance = ultrasonicRightDistance();
-			double error = currentUltraDistance - ULTRA_DISTANCE_TARGET;
-			if (error > 5 && error < 30) {
-				cameraSteer = (ULTRA_DISTANCE_TARGET - currentUltraDistance) * kUltraDriveFar;
-				System.out.println("WALL FOUND FAR = " + currentUltraDistance);
-			}
-
-			else if (error < 5) {
-				cameraSteer = (ULTRA_DISTANCE_TARGET - currentUltraDistance) * kUltraDriveNear;
-				System.out.println("WALL FOUND NEAR = " + currentUltraDistance);
-			}
-
-			else {
-				System.out.println("TO FAR FROM WALL = " + currentUltraDistance);
-				cameraSteer = -m_steerOutput;
-			}
-			m_steerOutput = -cameraSteer;
-		}
-
-		m_drive.arcadeDrive(-m_moveOutput, -m_steerOutput);
 	}
 
 	public boolean isBrakeMode() {
@@ -1013,23 +918,6 @@ public class Drive extends Subsystem implements Loop {
 		return Math.asin(steerNonLinearity * steer) / Math.asin(steerNonLinearity);
 	}
 
-	public void setShiftState(DriveSpeedShiftState state) {
-		shiftState = state;
-
-		System.out.println("shift state = " + state);
-		setOpenLoopVoltageRamp(
-				state == DriveSpeedShiftState.HI ? OPEN_LOOP_VOLTAGE_RAMP_HI : OPEN_LOOP_VOLTAGE_RAMP_LO);
-		if (state == DriveSpeedShiftState.HI) {
-			speedShift.set(false);
-		} else if (state == DriveSpeedShiftState.LO) {
-			speedShift.set(true);
-		}
-	}
-
-	public DriveSpeedShiftState getShiftState() {
-		return shiftState;
-	}
-
 	public synchronized boolean isFinished() {
 		return isFinished;
 	}
@@ -1067,16 +955,6 @@ public class Drive extends Subsystem implements Loop {
 		getLimetable().getEntry("pipeline").setNumber(pipeline);
 	}
 
-	/**
-	 * stream Sets limelight’s streaming mode
-	 * 
-	 * kStandard - Side-by-side streams if a webcam is attached to Limelight
-	 * kPiPMain - The secondary camera stream is placed in the lower-right corner of
-	 * the primary camera stream kPiPSecondary - The primary camera stream is placed
-	 * in the lower-right corner of the secondary camera stream
-	 * 
-	 * @param stream
-	 */
 	public void setStream(String stream) {
 		getLimetable().getEntry("stream").setString(stream);
 	}
@@ -1136,18 +1014,6 @@ public class Drive extends Subsystem implements Loop {
 		}
 	}
 
-	public void setAutomatic() {
-		ultrasonicLeft.setAutomaticMode(true); // turns on automatic mode
-		ultrasonicRight.setAutomaticMode(true);
-	}
-
-	public double ultrasonicLeftDistance() {
-		return ultrasonicLeft.getRangeInches(); // reads the range on the ultrasonic sensor
-	}
-
-	public double ultrasonicRightDistance() {
-		return ultrasonicRight.getRangeInches(); // reads the range on the ultrasonic sensor
-	}
 	// End
 
 	public double getPeriodMs() {
