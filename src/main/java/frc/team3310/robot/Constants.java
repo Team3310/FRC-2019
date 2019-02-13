@@ -16,9 +16,9 @@ public class Constants {
     /* ROBOT PHYSICAL CONSTANTS */
 
     // Wheels
-    // 2018 Robot Values
-    public static final double kDriveWheelTrackWidthInches = 26.17;
-    public static final double kDriveWheelDiameterInches = 5.8;
+    // 2019 Robot Values
+    public static final double kDriveWheelTrackWidthInches = 23.92;
+    public static final double kDriveWheelDiameterInches = 3.8;
     public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
     public static final double kTrackScrubFactor = 0.924; // Tune me!
 
@@ -31,10 +31,10 @@ public class Constants {
     public static final double kDriveKa = 0.012; // V per rad/s^2
 
     // Geometry
-    // 2018 Robot Values
-    public static final double kCenterToFrontBumperDistance = 16.33;
-    public static final double kCenterToRearBumperDistance = 16.99;
-    public static final double kCenterToSideBumperDistance = 17.225;
+    // 2019 Robot Values
+    public static final double kCenterToFrontBumperDistance = 15.832; //31.664/2
+    public static final double kCenterToRearBumperDistance = 15.832;
+    public static final double kCenterToSideBumperDistance = 15.832;
 
     // Pose of the LIDAR frame w.r.t. the robot frame
     // TODO measure in CAD/on robot!
@@ -103,6 +103,33 @@ public class Constants {
     public static double kDriveLowGearNominalOutput = 0.5 / 12.0;
     public static double kDriveLowGearMaxSetpoint = 17.0 * 12.0; // 17 fps
 
+    //2019 Motion Magic 
+    	/**
+	 * Which PID slot to pull gains from. Starting 2018, you can choose from
+	 * 0,1,2 or 3. Only the first two (0,1) are visible in web-based
+	 * configuration.
+	 */
+	public static final int kSlotIdx = 0;
+
+	/**
+	 * Talon SRX/ Victor SPX will supported multiple (cascaded) PID loops. For
+	 * now we just want the primary one.
+	 */
+	public static final int kPIDLoopIdx = 0;
+
+	/**
+	 * set to zero to skip waiting for confirmation, set to nonzero to wait and
+	 * report to DS if action fails.
+	 */
+	public static final int kTimeoutMs = 30;
+
+	/**
+	 * Gains used in Motion Magic, to be adjusted accordingly
+     * Gains(kp, ki, kd, kf, izone, peak output);
+     */
+    public static final Gains kGains = new Gains(0.02, 0.0, 0.0, 0.2, 0, 1.0);
+
+
     // PID gains for elevator velocity loop (HIGH GEAR)
     // Units: setpoint, error, and output are in native units per 100ms.
     // Elevator encoder is CTRE mag encoder which is 4096 native units per
@@ -115,6 +142,7 @@ public class Constants {
     public static final double kElevatorJogKd = 3.0;
     public static final double kElevatorFeedforwardNoCube = -0.06;// 33000;
     public static final double kElevatorFeedforwardWithCube = -0.07;// 33000;
+    
 
     public static final int kElevatorHighGearMaxIntegralAccumulator = 500000; // todo: tune me
     public static final int kElevatorHighGearIZone = 0;

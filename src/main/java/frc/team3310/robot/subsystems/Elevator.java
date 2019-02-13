@@ -1,15 +1,19 @@
 package frc.team3310.robot.subsystems;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.Constants;
+import frc.team3310.robot.Instrum;
+import frc.team3310.robot.OI;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.RobotMap;
 import frc.team3310.robot.loops.Loop;
@@ -22,7 +26,7 @@ public class Elevator extends Subsystem implements Loop {
 	private static Elevator instance;
 
 	public static enum ElevatorControlMode {
-		MOTION_PROFILE, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL
+		MOTION_PROFILE, MOTION_MAGIC, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL
 	};
 
 	public static enum ElevatorSpeedShiftState {
@@ -66,12 +70,12 @@ public class Elevator extends Subsystem implements Loop {
 	public static final double HATCH_LEVEL_1 = 13;
 	public static final double HATCH_LEVEL_2 = 44;
 	public static final double HATCH_LEVEL_3 = 72;
-	public static double ROCKET_LEVEL_1;
-	public static double ROCKET_LEVEL_2;
-	public static double ROCKET_LEVEL_3;
-	public static double BALL_LEVEL;
-	public static boolean ballScoring;
-	public static boolean hatchScoring;
+	public double ROCKET_LEVEL_1;
+	public double ROCKET_LEVEL_2;
+	public double ROCKET_LEVEL_3;
+	public double BALL_LEVEL;
+	public boolean ballScoring;
+	public boolean hatchScoring;
 	public boolean Hatch_Level_1;
 	public boolean Hatch_Level_2;
 	public boolean Hatch_Level_3;
@@ -104,9 +108,9 @@ public class Elevator extends Subsystem implements Loop {
 
 	// Pneumatics
 	// private Solenoid speedShift;
-	private Solenoid elevatorShift = new Solenoid(RobotMap.ELEVATOR_CLIMB_SHIFT_PCM_ID);
-	private Solenoid frontLegShift = new Solenoid(RobotMap.FRONT_LEG_SHIFT_PCM_ID);
-	private Solenoid backLegShift = new Solenoid(RobotMap.BACK_LEG_SHIFT_PCM_ID);
+	private Solenoid elevatorShift;
+	private Solenoid frontLegShift;
+	private Solenoid backLegShift;
 
 	private ElevatorSpeedShiftState shiftState = ElevatorSpeedShiftState.LO; // Default position
 	private FrontLegShiftState frontShiftState = FrontLegShiftState.IN;
@@ -131,26 +135,62 @@ public class Elevator extends Subsystem implements Loop {
 			motor3 = TalonSRXFactory.createPermanentSlaveTalon(RobotMap.ELEVATOR_MOTOR_3_CAN_ID,
 					RobotMap.ELEVATOR_MOTOR_1_CAN_ID);
 
+			configureTalonsForMotionMagic();
+
+			motor1.setSensorPhase(true);
 			motor1.setInverted(true);
 			motor2.setInverted(true);
 			motor3.setInverted(true);
 
-			// if (motor1.isSensorPresent(CANTalon.FeedbackDevice.QuadEncoder) !=
-			// CANTalon.FeedbackDeviceStatus.FeedbackStatusPresent) {
-			// Driver.reportError("Could not detect elevator motor 1 encoder encoder!",
-			// false);
-			// }
-
 			motorControllers.add(motor1);
 
-			// speedShift = new Solenoid(RobotMap.ELEVATOR_SPEEDSHIFT_PCM_ID);
+			elevatorShift = new Solenoid(RobotMap.ELEVATOR_CLIMB_SHIFT_PCM_ID);
+			frontLegShift = new Solenoid(RobotMap.FRONT_LEG_SHIFT_PCM_ID);
+			backLegShift = new Solenoid(RobotMap.BACK_LEG_SHIFT_PCM_ID);
 		} catch (Exception e) {
-			System.err.println("An error occurred in the DriveTrain constructor");
+			System.err.println("An error occurred in the Elevator constructor");
 		}
 	}
 
 	@Override
 	public void initDefaultCommand() {
+	}
+
+	/**
+	 * Configures talons for motion magic
+	 */
+
+	public void configureTalonsForMotionMagic() {
+		/* Factory default hardware to prevent unexpected behavior */
+		motor1.configFactoryDefault();
+
+		/* Configure Sensor Source for Pirmary PID */
+		motor1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx,
+				Constants.kTimeoutMs);
+
+		/* Set relevant frame periods to be at least as fast as periodic rate */
+		motor1.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
+		motor1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
+
+		/* Set the peak and nominal outputs */
+		motor1.configNominalOutputForward(0, Constants.kTimeoutMs);
+		motor1.configNominalOutputReverse(0, Constants.kTimeoutMs);
+		motor1.configPeakOutputForward(1, Constants.kTimeoutMs);
+		motor1.configPeakOutputReverse(-1, Constants.kTimeoutMs);
+
+		/* Set Motion Magic gains in slot0 - see documentation */
+		motor1.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
+		motor1.config_kF(Constants.kSlotIdx, Constants.kGains.kF, Constants.kTimeoutMs);
+		motor1.config_kP(Constants.kSlotIdx, Constants.kGains.kP, Constants.kTimeoutMs);
+		motor1.config_kI(Constants.kSlotIdx, Constants.kGains.kI, Constants.kTimeoutMs);
+		motor1.config_kD(Constants.kSlotIdx, Constants.kGains.kD, Constants.kTimeoutMs);
+
+		/* Set acceleration and vcruise velocity - see documentation */
+		motor1.configMotionCruiseVelocity(15000, Constants.kTimeoutMs);
+		motor1.configMotionAcceleration(6000, Constants.kTimeoutMs);
+
+		/* Zero the sensor */
+		motor1.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 	}
 
 	public void resetZeroPosition(double position) {
@@ -227,6 +267,8 @@ public class Elevator extends Subsystem implements Loop {
 	@Override
 	public void onLoop(double timestamp) {
 		synchronized (Elevator.this) {
+			checkScoringPosition();
+			setScoringLocation();
 			switch (getElevatorControlMode()) {
 			case JOYSTICK_PID:
 				controlPidWithJoystick();
@@ -236,9 +278,10 @@ public class Elevator extends Subsystem implements Loop {
 				controlManualWithJoystick();
 				// checkInchesIntake();
 				break;
+			case MOTION_MAGIC:
+				controlMotionMagic();
+				break;
 			case MOTION_PROFILE:
-				setScoringLocation();
-				checkScoringPosition();
 				if (!isFinished()) {
 					if (firstMpPoint) {
 						mpController.setPIDSlot(MP_SLOT);
@@ -300,19 +343,6 @@ public class Elevator extends Subsystem implements Loop {
 	// }
 	// }
 
-	// public void setShiftState(ElevatorSpeedShiftState state) {
-	// shiftState = state;
-	// if (state == ElevatorSpeedShiftState.HI) {
-	// joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_HI;
-	// speedShift.set(true);
-	// mpController.setPID(pidPIDParamsHiGear, PID_SLOT);
-	// } else if (state == ElevatorSpeedShiftState.LO) {
-	// joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
-	// speedShift.set(false);
-	// mpController.setPID(pidPIDParamsLoGear, PID_SLOT);
-	// }
-	// }
-
 	public void setFrontLegState(FrontLegShiftState state) {
 		frontShiftState = state;
 		if (state == FrontLegShiftState.IN) {
@@ -366,18 +396,8 @@ public class Elevator extends Subsystem implements Loop {
 		return motor1.getPositionWorld();
 	}
 
-	// public double getAverageMotorCurrent() {
-	// return (Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID) +
-	// Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID) +
-	// Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID)) / 3;
-	// }
-
 	public double getAverageMotorCurrent() {
 		return (motor1.getOutputCurrent() + motor2.getOutputCurrent() + motor3.getOutputCurrent()) / 3;
-	}
-
-	public void getElevatorLevel() {
-
 	}
 
 	public synchronized boolean isFinished() {
@@ -400,16 +420,65 @@ public class Elevator extends Subsystem implements Loop {
 				SmartDashboard.putNumber("Elevator Motor 2 Amps", motor2.getOutputCurrent());
 				SmartDashboard.putNumber("Elevator Motor 3 Amps", motor3.getOutputCurrent());
 				SmartDashboard.putNumber("Elevator Average Amps", getAverageMotorCurrent());
-				// SmartDashboard.putNumber("Elevator Motor 1 Amps PDP",
-				// Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_1_CAN_ID));
-				// SmartDashboard.putNumber("Elevator Motor 2 Amps PDP",
-				// Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_2_CAN_ID));
-				// SmartDashboard.putNumber("Elevator Motor 3 Amps PDP",
-				// Robot.pdp.getCurrent(RobotMap.ELEVATOR_MOTOR_3_CAN_ID));
 				SmartDashboard.putNumber("Elevator Target PID Position", targetPositionInchesPID);
 			} catch (Exception e) {
 			}
 		}
+	}
+
+	public void controlMotionMagic() {
+
+		boolean Button = OI.getInstance().getDriverController().getButtonB().get();
+		double joystick = -Robot.oi.getOperatorController().getRightYAxis();
+		boolean isMMStarted = false;
+		setElevatorControlMode(ElevatorControlMode.MOTION_MAGIC);
+		StringBuilder _sb = new StringBuilder();
+
+		/* Get current Talon SRX motor output */
+		double motorOutput = motor1.getMotorOutputPercent();
+
+		/* Prepare line to print */
+		_sb.append("\tOut%:");
+		_sb.append(motorOutput);
+		_sb.append("\tVel:");
+		_sb.append(motor1.getSelectedSensorVelocity(Constants.kPIDLoopIdx));
+
+		/**
+		 * Peform Motion Magic when Button 1 is held, else run Percent Output, which can
+		 * be used to confirm hardware setup.
+		 */
+
+		if (Button) {
+			/* Motion Magic */
+			if (isMMStarted == false) {
+				isMMStarted = true;
+				/* 4096 ticks/rev * 10 Rotations in either direction */
+				double targetPos = 1.0 * 4096 * 10.0;
+				motor1.set(ControlMode.MotionMagic, targetPos);
+				_sb.append("\ttrg:");
+				_sb.append(targetPos);
+				/* Append more signals to print when in speed mode */
+				_sb.append("\terr:");
+				_sb.append(motor1.getClosedLoopError(Constants.kPIDLoopIdx));
+			}
+			{
+				/* Percent Output */
+				motor1.set(ControlMode.PercentOutput, joystick);
+			}
+
+			if (isMMStarted == true && motor1.isMotionProfileFinished()) {
+				_sb.append("Motion Magic is finished");
+				isMMStarted = false;
+			}
+		}
+		/* Instrumentation */
+		Instrum.Process(motor1, _sb);
+
+		/* 10 Ms timeout, allow CAN Frames to process */
+		try {
+			TimeUnit.MILLISECONDS.sleep(10);
+		} catch (Exception e) {
+			/* Do Nothing */ }
 	}
 
 	public static Elevator getInstance() {

@@ -102,6 +102,10 @@ public class Robot extends TimedRobot {
 
 		drive.setLimeLED(0);
 
+		elevator.setElevatorClimbState(ElevatorClimbShiftState.OUT);
+		elevator.setFrontLegState(FrontLegShiftState.IN);
+		elevator.setBackLegState(BackLegShiftState.IN);
+
 	}
 
 	// Called every loop for all modes
@@ -154,10 +158,6 @@ public class Robot extends TimedRobot {
 
 		operationMode = operationModeChooser.getSelected();
 		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
-
-		elevator.setElevatorClimbState(ElevatorClimbShiftState.OUT);
-		elevator.setFrontLegState(FrontLegShiftState.IN);
-		elevator.setBackLegState(BackLegShiftState.IN);
 
 		controlLoop.start();
 		drive.endGyroCalibration();

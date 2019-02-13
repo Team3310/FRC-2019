@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ElevatorSetOffsetMP extends Command {
 
   private double targetPositionInches = Robot.elevator.BALL_LEVEL;
-  private double currentPositionInches = Robot.elevator.getPositionInches();
   private boolean isAtTarget;
   private static final double MIN_DELTA_TARGET = 0.3;
 

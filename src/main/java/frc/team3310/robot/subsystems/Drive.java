@@ -195,7 +195,6 @@ public class Drive extends Subsystem implements Loop {
 	public void onLoop(double timestamp) {
 		synchronized (Drive.this) {
 			DriveControlMode currentControlMode = getControlMode();
-
 			readPeriodicInputs();
 
 			if (currentControlMode == DriveControlMode.JOYSTICK) {
@@ -826,6 +825,7 @@ public class Drive extends Subsystem implements Loop {
 			}
 			m_steerOutput = -cameraSteer;
 		}
+		m_drive.arcadeDrive(-m_moveOutput, -m_steerOutput);	
 	}
 
 	// Delete
