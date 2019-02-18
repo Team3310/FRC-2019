@@ -152,8 +152,8 @@ public class Drive extends Subsystem implements Loop {
 
 	private double mLastValidGyroAngle;
 	private double mCameraVelocity;
-	private double kCamera = 0.8;
-	private double kCameraDrive = 0.05;
+	private double kCamera = 0.7; // .8
+	private double kCameraDrive = 0.04; // .05
 
 	// Hardware states //Poofs
 	private PeriodicIO mPeriodicIO;
@@ -245,14 +245,14 @@ public class Drive extends Subsystem implements Loop {
 
 			System.out.println("configureTalonsForSpeedControl");
 			leftDrive1.selectProfileSlot(kHighGearVelocityControlSlot, TalonSRXEncoder.PID_IDX);
-			leftDrive1.configNominalOutputForward(Constants.kDriveLowGearNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
-			leftDrive1.configNominalOutputReverse(-Constants.kDriveLowGearNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
-			leftDrive1.configClosedloopRamp(Constants.kDriveLowGearVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
+			leftDrive1.configNominalOutputForward(Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
+			leftDrive1.configNominalOutputReverse(-Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
+			leftDrive1.configClosedloopRamp(Constants.kDriveVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
 
 			rightDrive1.selectProfileSlot(kHighGearVelocityControlSlot, TalonSRXEncoder.PID_IDX);
-			rightDrive1.configNominalOutputForward(Constants.kDriveLowGearNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
-			rightDrive1.configNominalOutputReverse(-Constants.kDriveLowGearNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
-			rightDrive1.configClosedloopRamp(Constants.kDriveLowGearVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
+			rightDrive1.configNominalOutputForward(Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
+			rightDrive1.configNominalOutputReverse(-Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
+			rightDrive1.configClosedloopRamp(Constants.kDriveVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
 		}
 	}
 
@@ -539,7 +539,7 @@ public class Drive extends Subsystem implements Loop {
 	private synchronized void updateVelocitySetpoint(double left_inches_per_sec, double right_inches_per_sec) {
 		if (usesTalonVelocityControl(driveControlMode)) {
 			final double max_desired = Math.max(Math.abs(left_inches_per_sec), Math.abs(right_inches_per_sec));
-			final double maxSetpoint = Constants.kDriveLowGearMaxSetpoint;
+			final double maxSetpoint = Constants.kDriveMaxSetpoint;
 			final double scale = max_desired > maxSetpoint ? maxSetpoint / max_desired : 1.0;
 
 			leftDrive1.setVelocityWorld(left_inches_per_sec * scale);
@@ -653,26 +653,18 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	public synchronized void reloadGains() {
-		leftDrive1.config_kP(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKp,
-				Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kI(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKi,
-				Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kD(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKd,
-				Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kF(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKf,
-				Constants.kLongCANTimeoutMs);
-		leftDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityIZone,
+		leftDrive1.config_kP(kLowGearVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kI(kLowGearVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kD(kLowGearVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kF(kLowGearVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveVelocityIZone,
 				Constants.kLongCANTimeoutMs);
 
-		rightDrive1.config_kP(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKp,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kI(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKi,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kD(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKd,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kF(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKf,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityIZone,
+		rightDrive1.config_kP(kLowGearVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kI(kLowGearVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kD(kLowGearVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kF(kLowGearVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveVelocityIZone,
 				Constants.kLongCANTimeoutMs);
 
 	}
@@ -721,10 +713,9 @@ public class Drive extends Subsystem implements Loop {
 			rightDrive1.set(ControlMode.PercentOutput, mPeriodicIO.right_demand, DemandType.ArbitraryFeedForward, 0.0);
 		} else {
 			leftDrive1.set(ControlMode.Velocity, mPeriodicIO.left_demand, DemandType.ArbitraryFeedForward,
-					mPeriodicIO.left_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / 1023.0);
+					mPeriodicIO.left_feedforward + Constants.kDriveVelocityKd * mPeriodicIO.left_accel / 1023.0);
 			rightDrive1.set(ControlMode.Velocity, mPeriodicIO.right_demand, DemandType.ArbitraryFeedForward,
-					mPeriodicIO.right_feedforward
-							+ Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / 1023.0);
+					mPeriodicIO.right_feedforward + Constants.kDriveVelocityKd * mPeriodicIO.right_accel / 1023.0);
 		}
 	}
 	// End
@@ -772,8 +763,8 @@ public class Drive extends Subsystem implements Loop {
 		if (m_drive == null)
 			return;
 
-		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getRightBumper().get();
-		boolean cameraTrackCargoButton = OI.getInstance().getDriverController().getLeftBumper().get();
+		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getButtonY().get();
+		boolean cameraTrackCargoButton = OI.getInstance().getDriverController().getButtonX().get();
 
 		m_moveInput = OI.getInstance().getDriverController().getLeftYAxis();
 		m_steerInput = -OI.getInstance().getDriverController().getRightXAxis();
@@ -825,7 +816,7 @@ public class Drive extends Subsystem implements Loop {
 			}
 			m_steerOutput = -cameraSteer;
 		}
-		m_drive.arcadeDrive(-m_moveOutput, -m_steerOutput);	
+		m_drive.arcadeDrive(-m_moveOutput, -m_steerOutput);
 	}
 
 	// Delete
@@ -1094,23 +1085,32 @@ public class Drive extends Subsystem implements Loop {
 				SmartDashboard.putNumber("Limelight X", table.getEntry("tx").getDouble(0));
 				SmartDashboard.putNumber("Limelight Y", table.getEntry("ty").getDouble(0));
 				SmartDashboard.putNumber("Limelight Area", table.getEntry("ta").getDouble(0));
+
+				SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
+				SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_ticks);
+				SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_ticks);
+				SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
+				SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
+				SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
+
+				SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
+				SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());
+				SmartDashboard.putNumber("theta err", mPeriodicIO.error.getRotation().getDegrees());
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
-			// SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
-			// SmartDashboard.putNumber("Right Drive Ticks",
-			// mPeriodicIO.right_position_ticks);
-			// SmartDashboard.putNumber("Left Drive Ticks",
-			// mPeriodicIO.left_position_ticks);
-			// SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
-			// SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
-			// SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
+			SmartDashboard.putBoolean("Vison = ", onTarget());
+			SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
+			SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
+			SmartDashboard.putNumber("Drive Left 1 Amps", leftDrive1.getOutputCurrent());
+			SmartDashboard.putNumber("Drive Left 2 Amps", leftDrive2.getOutputCurrent());
+			SmartDashboard.putNumber("Drive Left 3 Amps", leftDrive3.getOutputCurrent());
+			SmartDashboard.putNumber("Drive Right 1 Amps", rightDrive1.getOutputCurrent());
+			SmartDashboard.putNumber("Drive Right 2 Amps", rightDrive2.getOutputCurrent());
+			SmartDashboard.putNumber("Drive Right 3 Amps", rightDrive3.getOutputCurrent());
 
-			SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
-			SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());
-			SmartDashboard.putNumber("theta err", mPeriodicIO.error.getRotation().getDegrees());
 			if (getHeading() != null) {
-				SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
+				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
 			}
 		}
 	}

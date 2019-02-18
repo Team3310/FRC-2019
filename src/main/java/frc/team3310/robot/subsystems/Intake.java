@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.RobotMap;
-import frc.team3310.robot.loops.Loop;
 import frc.team3310.utility.lib.drivers.TalonSRXChecker;
 import frc.team3310.utility.lib.drivers.TalonSRXFactory;
 
@@ -55,12 +54,13 @@ public class Intake extends Subsystem {
 
 			rightArm = TalonSRXFactory.createDefaultTalon(RobotMap.INTAKE_RIGHT_CAN_ID);
 			rightArm.setNeutralMode(NeutralMode.Brake);
+			rightArm.setInverted(true);
 
 			frontIRIntakeSensor = new DigitalInput(RobotMap.INTAKE_FRONT_IR_SENSOR_DIO_ID);
 			frontVEXIntakeSensor = new DigitalInput(RobotMap.INTAKE_FRONT_VEX_SENSOR_DIO_ID);
 
-			ballArms = new Solenoid(7);
-			hatchArms = new Solenoid(6);
+			ballArms = new Solenoid(RobotMap.INTAKE_BALL_ARM_PCM_ID);
+			hatchArms = new Solenoid(RobotMap.INTAKE_HATCH_ARM_PCM_ID);
 
 		} catch (Exception e) {
 			System.err.println("An error occurred in the Intake constructor");
@@ -94,18 +94,6 @@ public class Intake extends Subsystem {
 		rightArm.set(ControlMode.PercentOutput, -speed);
 	}
 
-	public void setSpeedShootLeft(double speed) {
-		rightArm.set(ControlMode.PercentOutput, -speed);
-		leftArm.set(ControlMode.PercentOutput, speed);
-
-	}
-
-	public void setSpeedShootRight(double speed) {
-		leftArm.set(ControlMode.PercentOutput, speed);
-		rightArm.set(ControlMode.PercentOutput, -speed);
-
-	}
-
 	public void setSpeedAsymmetric(double speedLeft, double speedRight) {
 		leftArm.set(ControlMode.PercentOutput, speedLeft);
 		rightArm.set(ControlMode.PercentOutput, -speedRight);
@@ -126,6 +114,10 @@ public class Intake extends Subsystem {
 		return !frontVEXIntakeSensor.get();
 	}
 
+	public synchronized boolean hasBall() {
+		return getFrontVEXIntakeSensor();
+	}
+
 	public void updateStatus(Robot.OperationMode operationMode) {
 		if (operationMode == Robot.OperationMode.TEST) {
 			try {
@@ -135,6 +127,8 @@ public class Intake extends Subsystem {
 				SmartDashboard.putNumber("Right Intake Amps", rightArm.getOutputCurrent());
 			} catch (Exception e) {
 			}
+		} else if (operationMode == Robot.OperationMode.COMPETITION) {
+			SmartDashboard.putBoolean("Intake Front IR Sensor", getFrontIRIntakeSensor());
 		}
 	}
 

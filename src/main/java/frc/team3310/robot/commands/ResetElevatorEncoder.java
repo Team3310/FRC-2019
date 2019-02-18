@@ -7,11 +7,11 @@
 
 package frc.team3310.robot.commands;
 
-import frc.team3310.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team3310.robot.Robot;
 
-public class ElevatorSetHatchScoringPosition extends Command {
-  public ElevatorSetHatchScoringPosition() {
+public class ResetElevatorEncoder extends Command {
+  public ResetElevatorEncoder() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -19,8 +19,7 @@ public class ElevatorSetHatchScoringPosition extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.elevator.hatchScoring = false;
-    Robot.elevator.ballScoring = true;
+    Robot.elevator.resetEncoders();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -31,7 +30,7 @@ public class ElevatorSetHatchScoringPosition extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
   }
 
   // Called once after isFinished returns true

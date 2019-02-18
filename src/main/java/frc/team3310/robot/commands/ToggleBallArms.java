@@ -3,13 +3,10 @@ package frc.team3310.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
-import frc.team3310.robot.subsystems.Intake.HatchArmState;
 
 public class ToggleBallArms extends Command {
-	private HatchArmState state;
-	
 	public ToggleBallArms() {
-//		requires(Robot.drive);
+		// requires(Robot.drive);
 	}
 
 	@Override
@@ -20,7 +17,7 @@ public class ToggleBallArms extends Command {
 
 	@Override
 	protected void execute() {
-		
+
 	}
 
 	@Override
@@ -37,6 +34,6 @@ public class ToggleBallArms extends Command {
 
 	@Override
 	protected void interrupted() {
-			
+
 	}
 }

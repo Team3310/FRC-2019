@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.commands.DriveMotionCommand;
-import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.AirCompressor;
@@ -68,6 +67,7 @@ public class Robot extends TimedRobot {
 
 	public void zeroAllSensors() {
 		drive.zeroSensors();
+		elevator.resetEncoders();
 	}
 
 	// Called at the start of connection
@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
 		autonTaskChooser.addOption("Test Mirrored Motion", new DriveMotionCommand(
 				TrajectoryGenerator.getInstance().getTrajectorySet().centerPyramidCubeToScaleLeft.left, true));
 
-		SmartDashboard.putData("Auton Tasks", autonTaskChooser);
+		SmartDashboard.putData("Autonomous", autonTaskChooser);
 
 		LiveWindow.setEnabled(false);
 		LiveWindow.disableAllTelemetry();
@@ -102,22 +102,21 @@ public class Robot extends TimedRobot {
 
 		drive.setLimeLED(0);
 
-		elevator.setElevatorClimbState(ElevatorClimbShiftState.OUT);
 		elevator.setFrontLegState(FrontLegShiftState.IN);
 		elevator.setBackLegState(BackLegShiftState.IN);
+		elevator.setElevatorClimbState(ElevatorClimbShiftState.OUT);
 
 	}
 
 	// Called every loop for all modes
 	public void robotPeriodic() {
 		updateStatus();
-		SmartDashboard.putNumber("Elevator Position Inches", elevator.getPositionInches());
-		SmartDashboard.putBoolean("On Target", drive.onTarget());
 	}
 
 	// Called once when is disabled
 	@Override
 	public void disabledInit() {
+		zeroAllSensors();
 
 	}
 

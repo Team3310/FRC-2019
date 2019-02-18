@@ -5,8 +5,6 @@ import frc.team3310.robot.Robot;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
 
 public class ToggleHatchArms extends Command {
-	private HatchArmState state;
-	
 	public ToggleHatchArms() {
 //		requires(Robot.drive);
 	}

@@ -12,7 +12,7 @@ buildscript {
 
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2019.1.1"
+    id "edu.wpi.first.GradleRIO" version "2019.3.2"
     id "eclipse"
     id 'war'
 }

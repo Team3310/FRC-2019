@@ -18,11 +18,9 @@ public class IntakeBallAndLift extends CommandGroup {
    */
   public IntakeBallAndLift() {
     addParallel(new IntakeHatchArms(HatchArmState.IN));
-    addSequential(new ElevatorSetPositionMP(Elevator.MIN_POSITION_INCHES));
+    addSequential(new ElevatorSetPositionMM(Elevator.MIN_POSITION_INCHES));
     addSequential(new IntakeBallSensor(Intake.INTAKE_LOAD_SPEED));
-    addSequential(new ElevatorSetPositionMP(Elevator.AFTER_INTAKE_POSITION_INCHES));
+    addSequential(new ElevatorSetPositionMM(Elevator.AFTER_INTAKE_POSITION_INCHES));
 
-
-    
   }
 }

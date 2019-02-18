@@ -2,7 +2,6 @@ package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.Robot;
-import frc.team3310.robot.subsystems.Intake;
 
 /**
  *
