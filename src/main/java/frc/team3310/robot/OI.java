@@ -14,12 +14,14 @@ import frc.team3310.robot.commands.DriveForwardClimb;
 import frc.team3310.robot.commands.ElevatorSetMode;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
 import frc.team3310.robot.commands.ElevatorSetPositionMP;
-import frc.team3310.robot.commands.ElevatorSetSpeed;
 import frc.team3310.robot.commands.IntakeBallAndLift;
 import frc.team3310.robot.commands.IntakeBallArms;
+import frc.team3310.robot.commands.IntakeBallSensor;
 import frc.team3310.robot.commands.IntakeHatchArms;
 import frc.team3310.robot.commands.IntakeSetSpeed;
 import frc.team3310.robot.commands.ResetElevatorEncoder;
+import frc.team3310.robot.commands.SetRobotClimbBack;
+import frc.team3310.robot.commands.SetRobotClimbFront;
 import frc.team3310.robot.commands.SetRobotClimbMode;
 import frc.team3310.robot.commands.SetRobotScoreMode;
 import frc.team3310.robot.commands.TurnCompressorOff;
@@ -57,8 +59,13 @@ public class OI {
     ejectHatch.whenReleased(new IntakeBallArms(BallArmState.IN));
 
     Button driveFowardClimb = m_driver.getButtonB();
-    driveFowardClimb.whenPressed(new DriveForwardClimb(.5));
-    driveFowardClimb.whenReleased(new DriveForwardClimb(0));
+    driveFowardClimb.whenPressed(new IntakeBallSensor(-.8));
+
+    Button climbFront = m_driver.getRightTrigger();
+    climbFront.whenPressed(new SetRobotClimbFront());
+
+    Button climbBack = m_driver.getLeftTrigger();
+    climbBack.whenPressed(new SetRobotClimbBack());
 
     Button climbState = m_driver.getRightBumper();
     climbState.whenPressed(new SetRobotClimbMode());
@@ -113,13 +120,14 @@ public class OI {
     IntakeHatchManual.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
     IntakeHatchManual.whenReleased(new IntakeHatchArms(HatchArmState.IN));
 
-    Button climbUp = m_operator.getDPadUp();
-    climbUp.whenPressed(new ElevatorSetSpeed(-.6));
-    climbUp.whenReleased(new ElevatorSetSpeed(0));
+    Button balleLevel1 = m_operator.getDPadDown();
+    balleLevel1.whenPressed(new ElevatorSetPositionMM(Elevator.BALL_LEVEL_1));
 
-    Button climbDown = m_operator.getDPadDown();
-    climbDown.whenPressed(new ElevatorSetSpeed(.6));
-    climbDown.whenReleased(new ElevatorSetSpeed(0));
+    Button ballLevel2 = m_operator.getDPadRight();
+    ballLevel2.whenPressed(new ElevatorSetPositionMM(Elevator.BALL_LEVEL_2));
+
+    Button ballLevel3 = m_operator.getDPadUp();
+    ballLevel3.whenPressed(new ElevatorSetPositionMM(Elevator.BALL_LEVEL_3));
 
     // Smartdashboard
     Button turnCompressorOff = new InternalButton();

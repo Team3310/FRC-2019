@@ -37,7 +37,8 @@ public class RobotMap {
 	public static final int BACK_LEG_SHIFT_PCM_ID = 5;
 
 	// DIO
-	public static final int INTAKE_FRONT_IR_SENSOR_DIO_ID = 0;
+	public static final int INTAKE_FRONT_RIGHT_IR_SENSOR_DIO_ID = 0;
+	public static final int INTAKE_FRONT_LEFT_IR_SENSOR_DIO_ID = 1;
 	public static final int INTAKE_FRONT_VEX_SENSOR_DIO_ID = 3;
 
 }

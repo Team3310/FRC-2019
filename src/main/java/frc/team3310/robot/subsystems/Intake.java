@@ -40,7 +40,8 @@ public class Intake extends Subsystem {
 	};
 
 	// Sensors
-	private DigitalInput frontIRIntakeSensor;
+	private DigitalInput frontIRIntakeRightSensor;
+	private DigitalInput frontIRIntakeLeftSensor;
 	private DigitalInput frontVEXIntakeSensor;
 
 	private Solenoid ballArms;
@@ -56,7 +57,8 @@ public class Intake extends Subsystem {
 			rightArm.setNeutralMode(NeutralMode.Brake);
 			rightArm.setInverted(true);
 
-			frontIRIntakeSensor = new DigitalInput(RobotMap.INTAKE_FRONT_IR_SENSOR_DIO_ID);
+			frontIRIntakeRightSensor = new DigitalInput(RobotMap.INTAKE_FRONT_RIGHT_IR_SENSOR_DIO_ID);
+			frontIRIntakeLeftSensor = new DigitalInput(RobotMap.INTAKE_FRONT_LEFT_IR_SENSOR_DIO_ID);
 			frontVEXIntakeSensor = new DigitalInput(RobotMap.INTAKE_FRONT_VEX_SENSOR_DIO_ID);
 
 			ballArms = new Solenoid(RobotMap.INTAKE_BALL_ARM_PCM_ID);
@@ -106,8 +108,12 @@ public class Intake extends Subsystem {
 		return instance;
 	}
 
-	public boolean getFrontIRIntakeSensor() {
-		return frontIRIntakeSensor.get();
+	public boolean getFrontRightIRIntakeSensor() {
+		return frontIRIntakeRightSensor.get();
+	}
+
+	public boolean getFrontLeftIRIntakeSensor() {
+		return frontIRIntakeLeftSensor.get();
 	}
 
 	public boolean getFrontVEXIntakeSensor() {
@@ -122,13 +128,16 @@ public class Intake extends Subsystem {
 		if (operationMode == Robot.OperationMode.TEST) {
 			try {
 				SmartDashboard.putBoolean("Intake Front VEX Sensor", getFrontVEXIntakeSensor());
-				SmartDashboard.putBoolean("Intake Front IR Sensor", getFrontIRIntakeSensor());
+				SmartDashboard.putBoolean("Intake Front IR Sensor", getFrontRightIRIntakeSensor());
 				SmartDashboard.putNumber("Left Intake Amps", leftArm.getOutputCurrent());
 				SmartDashboard.putNumber("Right Intake Amps", rightArm.getOutputCurrent());
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
-			SmartDashboard.putBoolean("Intake Front IR Sensor", getFrontIRIntakeSensor());
+			SmartDashboard.putBoolean("Intake Front Right IR Sensor", getFrontRightIRIntakeSensor());
+			SmartDashboard.putBoolean("Intake Front Left IR Sensor", getFrontLeftIRIntakeSensor());
+			SmartDashboard.putNumber("Left Intake Amps", leftArm.getOutputCurrent());
+			SmartDashboard.putNumber("Right Intake Amps", rightArm.getOutputCurrent());
 		}
 	}
 

@@ -67,8 +67,11 @@ public class Elevator extends Subsystem implements Loop {
 	public static final double TEST_SPEED_UP = 0.3;
 	public static final double TEST_SPEED_DOWN = -0.3;
 	public static final double AUTO_ZERO_SPEED = -0.3;
-	public static final double JOYSTICK_INCHES_PER_MS_HI = 0.75;
-	public static final double JOYSTICK_INCHES_PER_MS_LO = JOYSTICK_INCHES_PER_MS_HI / 3.68 * 0.8;
+	public static final double JOYSTICK_INCHES_PER_MS_ELEVATOR = 0.75;
+	// public static final double JOYSTICK_INCHES_PER_MS_LO =
+	// JOYSTICK_INCHES_PER_MS_HI / 3.68 * 0.8;
+	public static final double JOYSTICK_INCHES_PER_MS_GGG = ENCODER_TICKS_TO_INCHES_ELEVATOR
+			/ ENCODER_TICKS_TO_INCHES_GGG * 0.8;
 
 	// Defined positions
 	public static final double ZERO_POSITION_INCHES = -0.25;
@@ -78,11 +81,11 @@ public class Elevator extends Subsystem implements Loop {
 	public static final double HATCH_LEVEL_1 = 14.1;
 	public static final double HATCH_LEVEL_2 = 42.1;
 	public static final double HATCH_LEVEL_3 = 70.1;
-	public static final double BALL_LEVEL_1 = 21.5;
-	public static final double BALL_LEVEL_2 = 42.1;
-	public static final double BALL_LEVEL_3 = 70.1;
+	public static final double BALL_LEVEL_1 = 19.5;
+	public static final double BALL_LEVEL_2 = 48.1;
+	public static final double BALL_LEVEL_3 = 74.1;
 	public static final int GRAB_HATCH_STATION = 13;
-	public static final int CLIMB = 19;
+	public static final int CLIMB = 15;
 
 	// Motion profile max velocities and accel times
 	public static final int MP_MAX_VELOCITY_INCHES_PER_SEC = 60;
@@ -132,7 +135,7 @@ public class Elevator extends Subsystem implements Loop {
 	private ElevatorControlMode elevatorControlMode = ElevatorControlMode.JOYSTICK_MANUAL;
 	private double targetPositionInchesPID = 0;
 	private boolean firstMpPoint;
-	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_LO;
+	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_ELEVATOR;
 	private double currentEncoderTicksToInches = ENCODER_TICKS_TO_INCHES_ELEVATOR;
 	public boolean toLow;
 
@@ -489,13 +492,31 @@ public class Elevator extends Subsystem implements Loop {
 	}
 
 	public void setRobotClimbMode() {
+		joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_GGG;
 		currentEncoderTicksToInches = ENCODER_TICKS_TO_INCHES_GGG;
 		setFrontLegState(FrontLegShiftState.OUT);
 		setBackLegState(BackLegShiftState.OUT);
 		setElevatorClimbState(ElevatorClimbShiftState.IN);
 	}
 
+	public void setRobotClimbFront() {
+		joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_GGG;
+		currentEncoderTicksToInches = ENCODER_TICKS_TO_INCHES_GGG;
+		setFrontLegState(FrontLegShiftState.OUT);
+		setBackLegState(BackLegShiftState.IN);
+		setElevatorClimbState(ElevatorClimbShiftState.IN);
+	}
+
+	public void setRobotClimbBack() {
+		joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_GGG;
+		currentEncoderTicksToInches = ENCODER_TICKS_TO_INCHES_GGG;
+		setFrontLegState(FrontLegShiftState.IN);
+		setBackLegState(BackLegShiftState.OUT);
+		setElevatorClimbState(ElevatorClimbShiftState.IN);
+	}
+
 	public void setRobotScoreMode() {
+		joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_ELEVATOR;
 		currentEncoderTicksToInches = ENCODER_TICKS_TO_INCHES_ELEVATOR;
 		setFrontLegState(FrontLegShiftState.IN);
 		setBackLegState(BackLegShiftState.IN);
@@ -546,7 +567,7 @@ public class Elevator extends Subsystem implements Loop {
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
-			// SmartDashboard.putNumber("Elevator Position Inches", motor1.getPositionWorld());
+			SmartDashboard.putNumber("Elevator Sensor Velocity", motor1.getSelectedSensorVelocity());
 			SmartDashboard.putNumber("Elevator Position Inches Poofs", getInchesOffGround());
 			SmartDashboard.putNumber("Position Ticks Poofs", mPeriodicIO.position_ticks);
 

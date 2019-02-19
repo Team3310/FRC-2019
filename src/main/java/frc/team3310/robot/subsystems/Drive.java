@@ -764,7 +764,6 @@ public class Drive extends Subsystem implements Loop {
 			return;
 
 		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getButtonY().get();
-		boolean cameraTrackCargoButton = OI.getInstance().getDriverController().getButtonX().get();
 
 		m_moveInput = OI.getInstance().getDriverController().getLeftYAxis();
 		m_steerInput = -OI.getInstance().getDriverController().getRightXAxis();
@@ -786,7 +785,7 @@ public class Drive extends Subsystem implements Loop {
 		}
 
 		if (cameraTrackTapeButton) {
-			setPipeline(3);
+			setPipeline(0);
 			setLimeLED(0);
 			updateLimelight();
 			double cameraSteer = 0;
@@ -796,22 +795,6 @@ public class Drive extends Subsystem implements Loop {
 				System.out.println("Valid lime angle = " + limeX);
 			} else {
 				System.out.println("In Valid lime angle = " + limeX);
-				cameraSteer = -m_steerOutput;
-			}
-			m_steerOutput = -cameraSteer;
-		}
-
-		if (cameraTrackCargoButton) {
-			setPipeline(5);
-			setLimeLED(0);
-			updateLimelight();
-			double cameraSteer = 0;
-			mLastValidGyroAngle = getGyroAngleDeg();
-			if (isLimeValid) {
-				cameraSteer = limeX * kCameraDrive;
-				System.out.println("CARGO FOUND = " + limeX);
-			} else {
-				System.out.println("NO CARGO FOUND = " + limeX);
 				cameraSteer = -m_steerOutput;
 			}
 			m_steerOutput = -cameraSteer;
@@ -1151,4 +1134,15 @@ public class Drive extends Subsystem implements Loop {
 		return leftSide && rightSide;
 
 	}
+
+	public static void main(String[] args) {
+
+		Drive drive = Drive.getInstance();
+
+		for (int i = 0; i < 10; i++) {
+			double m_steerOutput = drive.adjustForSensitivity(1.0, 0, (double) i / 10.0, -3, STEER_NON_LINEARITY);
+			System.out.println("i=" + i + ", output=" + m_steerOutput);
+		}
+	}
+
 }

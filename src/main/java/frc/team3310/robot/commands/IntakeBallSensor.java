@@ -11,7 +11,8 @@ public class IntakeBallSensor extends ExtraTimeoutCommand {
 
     private double speed;
     private boolean ballDetected;
-    private double EXTRA_INTAKE_TIME = 0.05;
+    private double EXTRA_INTAKE_TIME = 0.01;
+    private double EXTRA_INTAKE_DEPLOY_TIME = .5;
     private static final double TIMEOUT = 10.0;
 
     public IntakeBallSensor(double speed) {
@@ -19,16 +20,25 @@ public class IntakeBallSensor extends ExtraTimeoutCommand {
         requires(Robot.intake);
     }
 
-    public IntakeBallSensor(double speed, double extraTimeout) {
+    public IntakeBallSensor(double speed, double afterSensorTimeout) {
         this.speed = speed;
-        EXTRA_INTAKE_TIME = extraTimeout;
+        EXTRA_INTAKE_TIME = afterSensorTimeout;
+        requires(Robot.intake);
+    }
+
+    public IntakeBallSensor(double speed, double afterSensorTimeout, double deployIntakeTimeout) {
+        this.speed = speed;
+        EXTRA_INTAKE_TIME = afterSensorTimeout;
+        EXTRA_INTAKE_DEPLOY_TIME = deployIntakeTimeout;
         requires(Robot.intake);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
         System.out.println("Intake sensor off started");
-        resetExtraTimer();
+        resetExtraOneTimer();
+        resetExtraTwoTimer();
+        startExtraTwoTimeout(EXTRA_INTAKE_DEPLOY_TIME);
         setTimeout(TIMEOUT);
         ballDetected = false;
         Robot.intake.setSpeed(speed);
@@ -37,8 +47,8 @@ public class IntakeBallSensor extends ExtraTimeoutCommand {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        if (ballDetected == false && (Robot.intake.getFrontVEXIntakeSensor())) {
-            startExtraTimeout(EXTRA_INTAKE_TIME);
+        if (ballDetected == false && Robot.intake.getFrontRightIRIntakeSensor()&& Robot.intake.getFrontLeftIRIntakeSensor() && isExtraTwoTimedOut()) {
+            startExtraOneTimeout(EXTRA_INTAKE_TIME);
             ballDetected = true;
             System.out.println("BALL DETECTED!!!!!");
         }
@@ -46,7 +56,7 @@ public class IntakeBallSensor extends ExtraTimeoutCommand {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return isExtraTimedOut() || isTimedOut();
+        return isExtraOneTimedOut() || isTimedOut();
     }
 
     // Called once after isFinished returns true

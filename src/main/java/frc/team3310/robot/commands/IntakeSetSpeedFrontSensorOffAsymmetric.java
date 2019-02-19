@@ -29,7 +29,7 @@ public class IntakeSetSpeedFrontSensorOffAsymmetric extends ExtraTimeoutCommand 
     // Called just before this Command runs the first time
     protected void initialize() {
 //    	System.out.println("Intake sensor off started");
-    	resetExtraTimer();
+    	resetExtraOneTimer();
     	setTimeout(TIMEOUT);
 		cubeDetected = false;
     	Robot.intake.setSpeedAsymmetric(speedLeft, speedRight);
@@ -37,8 +37,8 @@ public class IntakeSetSpeedFrontSensorOffAsymmetric extends ExtraTimeoutCommand 
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	if (cubeDetected == false && (Robot.intake.getFrontIRIntakeSensor() || Robot.intake.getFrontVEXIntakeSensor())) {
-    		startExtraTimeout(EXTRA_INTAKE_TIME);
+    	if (cubeDetected == false && (Robot.intake.getFrontRightIRIntakeSensor() || Robot.intake.getFrontVEXIntakeSensor())) {
+    		startExtraOneTimeout(EXTRA_INTAKE_TIME);
     		cubeDetected = true;
 //    		System.out.println("CUBE DETECTED!!!!!");
     	}
@@ -46,7 +46,7 @@ public class IntakeSetSpeedFrontSensorOffAsymmetric extends ExtraTimeoutCommand 
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return isExtraTimedOut() || isTimedOut();
+        return isExtraOneTimedOut() || isTimedOut();
     }
 
     // Called once after isFinished returns true

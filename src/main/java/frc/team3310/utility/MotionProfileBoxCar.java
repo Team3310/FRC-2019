@@ -170,15 +170,15 @@ public class MotionProfileBoxCar
 
 	public static void main(String[] args) {
 		long startTime = System.nanoTime();
-		
+
 		MotionProfileBoxCar mp = new MotionProfileBoxCar(0, 70, 120, 10, 600, 300);
 		System.out.println("Time, Position, Velocity, Acceleration");
 		MotionProfilePoint point = new MotionProfilePoint();
-		while(mp.getNextPoint(point) != null) {
+		while (mp.getNextPoint(point) != null) {
 			System.out.println(point.time + ", " + point.position + ", " + point.velocity + ", " + point.acceleration);
 		}
-		
+
 		long deltaTime = System.nanoTime() - startTime;
-		System.out.println("Time Box Car = " + (double)deltaTime * 1E-6 + " ms");
+		System.out.println("Time Box Car = " + (double) deltaTime * 1E-6 + " ms");
 	}
 }

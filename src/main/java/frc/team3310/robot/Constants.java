@@ -83,20 +83,20 @@ public class Constants {
     // Units: setpoint, error, and output are in native units per 100ms.
     // Elevator encoder is CTRE mag encoder which is 4096 native units per
     // revolution.
-    public static final double kElevatorKp = 0.3;
+    public static final double kElevatorKp = 0.0;
     public static final double kElevatorKi = 0.0; // 0.0;
-    public static final double kElevatorKd = 4.0; // 4.0;
-    public static final double kElevatorKf = 0.06; // lower speed: 0.08;
+    public static final double kElevatorKd = 0.0; // 4.0;
+    public static final double kElevatorKf = 0.097; // 0.06;
     public static final double kElevatorJogKp = 0.1;
     public static final double kElevatorJogKd = 3.0;
-    public static final double kElevatorFeedforwardNoBall = -0.06;// 33000;
-    public static final double kElevatorFeedforwardWithBall = -0.07;// 33000;
+    public static final double kElevatorFeedforwardNoBall = 0.197;// 33000;
+    public static final double kElevatorFeedforwardWithBall = 0.297;// 33000;
 
     public static final int kElevatorMaxIntegralAccumulator = 500000; // todo: tune me
     public static final int kElevatorIZone = 0;
     public static final int kElevatorDeadband = 0;
-    public static final int kElevatorCruiseVelocity = 20000; // 12500;
-    public static final int kElevatorAcceleration = 27000;// 33000;
+    public static final int kElevatorCruiseVelocity = 10475; // 12500; //Max Velocity 10475
+    public static final int kElevatorAcceleration = 15000;// 33000; //Max Velocity / Time to reach top .82
     public static final double kElevatorEpsilon = 1.0;// 33000;
     public static final double kElevatorRampRate = 0.1;
 

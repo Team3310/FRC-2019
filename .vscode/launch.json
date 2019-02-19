@@ -6,16 +6,37 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "CodeLens (Launch) - MotionProfileBoxCar",
+      "request": "launch",
+      "mainClass": "frc.team3310.utility.MotionProfileBoxCar",
+      "projectName": "2019_DeepSpace"
+    },
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - DriveTrainTest",
+      "request": "launch",
+      "mainClass": "frc.team3310.utility.DriveTrainTest",
+      "projectName": "2019_DeepSpace"
+    },
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - Drive",
+      "request": "launch",
+      "mainClass": "frc.team3310.robot.subsystems.Drive",
+      "projectName": "2019_DeepSpace"
+    },
+    {
       "type": "wpilib",
       "name": "WPILib Desktop Debug",
       "request": "launch",
-      "desktop": true,
+      "desktop": true
     },
     {
       "type": "wpilib",
       "name": "WPILib roboRIO Debug",
       "request": "launch",
-      "desktop": false,
+      "desktop": false
     }
   ]
 }
