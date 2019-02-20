@@ -39,6 +39,8 @@ public class Intake extends Subsystem {
 		IN, OUT
 	};
 
+
+
 	// Sensors
 	private DigitalInput frontIRIntakeRightSensor;
 	private DigitalInput frontIRIntakeLeftSensor;

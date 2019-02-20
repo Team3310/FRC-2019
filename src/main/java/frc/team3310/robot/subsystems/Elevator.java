@@ -78,12 +78,12 @@ public class Elevator extends Subsystem implements Loop {
 	public static final int MIN_POSITION_INCHES = 0;
 	public static final int MAX_POSITION_INCHES = 76;
 	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
-	public static final double HATCH_LEVEL_1 = 14.1;
+	public static double HATCH_LEVEL_1 = 14.1;
 	public static final double HATCH_LEVEL_2 = 42.1;
 	public static final double HATCH_LEVEL_3 = 70.1;
 	public static final double BALL_LEVEL_1 = 19.5;
 	public static final double BALL_LEVEL_2 = 48.1;
-	public static final double BALL_LEVEL_3 = 74.1;
+	public static final double BALL_LEVEL_3 = 75.1;
 	public static final int GRAB_HATCH_STATION = 13;
 	public static final int CLIMB = 15;
 

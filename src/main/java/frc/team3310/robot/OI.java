@@ -11,14 +11,18 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.commands.DriveForwardClimb;
+import frc.team3310.robot.commands.EjectBallFast;
+import frc.team3310.robot.commands.EjectBallSlow;
+import frc.team3310.robot.commands.EjectBallStop;
+import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorSetMode;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
-import frc.team3310.robot.commands.ElevatorSetPositionMP;
 import frc.team3310.robot.commands.IntakeBallAndLift;
 import frc.team3310.robot.commands.IntakeBallArms;
-import frc.team3310.robot.commands.IntakeBallSensor;
+import frc.team3310.robot.commands.IntakeBallHold;
+import frc.team3310.robot.commands.IntakeBallManual;
+import frc.team3310.robot.commands.IntakeHatch;
 import frc.team3310.robot.commands.IntakeHatchArms;
-import frc.team3310.robot.commands.IntakeSetSpeed;
 import frc.team3310.robot.commands.ResetElevatorEncoder;
 import frc.team3310.robot.commands.SetRobotClimbBack;
 import frc.team3310.robot.commands.SetRobotClimbFront;
@@ -29,7 +33,6 @@ import frc.team3310.robot.controller.GameController;
 import frc.team3310.robot.controller.Xbox;
 import frc.team3310.robot.subsystems.Elevator;
 import frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
-import frc.team3310.robot.subsystems.Intake;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
 
@@ -54,12 +57,12 @@ public class OI {
 
     // Driver Controls
     Button ejectHatch = m_driver.getButtonA();
-    ejectHatch.whenPressed(new IntakeHatchArms(HatchArmState.IN));
-    ejectHatch.whenPressed(new IntakeBallArms(BallArmState.OUT));
+    ejectHatch.whenPressed(new EjectHatch());
     ejectHatch.whenReleased(new IntakeBallArms(BallArmState.IN));
 
     Button driveFowardClimb = m_driver.getButtonB();
-    driveFowardClimb.whenPressed(new IntakeBallSensor(-.8));
+    driveFowardClimb.whenPressed(new DriveForwardClimb(.5));
+    driveFowardClimb.whenReleased(new DriveForwardClimb(0));
 
     Button climbFront = m_driver.getRightTrigger();
     climbFront.whenPressed(new SetRobotClimbFront());
@@ -89,31 +92,22 @@ public class OI {
 
     // Intake
     Button IntakeHatch = m_operator.getRightBumper();
-    IntakeHatch.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
-    IntakeHatch.whenPressed(new IntakeBallArms(BallArmState.IN));
-    IntakeHatch.whenPressed(new ElevatorSetPositionMP(Elevator.GRAB_HATCH_STATION));
+    IntakeHatch.whenPressed(new IntakeHatch());
     IntakeHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
 
     Button IntakeBallManual = m_operator.getRightTrigger();
-    IntakeBallManual.whenPressed(new IntakeHatchArms(HatchArmState.IN));
-    IntakeBallManual.whenPressed(new IntakeBallArms(BallArmState.OUT));
-    IntakeBallManual.whenPressed(new IntakeSetSpeed(Intake.INTAKE_LOAD_SPEED));
-    IntakeBallManual.whenReleased(new IntakeBallArms(BallArmState.IN));
-    IntakeBallManual.whenReleased(new IntakeSetSpeed(Intake.INTAKE_HOLD_SPEED));
+    IntakeBallManual.whenPressed(new IntakeBallManual());
+    IntakeBallManual.whenReleased(new IntakeBallHold());
 
     Button ejectBall = m_operator.getLeftBumper();
-    ejectBall.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
-    ejectBall.whenPressed(new IntakeSetSpeed(Intake.INTAKE_EJECT_SPEED));
-    ejectBall.whenReleased(new IntakeHatchArms(HatchArmState.IN));
-    ejectBall.whenReleased(new IntakeSetSpeed(0.0));
+    ejectBall.whenPressed(new EjectBallFast());
+    ejectBall.whenReleased(new EjectBallStop());
 
     Button ejectBallSlow = m_operator.getLeftTrigger();
-    ejectBallSlow.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
-    ejectBallSlow.whenPressed(new IntakeSetSpeed(Intake.INTAKE_EJECT_SLOW_SPEED));
-    ejectBallSlow.whenReleased(new IntakeHatchArms(HatchArmState.IN));
-    ejectBallSlow.whenReleased(new IntakeSetSpeed(0.0));
+    ejectBallSlow.whenPressed(new EjectBallSlow());
+    ejectBallSlow.whenReleased(new EjectBallStop());
 
-    Button setManualMode = m_operator.getStartButton();
+    Button setManualMode = m_operator.getOptionsButton();
     setManualMode.whenPressed(new ElevatorSetMode(ElevatorControlMode.JOYSTICK_MANUAL));
 
     Button IntakeHatchManual = m_operator.getDPadLeft();
@@ -128,6 +122,14 @@ public class OI {
 
     Button ballLevel3 = m_operator.getDPadUp();
     ballLevel3.whenPressed(new ElevatorSetPositionMM(Elevator.BALL_LEVEL_3));
+
+    // Button setClimbUp = m_operator.getDPadUp();
+    // setClimbUp.whenPressed(new ElevatorSetSpeed(-.7));
+    // setClimbUp.whenReleased(new ElevatorSetSpeed(0));
+
+    // Button setClimbDown = m_operator.getDPadDown();
+    // setClimbDown.whenPressed(new ElevatorSetSpeed(.7));
+    // setClimbDown.whenReleased(new ElevatorSetSpeed(0));
 
     // Smartdashboard
     Button turnCompressorOff = new InternalButton();

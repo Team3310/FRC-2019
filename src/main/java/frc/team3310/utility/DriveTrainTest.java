@@ -1,7 +1,7 @@
 package frc.team3310.utility;
 
 public class DriveTrainTest {
-  public static final double STEER_NON_LINEARITY = 0.1;
+  public static final double STEER_NON_LINEARITY = 0.10;
   public static final double MOVE_NON_LINEARITY = 1.0;
 
   public static final double STICK_DEADBAND = 0.02;
@@ -59,7 +59,7 @@ public class DriveTrainTest {
   public static void main(String[] args) {
 
     for (int i = 0; i < 10; i++) {
-      double m_steerOutput = adjustForSensitivity(1.0, 0, (double) i / 10.0, -20, STEER_NON_LINEARITY);
+      double m_steerOutput = adjustForSensitivity(1.0, 0, (double) i / 10.0, -30, STEER_NON_LINEARITY);
       System.out.println(m_steerOutput);
     }
   }
