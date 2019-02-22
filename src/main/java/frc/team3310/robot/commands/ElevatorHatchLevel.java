@@ -8,6 +8,7 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team3310.robot.Robot;
 
 public class ElevatorHatchLevel extends Command {
   public ElevatorHatchLevel() {
@@ -18,6 +19,7 @@ public class ElevatorHatchLevel extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    Robot.elevator.elevatorCargoMode = false;
   }
 
   // Called repeatedly when this Command is scheduled to run

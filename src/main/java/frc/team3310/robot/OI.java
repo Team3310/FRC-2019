@@ -15,6 +15,7 @@ import frc.team3310.robot.commands.EjectBallFast;
 import frc.team3310.robot.commands.EjectBallSlow;
 import frc.team3310.robot.commands.EjectBallStop;
 import frc.team3310.robot.commands.EjectHatch;
+import frc.team3310.robot.commands.ElevatorHatchLevel;
 import frc.team3310.robot.commands.ElevatorSetMode;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
 import frc.team3310.robot.commands.IntakeBallAndLift;
@@ -30,8 +31,8 @@ import frc.team3310.robot.commands.SetRobotClimbMode;
 import frc.team3310.robot.commands.SetRobotScoreMode;
 import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.controller.GameController;
+import frc.team3310.robot.controller.Playstation;
 import frc.team3310.robot.controller.Xbox;
-import frc.team3310.robot.subsystems.Elevator;
 import frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
@@ -52,7 +53,7 @@ public class OI {
 
   private OI() {
     // Driver controller
-    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
+    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
     m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Xbox());
 
     // Driver Controls
@@ -82,13 +83,13 @@ public class OI {
     intakeBallAndLift.whenPressed(new IntakeBallAndLift());
 
     Button elevatorLowHatchPosition = m_operator.getButtonA();
-    elevatorLowHatchPosition.whenPressed(new ElevatorSetPositionMM(Elevator.HATCH_LEVEL_1));
+    elevatorLowHatchPosition.whenPressed(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
 
     Button elevatorMidHatchPosition = m_operator.getButtonB();
-    elevatorMidHatchPosition.whenPressed(new ElevatorSetPositionMM(Elevator.HATCH_LEVEL_2));
+    elevatorMidHatchPosition.whenPressed(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_2));
 
     Button elevatorMaxHatchPosition = m_operator.getButtonY();
-    elevatorMaxHatchPosition.whenPressed(new ElevatorSetPositionMM(Elevator.HATCH_LEVEL_3));
+    elevatorMaxHatchPosition.whenPressed(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_3));
 
     // Intake
     Button IntakeHatch = m_operator.getRightBumper();
@@ -113,23 +114,16 @@ public class OI {
     Button IntakeHatchManual = m_operator.getDPadLeft();
     IntakeHatchManual.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
     IntakeHatchManual.whenReleased(new IntakeHatchArms(HatchArmState.IN));
+    IntakeHatchManual.whenReleased(new ElevatorHatchLevel());
 
     Button balleLevel1 = m_operator.getDPadDown();
-    balleLevel1.whenPressed(new ElevatorSetPositionMM(Elevator.BALL_LEVEL_1));
+    balleLevel1.whenPressed(new ElevatorSetPositionMM(Constants.BALL_LEVEL_1));
 
     Button ballLevel2 = m_operator.getDPadRight();
-    ballLevel2.whenPressed(new ElevatorSetPositionMM(Elevator.BALL_LEVEL_2));
+    ballLevel2.whenPressed(new ElevatorSetPositionMM(Constants.BALL_LEVEL_2));
 
     Button ballLevel3 = m_operator.getDPadUp();
-    ballLevel3.whenPressed(new ElevatorSetPositionMM(Elevator.BALL_LEVEL_3));
-
-    // Button setClimbUp = m_operator.getDPadUp();
-    // setClimbUp.whenPressed(new ElevatorSetSpeed(-.7));
-    // setClimbUp.whenReleased(new ElevatorSetSpeed(0));
-
-    // Button setClimbDown = m_operator.getDPadDown();
-    // setClimbDown.whenPressed(new ElevatorSetSpeed(.7));
-    // setClimbDown.whenReleased(new ElevatorSetSpeed(0));
+    ballLevel3.whenPressed(new ElevatorSetPositionMM(Constants.BALL_LEVEL_3));
 
     // Smartdashboard
     Button turnCompressorOff = new InternalButton();
@@ -143,15 +137,6 @@ public class OI {
     Button resetElevatorEncoders = new InternalButton();
     resetElevatorEncoders.whenPressed(new ResetElevatorEncoder());
     SmartDashboard.putData("Reset Elevator Encoder", resetElevatorEncoders);
-
-    // Button cameraTrack = new InternalButton();
-    // cameraTrack.whenPressed(new DrivePathCameraTrack(75));
-    // SmartDashboard.putData("Camera Track", cameraTrack);
-
-    // Button cameraTrackStop = new InternalButton();
-    // cameraTrackStop.whenPressed(new DrivePathCameraTrackStop());
-    // SmartDashboard.putData("Camera Track Stop", cameraTrackStop);
-
   }
 
   public GameController getDriverController() {

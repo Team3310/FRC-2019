@@ -8,7 +8,7 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team3310.robot.subsystems.Elevator;
+import frc.team3310.robot.Constants;
 import frc.team3310.robot.subsystems.Intake;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
 
@@ -18,9 +18,10 @@ public class IntakeBallAndLift extends CommandGroup {
    */
   public IntakeBallAndLift() {
     addParallel(new IntakeHatchArms(HatchArmState.IN));
-    addSequential(new ElevatorSetPositionMM(Elevator.MIN_POSITION_INCHES));
+    addSequential(new ElevatorSetPositionMM(Constants.MIN_POSITION_INCHES));
     addSequential(new IntakeBallSensor(Intake.INTAKE_LOAD_SPEED));
-    addSequential(new ElevatorSetPositionMM(Elevator.AFTER_INTAKE_POSITION_INCHES));
+    addSequential(new ElevatorSetPositionMM(Constants.AFTER_INTAKE_POSITION_INCHES));
+    addSequential(new ElevatorBallLevel());
 
   }
 }

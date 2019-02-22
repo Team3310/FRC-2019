@@ -63,29 +63,12 @@ public class Elevator extends Subsystem implements Loop {
 			/ (1.128 * Math.PI);
 
 	// Defined speeds
-	public static final double CLIMB_SPEED = -1.0;
 	public static final double TEST_SPEED_UP = 0.3;
 	public static final double TEST_SPEED_DOWN = -0.3;
 	public static final double AUTO_ZERO_SPEED = -0.3;
 	public static final double JOYSTICK_INCHES_PER_MS_ELEVATOR = 0.75;
-	// public static final double JOYSTICK_INCHES_PER_MS_LO =
-	// JOYSTICK_INCHES_PER_MS_HI / 3.68 * 0.8;
 	public static final double JOYSTICK_INCHES_PER_MS_GGG = ENCODER_TICKS_TO_INCHES_ELEVATOR
 			/ ENCODER_TICKS_TO_INCHES_GGG * 0.8;
-
-	// Defined positions
-	public static final double ZERO_POSITION_INCHES = -0.25;
-	public static final int MIN_POSITION_INCHES = 0;
-	public static final int MAX_POSITION_INCHES = 76;
-	public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
-	public static double HATCH_LEVEL_1 = 14.1;
-	public static final double HATCH_LEVEL_2 = 42.1;
-	public static final double HATCH_LEVEL_3 = 70.1;
-	public static final double BALL_LEVEL_1 = 19.5;
-	public static final double BALL_LEVEL_2 = 48.1;
-	public static final double BALL_LEVEL_3 = 75.1;
-	public static final int GRAB_HATCH_STATION = 13;
-	public static final int CLIMB = 15;
 
 	// Motion profile max velocities and accel times
 	public static final int MP_MAX_VELOCITY_INCHES_PER_SEC = 60;
@@ -138,6 +121,7 @@ public class Elevator extends Subsystem implements Loop {
 	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_ELEVATOR;
 	private double currentEncoderTicksToInches = ENCODER_TICKS_TO_INCHES_ELEVATOR;
 	public boolean toLow;
+	public boolean elevatorCargoMode = false;
 
 	private Elevator() {
 		try {
@@ -185,7 +169,7 @@ public class Elevator extends Subsystem implements Loop {
 				"Could not set forward (down) limit switch elevator: ");
 
 		TalonSRXUtil.checkError(
-				motor1.configForwardSoftLimitThreshold(MAX_POSITION_INCHES, Constants.kLongCANTimeoutMs),
+				motor1.configForwardSoftLimitThreshold(Constants.MAX_POSITION_INCHES, Constants.kLongCANTimeoutMs),
 				"Could not set forward (down) soft limit switch elevator: ");
 
 		TalonSRXUtil.checkError(motor1.configForwardSoftLimitEnable(true, Constants.kLongCANTimeoutMs),
@@ -195,7 +179,7 @@ public class Elevator extends Subsystem implements Loop {
 				"Could not set voltage compensation saturation elevator: ");
 
 		TalonSRXUtil.checkError(
-				motor1.configReverseSoftLimitThreshold(MIN_POSITION_INCHES, Constants.kLongCANTimeoutMs),
+				motor1.configReverseSoftLimitThreshold(Constants.MIN_POSITION_INCHES, Constants.kLongCANTimeoutMs),
 				"Could not set reverse (up) soft limit switch elevator: ");
 
 		TalonSRXUtil.checkError(motor1.configReverseSoftLimitEnable(true, Constants.kLongCANTimeoutMs),
@@ -298,10 +282,10 @@ public class Elevator extends Subsystem implements Loop {
 	}
 
 	private double limitPosition(double targetPosition) {
-		if (targetPosition < MIN_POSITION_INCHES) {
-			return MIN_POSITION_INCHES;
-		} else if (targetPosition > MAX_POSITION_INCHES) {
-			return MAX_POSITION_INCHES;
+		if (targetPosition < Constants.MIN_POSITION_INCHES) {
+			return Constants.MIN_POSITION_INCHES;
+		} else if (targetPosition > Constants.MAX_POSITION_INCHES) {
+			return Constants.MAX_POSITION_INCHES;
 		}
 
 		return targetPosition;

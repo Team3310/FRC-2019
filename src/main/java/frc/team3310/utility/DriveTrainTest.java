@@ -57,13 +57,7 @@ public class DriveTrainTest {
   }
 
   public static void main(String[] args) {
-
-<<<<<<< HEAD
-    for (int i = 0; i < 10; i++) {
-      double m_steerOutput = adjustForSensitivity(1.0, 0, (double) i / 10.0, -30, STEER_NON_LINEARITY);
-      System.out.println(m_steerOutput);
-=======
-    int nlFactorStart = -6;
+    int nlFactorStart = -7;
     int nlFactorEnd = 0;
 
     double wheelNonLinearity = 0.7;
@@ -84,14 +78,13 @@ public class DriveTrainTest {
 
       for (int j = nlFactorStart; j < nlFactorEnd + 1; j++) {
         int nonLinearFactor = j;
-    
+
         double steerOutput = adjustForSensitivity(1.0, 0, stickPosition, nonLinearFactor, wheelNonLinearity);
         output += "," + steerOutput;
       }
 
       System.out.println(output);
       stickPosition += deltaStick;
->>>>>>> bfa64e912b7e10f2b60a2ba47286b94a583dfeca
     }
   }
 }

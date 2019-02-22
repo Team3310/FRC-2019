@@ -3,7 +3,6 @@ package frc.team3310.utility.lib.control;
 import java.util.Map;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team3310.robot.Constants;
 import frc.team3310.robot.Kinematics;
 import frc.team3310.robot.Robot.OperationMode;
 import frc.team3310.robot.subsystems.Drive;
@@ -11,7 +10,6 @@ import frc.team3310.utility.InterpolatingDouble;
 import frc.team3310.utility.InterpolatingTreeMap;
 import frc.team3310.utility.lib.geometry.Pose2d;
 import frc.team3310.utility.lib.geometry.Rotation2d;
-import frc.team3310.utility.lib.geometry.Translation2d;
 import frc.team3310.utility.lib.geometry.Twist2d;
 
 public class RobotStatus {
@@ -22,10 +20,6 @@ public class RobotStatus {
     }
 
     private static final int kObservationBufferSize = 100;
-
-    private static final Pose2d kVehicleToLidar = new Pose2d(
-            new Translation2d(Constants.kLidarXOffset, Constants.kLidarYOffset), Rotation2d.fromDegrees(Constants
-            .kLidarYawAngleDegrees));
 
     // FPGATimestamp -> RigidTransform2d or Rotation2d
     private InterpolatingTreeMap<InterpolatingDouble, Pose2d> field_to_vehicle_;
@@ -54,8 +48,8 @@ public class RobotStatus {
     }
 
     /**
-     * Returns the robot's position on the field at a certain time. Linearly interpolates between stored robot positions
-     * to fill in the gaps.
+     * Returns the robot's position on the field at a certain time. Linearly
+     * interpolates between stored robot positions to fill in the gaps.
      */
     public synchronized Pose2d getFieldToVehicle(double timestamp) {
         return field_to_vehicle_.getInterpolated(new InterpolatingDouble(timestamp));
@@ -70,29 +64,23 @@ public class RobotStatus {
                 .transformBy(Pose2d.exp(vehicle_velocity_predicted_.scaled(lookahead_time)));
     }
 
-    public synchronized Pose2d getFieldToLidar(double timestamp) {
-        return getFieldToVehicle(timestamp).transformBy(kVehicleToLidar);
-    }
-
     public synchronized void addFieldToVehicleObservation(double timestamp, Pose2d observation) {
         field_to_vehicle_.put(new InterpolatingDouble(timestamp), observation);
     }
 
-    public synchronized void addObservations(double timestamp, Twist2d measured_velocity,
-                                             Twist2d predicted_velocity) {
+    public synchronized void addObservations(double timestamp, Twist2d measured_velocity, Twist2d predicted_velocity) {
         addFieldToVehicleObservation(timestamp,
                 Kinematics.integrateForwardKinematics(getLatestFieldToVehicle().getValue(), measured_velocity));
         vehicle_velocity_measured_ = measured_velocity;
         vehicle_velocity_predicted_ = predicted_velocity;
     }
 
-    public synchronized Twist2d generateOdometryFromSensors(double left_encoder_delta_distance, double
-            right_encoder_delta_distance, Rotation2d current_gyro_angle) {
+    public synchronized Twist2d generateOdometryFromSensors(double left_encoder_delta_distance,
+            double right_encoder_delta_distance, Rotation2d current_gyro_angle) {
         final Pose2d last_measurement = getLatestFieldToVehicle().getValue();
-        final Twist2d delta = Kinematics.forwardKinematics(last_measurement.getRotation(),
-                left_encoder_delta_distance, right_encoder_delta_distance,
-                current_gyro_angle);
-        distance_driven_ += delta.dx; //do we care about dy here?
+        final Twist2d delta = Kinematics.forwardKinematics(last_measurement.getRotation(), left_encoder_delta_distance,
+                right_encoder_delta_distance, current_gyro_angle);
+        distance_driven_ += delta.dx; // do we care about dy here?
         return delta;
     }
 
@@ -109,12 +97,12 @@ public class RobotStatus {
     }
 
     public void updateStatus(OperationMode operationMode) {
-    	if (operationMode == OperationMode.PRACTICE) {
+        if (operationMode == OperationMode.PRACTICE) {
             Pose2d odometry = getLatestFieldToVehicle().getValue();
             SmartDashboard.putNumber("Robot Pose X", odometry.getTranslation().x());
             SmartDashboard.putNumber("Robot Pose Y", odometry.getTranslation().y());
             SmartDashboard.putNumber("Robot Pose Theta", odometry.getRotation().getDegrees());
             SmartDashboard.putNumber("Robot Linear Vel", vehicle_velocity_measured_.dx);
-    	}
+        }
     }
 }

@@ -17,6 +17,6 @@ public class EjectHatch extends CommandGroup {
    */
   public EjectHatch() {
     addParallel(new IntakeHatchArms(HatchArmState.IN));
-    addParallel(new IntakeBallArms(BallArmState.OUT));
+    addSequential(new IntakeBallArms(BallArmState.OUT));
   }
 }

@@ -39,12 +39,9 @@ public class Intake extends Subsystem {
 		IN, OUT
 	};
 
-
-
 	// Sensors
 	private DigitalInput frontIRIntakeRightSensor;
 	private DigitalInput frontIRIntakeLeftSensor;
-	private DigitalInput frontVEXIntakeSensor;
 
 	private Solenoid ballArms;
 	private Solenoid hatchArms;
@@ -61,7 +58,6 @@ public class Intake extends Subsystem {
 
 			frontIRIntakeRightSensor = new DigitalInput(RobotMap.INTAKE_FRONT_RIGHT_IR_SENSOR_DIO_ID);
 			frontIRIntakeLeftSensor = new DigitalInput(RobotMap.INTAKE_FRONT_LEFT_IR_SENSOR_DIO_ID);
-			frontVEXIntakeSensor = new DigitalInput(RobotMap.INTAKE_FRONT_VEX_SENSOR_DIO_ID);
 
 			ballArms = new Solenoid(RobotMap.INTAKE_BALL_ARM_PCM_ID);
 			hatchArms = new Solenoid(RobotMap.INTAKE_HATCH_ARM_PCM_ID);
@@ -72,10 +68,16 @@ public class Intake extends Subsystem {
 	}
 
 	public void setBallArmState(BallArmState state) {
+		Robot.drive.updateLimelight();
 		System.out.println("Ball arm state = " + state);
 		if (state == BallArmState.IN) {
 			ballArms.set(false);
-		} else if (state == BallArmState.OUT) {
+
+		} else if (state == BallArmState.IN && Robot.drive.isLimeValid && Robot.drive.limeArea < 9) {
+			System.out.println("To far to score");
+		}
+		
+		else if (state == BallArmState.OUT) {
 			ballArms.set(true);
 		}
 	}
@@ -118,19 +120,13 @@ public class Intake extends Subsystem {
 		return frontIRIntakeLeftSensor.get();
 	}
 
-	public boolean getFrontVEXIntakeSensor() {
-		return !frontVEXIntakeSensor.get();
-	}
-
 	public synchronized boolean hasBall() {
-		return getFrontVEXIntakeSensor();
+		return getFrontLeftIRIntakeSensor() && getFrontRightIRIntakeSensor();
 	}
 
 	public void updateStatus(Robot.OperationMode operationMode) {
 		if (operationMode == Robot.OperationMode.TEST) {
 			try {
-				SmartDashboard.putBoolean("Intake Front VEX Sensor", getFrontVEXIntakeSensor());
-				SmartDashboard.putBoolean("Intake Front IR Sensor", getFrontRightIRIntakeSensor());
 				SmartDashboard.putNumber("Left Intake Amps", leftArm.getOutputCurrent());
 				SmartDashboard.putNumber("Right Intake Amps", rightArm.getOutputCurrent());
 			} catch (Exception e) {
@@ -138,8 +134,7 @@ public class Intake extends Subsystem {
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Intake Front Right IR Sensor", getFrontRightIRIntakeSensor());
 			SmartDashboard.putBoolean("Intake Front Left IR Sensor", getFrontLeftIRIntakeSensor());
-			SmartDashboard.putNumber("Left Intake Amps", leftArm.getOutputCurrent());
-			SmartDashboard.putNumber("Right Intake Amps", rightArm.getOutputCurrent());
+
 		}
 	}
 
