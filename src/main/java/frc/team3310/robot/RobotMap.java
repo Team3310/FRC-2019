@@ -39,5 +39,8 @@ public class RobotMap {
 	// DIO
 	public static final int INTAKE_FRONT_RIGHT_IR_SENSOR_DIO_ID = 0;
 	public static final int INTAKE_FRONT_LEFT_IR_SENSOR_DIO_ID = 1;
+	// public static final int ELEVATOR_MAX_REV_SENSOR_DIO_ID = 8;
+	// public static final int ELEVATOR_MIN_REV_SENSOR_DIO_ID = 9;
+
 
 }

@@ -177,7 +177,7 @@ public class GameController extends Joystick {
 	 * Gets the state of the left stick button
 	 * @return the state of the left stick button
 	 */
-	public JoystickButton getL3() {
+	public JoystickButton getLeftJoystickButton() {
 		return new JoystickButton(this, map.BUTTON_LEFT_JOYSTICK);
 	}
 
@@ -185,7 +185,7 @@ public class GameController extends Joystick {
 	 * Gets the state of the right stick button
 	 * @return the state of the right stick button
 	 */
-	public JoystickButton getR3() {
+	public JoystickButton getRightJoystickButton() {
 		return new JoystickButton(this, map.BUTTON_RIGHT_JOYSTICK);
 	}
 

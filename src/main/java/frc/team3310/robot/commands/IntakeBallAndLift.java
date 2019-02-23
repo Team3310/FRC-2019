@@ -17,11 +17,11 @@ public class IntakeBallAndLift extends CommandGroup {
    * Add your docs here.
    */
   public IntakeBallAndLift() {
-    addParallel(new IntakeHatchArms(HatchArmState.IN));
-    addSequential(new ElevatorSetPositionMM(Constants.MIN_POSITION_INCHES));
-    addSequential(new IntakeBallSensor(Intake.INTAKE_LOAD_SPEED));
-    addSequential(new ElevatorSetPositionMM(Constants.AFTER_INTAKE_POSITION_INCHES));
-    addSequential(new ElevatorBallLevel());
+   addParallel(new IntakeHatchArms(HatchArmState.IN));
+   addSequential(new ElevatorSetPositionMM(Constants.MIN_POSITION_INCHES));
+   addSequential(new IntakeBallSensor(Intake.INTAKE_LOAD_SPEED));
+   addSequential(new ElevatorSetPositionMM(Constants.AFTER_INTAKE_POSITION_INCHES));
+   addSequential(new ElevatorBallLevel());
 
   }
 }

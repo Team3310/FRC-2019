@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.commands.DriveMotionCommand;
+import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.AirCompressor;
@@ -102,9 +103,9 @@ public class Robot extends TimedRobot {
 
 		drive.setLimeLED(0);
 
-		elevator.setFrontLegState(FrontLegShiftState.IN);
-		elevator.setBackLegState(BackLegShiftState.IN);
-		elevator.setElevatorClimbState(ElevatorClimbShiftState.OUT);
+		elevator.setFrontLegState(FrontLegShiftState.LOCKED);
+		elevator.setBackLegState(BackLegShiftState.LOCKED);
+		elevator.setElevatorClimbState(ElevatorClimbShiftState.ENGAGED);
 
 	}
 
@@ -162,11 +163,9 @@ public class Robot extends TimedRobot {
 		drive.endGyroCalibration();
 		zeroAllSensors();
 
-		// if (operationMode != OperationMode.COMPETITION) {
-		// Scheduler.getInstance().add(new ElevatorAutoZero(false));
-		// } else {
-		// elevator.setPositionPID(elevator.getPositionInches());
-		// }
+//		if (operationMode != OperationMode.COMPETITION) {
+			Scheduler.getInstance().add(new ElevatorAutoZero(true));
+//		} 
 	}
 
 	// Called constantly through teleOp

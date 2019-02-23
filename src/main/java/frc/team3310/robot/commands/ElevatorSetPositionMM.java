@@ -51,15 +51,15 @@ public class ElevatorSetPositionMM extends Command {
 
   // Called once after isFinished returns true
   protected void end() {
-    Robot.elevator.setPositionPID(Robot.elevator.getPositionInches());
-    // System.out.println("Elevator set MP end");
+//      Robot.elevator.setJoystickPID();
+      System.out.println("Elevator set MP end");
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   protected void interrupted() {
-    // System.out.println("ElevatorSetPositionMP interrupted");
-    Robot.elevator.setFinished(true);
-    Robot.elevator.setPositionPID(Robot.elevator.getPositionInches());
+     System.out.println("ElevatorSetPositionMP interrupted");
+     end();
+  //   Robot.elevator.setPositionPID(Robot.elevator.getPositionInches());
   }
 }

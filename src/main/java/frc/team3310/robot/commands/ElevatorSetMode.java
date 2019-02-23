@@ -18,11 +18,11 @@ public class ElevatorSetMode extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	if (controlMode == ElevatorControlMode.JOYSTICK_PID) {
-    		Robot.elevator.setPositionPID(Robot.elevator.getPositionInches());
+    	if (controlMode == ElevatorControlMode.JOYSTICK_POSITION_PID) {
+    		Robot.elevator.setJoystickPID();
     	}
     	else if (controlMode == ElevatorControlMode.JOYSTICK_MANUAL) {
-    		Robot.elevator.setSpeedJoystick(0);
+    		Robot.elevator.setJoystickOpenLoop();
     	}
     	else {
     		Robot.elevator.setSpeed(0.0);

@@ -19,7 +19,7 @@ public class IntakeHatch extends CommandGroup {
   public IntakeHatch() {
     addParallel(new IntakeHatchArms(HatchArmState.OUT));
     addParallel(new IntakeBallArms(BallArmState.IN));
-    addSequential(new ElevatorSetPositionMM(Constants.GRAB_HATCH_STATION));
+    addSequential(new ElevatorSetPositionMM(Constants.LOADING_STATION_HATCH));
     addSequential(new ElevatorHatchLevel());
 
   }

@@ -21,7 +21,7 @@ public class ElevatorAutoZero extends Command {
 		lastElevatorPosition = Constants.MAX_POSITION_INCHES;
 		Robot.elevator.setSpeed(Elevator.AUTO_ZERO_SPEED);
 		encoderCount = 0;
-		// System.out.println("Auto zero initialize");
+		System.out.println("Auto zero initialize");
 	}
 
 	@Override
@@ -31,7 +31,6 @@ public class ElevatorAutoZero extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		Robot.elevator.setSpeed(Elevator.AUTO_ZERO_SPEED);
 		double currentElevatorPosition = Robot.elevator.getPositionInches();
 		double elevatorPositionChange = lastElevatorPosition - currentElevatorPosition;
 		lastElevatorPosition = currentElevatorPosition;
@@ -52,9 +51,9 @@ public class ElevatorAutoZero extends Command {
 	@Override
 	protected void end() {
 		Robot.elevator.setSpeed(0);
-		Robot.elevator.resetZeroPosition(Constants.ZERO_POSITION_INCHES);
-		Robot.elevator.setPositionPID(Constants.MIN_POSITION_INCHES);
-		// System.out.println("Elevator Zeroed");
+		Robot.elevator.resetEncoders();
+		Robot.elevator.setMotionMagicPosition(Constants.HOME_POSITION_INCHES);
+		System.out.println("Elevator Zeroed");
 	}
 
 	@Override

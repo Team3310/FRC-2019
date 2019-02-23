@@ -65,13 +65,15 @@ public class TalonSRXFactory {
 
     public static TalonSRXEncoder createTalonEncoder(int id, double encoderTicksToWorld, FeedbackDevice feedbackDevice) {
     	TalonSRXEncoder talon = new TalonSRXEncoder(id, encoderTicksToWorld, feedbackDevice);
-//        initializeTalon(talon, kDefaultConfiguration);
+		talon.configFactoryDefault();
+///        initializeTalon(talon, kDefaultConfiguration);
         return talon;
     }
 
     public static TalonSRXEncoder createTalonEncoder(int id, double encoderTicksToWorld, boolean isRight, FeedbackDevice feedbackDevice) {
     	TalonSRXEncoder talon = new TalonSRXEncoder(id, encoderTicksToWorld, isRight, feedbackDevice);
-//        initializeTalon(talon, kDefaultConfiguration);
+		talon.configFactoryDefault();
+///        initializeTalon(talon, kDefaultConfiguration);
         return talon;
     }
 
@@ -83,6 +85,7 @@ public class TalonSRXFactory {
 
     public static TalonSRX createTalon(int id, Configuration config) {
         TalonSRX talon = new TalonSRX(id);
+		talon.configFactoryDefault();
 //        initializeTalon(talon, config);
         return talon;
     }

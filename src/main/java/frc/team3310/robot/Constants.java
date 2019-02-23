@@ -1,9 +1,5 @@
 package frc.team3310.robot;
 
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
-
 /**
  * A list of constants used by the rest of the robot code. This include physics
  * constants as well as constants determined through calibrations.
@@ -56,39 +52,49 @@ public class Constants {
     public static double kDriveMaxSetpoint = 17.0 * 12.0; // 17 fps
 
     // 2019 Motion Magic
-    // PID gains for elevator velocity loop (HIGH GEAR)
+    // PID gains for elevator velocity loop 
     // Units: setpoint, error, and output are in native units per 100ms.
     // Elevator encoder is CTRE mag encoder which is 4096 native units per
     // revolution.
-    public static final double kElevatorKp = 0.3;
-    public static final double kElevatorKi = 0.0; // 0.0;
-    public static final double kElevatorKd = 0.0; // 4.0;
-    public static final double kElevatorKf = 0.297; // 0.06;
-    public static final double kElevatorJogKp = 0.1;
-    public static final double kElevatorJogKd = 3.0;
-    public static final double kElevatorFeedforwardNoBall = 0.197;// 33000;
-    public static final double kElevatorFeedforwardWithBall = 0.297;// 33000;
+    public static final double kElevatorPositionKp = 0.075;
+    public static final double kElevatorPositionKi = 0.0; 
+    public static final double kElevatorPositionKd = 0.0; 
+    public static final double kElevatorPositionKf = 0.0; 
+
+    public static final double kElevatorMotionMagicKp = 0.4;
+    public static final double kElevatorMotionMagicKi = 0.002; // 0.0;
+    public static final double kElevatorMotionMagicKd = 0.08; // (4+4)/100;
+    public static final double kElevatorMotionMagicKf = 0.12; //0.197; // 0.06;
+
+    public static final double kElevatorFeedforwardNoBall = 0.0; //0.197;// 33000;
+    public static final double kElevatorFeedforwardWithBall = 0.0; //0.297;// 33000;
     public static final int kElevatorMaxIntegralAccumulator = 500000; // todo: tune me
-    public static final int kElevatorIZone = 0;
+    public static final int kElevatorIZone = 200;
     public static final int kElevatorDeadband = 0;
     public static final int kElevatorCruiseVelocity = 10475; // 12500; //Max Velocity 10475
     public static final int kElevatorAcceleration = 15000;// 33000; //Max Velocity / Time to reach top .82
     public static final double kElevatorEpsilon = 1.0;// 33000;
-    public static final double kElevatorRampRate = 0.1;
-
+    public static final int kSmoothing = 4;
+    public static final double kElevatorNominalForward = 0.05;
+    public static final double kElevatorNominalReverse = -0.05;
+    public static final double kElevatorPeakForward = 1.0;
+    public static final double kElevatorPeakReverse = -1.0;
+    
     // 2019 Elevator Levels
-    public static final double ZERO_POSITION_INCHES = -0.25;
-    public static final int MIN_POSITION_INCHES = 0;
-    public static final int MAX_POSITION_INCHES = 77;
-    public static final double AFTER_INTAKE_POSITION_INCHES = 4.0;
-    public static double HATCH_LEVEL_1 = 14.1;
-    public static final double HATCH_LEVEL_2 = 42.1;
-    public static final double HATCH_LEVEL_3 = 70.1;
-    public static final double BALL_LEVEL_1 = 19.5;
-    public static final double BALL_LEVEL_2 = 48.1;
-    public static final double BALL_LEVEL_3 = 75.1;
-    public static final int GRAB_HATCH_STATION = 13;
-    public static final int CLIMB = 15;
+	public static final double HOME_POSITION_INCHES = 7.5;
+    public static final double ZERO_POSITION_INCHES = 7.5;
+    public static final double MIN_POSITION_INCHES = HOME_POSITION_INCHES;
+    public static final double MAX_POSITION_INCHES = 83.5;
+    public static final double AFTER_INTAKE_POSITION_INCHES = 11.5;
+    public static final double HATCH_LEVEL_1 = 19.0;
+    public static final double HATCH_LEVEL_2 = 47.0;
+    public static final double HATCH_LEVEL_3 = 75.0;
+    public static final double BALL_LEVEL_1 = 29.5;
+    public static final double BALL_LEVEL_2 = 57.5;
+    public static final double BALL_LEVEL_3 = 83.5;
+    public static final double BALL_LEVEL_CARGO = 42.0;
+    public static final double LOADING_STATION_HATCH = 20.0;
+    public static final double CLIMB = 15;
 
     /* I/O */
     // (Note that if multiple talons are dedicated to a mechanism, any sensors

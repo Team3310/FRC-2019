@@ -15,6 +15,7 @@ import frc.team3310.robot.commands.EjectBallFast;
 import frc.team3310.robot.commands.EjectBallSlow;
 import frc.team3310.robot.commands.EjectBallStop;
 import frc.team3310.robot.commands.EjectHatch;
+import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.commands.ElevatorHatchLevel;
 import frc.team3310.robot.commands.ElevatorSetMode;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
@@ -53,7 +54,7 @@ public class OI {
 
   private OI() {
     // Driver controller
-    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
+    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
     m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Xbox());
 
     // Driver Controls
@@ -111,7 +112,7 @@ public class OI {
     Button setManualMode = m_operator.getOptionsButton();
     setManualMode.whenPressed(new ElevatorSetMode(ElevatorControlMode.JOYSTICK_MANUAL));
 
-    Button IntakeHatchManual = m_operator.getDPadLeft();
+    Button IntakeHatchManual = m_operator.getShareButton();
     IntakeHatchManual.whenPressed(new IntakeHatchArms(HatchArmState.OUT));
     IntakeHatchManual.whenReleased(new IntakeHatchArms(HatchArmState.IN));
     IntakeHatchManual.whenReleased(new ElevatorHatchLevel());
@@ -124,6 +125,12 @@ public class OI {
 
     Button ballLevel3 = m_operator.getDPadUp();
     ballLevel3.whenPressed(new ElevatorSetPositionMM(Constants.BALL_LEVEL_3));
+
+    Button ballLevelCargo = m_operator.getDPadLeft();
+    ballLevelCargo.whenPressed(new ElevatorSetPositionMM(Constants.BALL_LEVEL_CARGO));
+
+    Button autoZero = m_operator.getRightJoystickButton();
+    autoZero.whenPressed(new ElevatorAutoZero(true));
 
     // Smartdashboard
     Button turnCompressorOff = new InternalButton();

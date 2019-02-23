@@ -1,27 +1,20 @@
 package frc.team3310.robot.subsystems;
 
-import java.util.ArrayList;
-
-import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Timer;
 import frc.team3310.robot.Constants;
 import frc.team3310.robot.Robot;
-import frc.team3310.utility.Util;
 import frc.team3310.robot.RobotMap;
 import frc.team3310.robot.loops.Loop;
-import frc.team3310.utility.MPTalonPIDController;
-import frc.team3310.utility.PIDParams;
+import frc.team3310.utility.Util;
 import frc.team3310.utility.lib.drivers.TalonSRXEncoder;
 import frc.team3310.utility.lib.drivers.TalonSRXFactory;
 import frc.team3310.utility.lib.drivers.TalonSRXUtil;
@@ -30,109 +23,76 @@ public class Elevator extends Subsystem implements Loop {
 	private static Elevator instance;
 
 	public static enum ElevatorControlMode {
-		MOTION_PROFILE, MOTION_MAGIC, JOYSTICK_PID, JOYSTICK_MANUAL, MANUAL
-	};
-
-	public static enum ElevatorSpeedShiftState {
-		HI, LO
+		MOTION_MAGIC, JOYSTICK_POSITION_PID, JOYSTICK_MANUAL, MANUAL
 	};
 
 	public static enum FrontLegShiftState {
-		IN, OUT
+		LOCKED, ENGAGED
 	}
 
 	public static enum BackLegShiftState {
-		IN, OUT
+		LOCKED, ENGAGED
 	}
 
 	public static enum ElevatorClimbShiftState {
-		IN, OUT
+		LOCKED, ENGAGED
 	}
 
-	// One revolution of the 30T Drive 1.880" PD pulley = Pi * PD inches = 36/24
-	// revs due to pulleys * 34/24 revs due to gears * 36/12 revs due mag encoder
-	// gear on ball shifter * 4096 ticks
-	// public static final double ENCODER_TICKS_TO_INCHES = (36.0 / 12.0) * (36.0 /
-	// 24.0) * (34.0 / 24.0) * 4096.0
-	// / (1.88 * Math.PI);
-
-	public static final double ENCODER_TICKS_TO_INCHES_ELEVATOR = (50.0 / 50.0) * (34.0 / 34.0) * 4096.0
-			/ (1.2987013 * Math.PI);
-
-	public static final double ENCODER_TICKS_TO_INCHES_GGG = (50.0 / 50.0) * (50.0 / 18.0) * (40.0 / 24.0) * 4096.0
-			/ (1.128 * Math.PI);
+	public static final double INCHES_TO_ENCODER_TICKS_ELEVATOR = (50.0 / 50.0) * (34.0 / 34.0) * 4096.0 / (1.2987013 * Math.PI);
+	public static final double INCHES_TO_ENCODER_TICKS_GGG = (50.0 / 50.0) * (50.0 / 18.0) * (40.0 / 24.0) * 4096.0 / (1.128 * Math.PI);
 
 	// Defined speeds
 	public static final double TEST_SPEED_UP = 0.3;
-	public static final double TEST_SPEED_DOWN = -0.3;
-	public static final double AUTO_ZERO_SPEED = -0.3;
-	public static final double JOYSTICK_INCHES_PER_MS_ELEVATOR = 0.75;
-	public static final double JOYSTICK_INCHES_PER_MS_GGG = ENCODER_TICKS_TO_INCHES_ELEVATOR
-			/ ENCODER_TICKS_TO_INCHES_GGG * 0.8;
-
-	// Motion profile max velocities and accel times
-	public static final int MP_MAX_VELOCITY_INCHES_PER_SEC = 60;
-	public static final int MP_T1 = 400; // Fast = 300
-	public static final int MP_T2 = 150; // Fast = 150
+	public static final double TEST_SPEED_DOWN = -0.2;
+	public static final double AUTO_ZERO_SPEED = -0.2;
+	public static final double JOYSTICK_TICKS_PER_MS_ELEVATOR = 0.25 * INCHES_TO_ENCODER_TICKS_ELEVATOR;
+	public static final double JOYSTICK_TICKS_PER_MS_GGG = JOYSTICK_TICKS_PER_MS_ELEVATOR / INCHES_TO_ENCODER_TICKS_ELEVATOR * INCHES_TO_ENCODER_TICKS_GGG * 0.8;
 
 	// Motor controllers
-	private ArrayList<TalonSRXEncoder> motorControllers = new ArrayList<TalonSRXEncoder>();
-
 	private TalonSRXEncoder motor1;
 	private TalonSRX motor2;
 	private TalonSRX motor3;
 
-	// PID controller and params
-	private MPTalonPIDController mpController;
-
-	public static int PID_SLOT = 0;
-	public static int MP_SLOT = 1;
-
-	private PIDParams mpPIDParams = new PIDParams(0.2, 0.0, 0.0, 0.0, 0.005, 0.0);
-	private PIDParams pidPIDParamsHiGear = new PIDParams(0.075, 0.0, 0.0, 0.0, 0.0, 0.0);
-	public static final double KF_UP = 0.005;
-	public static final double KF_DOWN = 0.0;
-	public static final double PID_ERROR_INCHES = 1.0;
-	private long periodMs = (long) (Constants.kLooperDt * 1000.0);
-
 	// Pneumatics
-	// private Solenoid speedShift;
 	private Solenoid elevatorShift;
 	private Solenoid frontLegShift;
 	private Solenoid backLegShift;
 
+	//Sensors
+	// private DigitalInput maxRevElevatorSensor;
+	// private DigitalInput minRevElevatorSensor;
+
+	// Position PID
+	private static final int kPositionPIDSlot = 0;
+
 	// Motion Magic
-	private static final int kHighGearSlot = 0;
-	private Intake mIntake = Intake.getInstance();
-	private PeriodicIO mPeriodicIO = new PeriodicIO();
-	private int kHomePositionInches = 0;
+	private static final int kMotionMagicSlot = 1;
 
 	// Shifting Default
-	private FrontLegShiftState frontShiftState = FrontLegShiftState.IN; // OUT = Climb Mode
-	private BackLegShiftState backShiftState = BackLegShiftState.IN; // OUT = Climb Mode
-	private ElevatorClimbShiftState elevatorClimbShiftState = ElevatorClimbShiftState.OUT; // IN = Climb Mode
+	private FrontLegShiftState frontShiftState = FrontLegShiftState.LOCKED; // ENGAGED = Climb Mode
+	private BackLegShiftState backShiftState = BackLegShiftState.LOCKED; // ENGAGED = Climb Mode
+	private ElevatorClimbShiftState elevatorClimbShiftState = ElevatorClimbShiftState.ENGAGED; // LOCKED = Climb Mode
 
 	// Misc
-	public static final double AUTO_ZERO_MOTOR_CURRENT = 4.0;
-	private boolean isFinished;
-	private ElevatorControlMode elevatorControlMode = ElevatorControlMode.JOYSTICK_MANUAL;
-	private double targetPositionInchesPID = 0;
-	private boolean firstMpPoint;
-	private double joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_ELEVATOR;
-	private double currentEncoderTicksToInches = ENCODER_TICKS_TO_INCHES_ELEVATOR;
-	public boolean toLow;
+	public static final double AUTO_ZERO_MOTOR_CURRENT = 1.0;
+	private double joystickTicksPerMs = JOYSTICK_TICKS_PER_MS_ELEVATOR;
+	private double currentInchesToEncoderTicks = INCHES_TO_ENCODER_TICKS_ELEVATOR;
+	private double targetPositionTicks = 0;
 	public boolean elevatorCargoMode = false;
 
+	private ElevatorControlMode elevatorControlMode = ElevatorControlMode.MOTION_MAGIC;
+
+	// Constructor
 	private Elevator() {
 		try {
-			motor1 = TalonSRXFactory.createTalonEncoder(RobotMap.ELEVATOR_MOTOR_1_CAN_ID, currentEncoderTicksToInches,
+			motor1 = TalonSRXFactory.createTalonEncoder(RobotMap.ELEVATOR_MOTOR_1_CAN_ID, currentInchesToEncoderTicks,
 					false, FeedbackDevice.QuadEncoder);
 			motor2 = TalonSRXFactory.createPermanentSlaveTalon(RobotMap.ELEVATOR_MOTOR_2_CAN_ID,
 					RobotMap.ELEVATOR_MOTOR_1_CAN_ID);
 			motor3 = TalonSRXFactory.createPermanentSlaveTalon(RobotMap.ELEVATOR_MOTOR_3_CAN_ID,
 					RobotMap.ELEVATOR_MOTOR_1_CAN_ID);
 
-			configureTalonsForMotionMagic();
+			configureTalons();
 
 			motor1.setSensorPhase(false);
 			motor2.setSensorPhase(false);
@@ -141,12 +101,15 @@ public class Elevator extends Subsystem implements Loop {
 			motor2.setInverted(true);
 			motor3.setInverted(true);
 
-			motorControllers.add(motor1);
-
 			elevatorShift = new Solenoid(RobotMap.ELEVATOR_CLIMB_SHIFT_PCM_ID);
 			frontLegShift = new Solenoid(RobotMap.FRONT_LEG_SHIFT_PCM_ID);
 			backLegShift = new Solenoid(RobotMap.BACK_LEG_SHIFT_PCM_ID);
-		} catch (Exception e) {
+
+			
+			// maxRevElevatorSensor = new DigitalInput(RobotMap.ELEVATOR_MAX_REV_SENSOR_DIO_ID);
+			// minRevElevatorSensor = new DigitalInput(RobotMap.ELEVATOR_MIN_REV_SENSOR_DIO_ID);
+		} 
+		catch (Exception e) {
 			System.err.println("An error occurred in the Elevator constructor");
 		}
 	}
@@ -155,85 +118,139 @@ public class Elevator extends Subsystem implements Loop {
 	public void initDefaultCommand() {
 	}
 
-	/**
-	 * Configures talons for motion magic
-	 */
-
-	public void configureTalonsForMotionMagic() {
-		TalonSRXUtil.checkError(motor1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 100),
+	// Configures talons for position PID and motion magic
+	public void configureTalons() {
+		TalonSRXUtil.checkError(
+			motor1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 100),
 				"Could not detect elevator encoder: ");
 
 		TalonSRXUtil.checkError(
-				motor1.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-						LimitSwitchNormal.NormallyOpen, Constants.kLongCANTimeoutMs),
-				"Could not set forward (down) limit switch elevator: ");
-
-		TalonSRXUtil.checkError(
-				motor1.configForwardSoftLimitThreshold(Constants.MAX_POSITION_INCHES, Constants.kLongCANTimeoutMs),
+			motor1.configForwardSoftLimitThreshold((int)getEncoderTicks(Constants.MAX_POSITION_INCHES), Constants.kLongCANTimeoutMs),
 				"Could not set forward (down) soft limit switch elevator: ");
 
-		TalonSRXUtil.checkError(motor1.configForwardSoftLimitEnable(true, Constants.kLongCANTimeoutMs),
+		TalonSRXUtil.checkError(
+			motor1.configForwardSoftLimitEnable(false, Constants.kLongCANTimeoutMs),
 				"Could not enable forward (down) soft limit switch elevator: ");
 
-		TalonSRXUtil.checkError(motor1.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs),
-				"Could not set voltage compensation saturation elevator: ");
-
 		TalonSRXUtil.checkError(
-				motor1.configReverseSoftLimitThreshold(Constants.MIN_POSITION_INCHES, Constants.kLongCANTimeoutMs),
+			motor1.configReverseSoftLimitThreshold((int)getEncoderTicks(Constants.MIN_POSITION_INCHES), Constants.kLongCANTimeoutMs),
 				"Could not set reverse (up) soft limit switch elevator: ");
 
-		TalonSRXUtil.checkError(motor1.configReverseSoftLimitEnable(true, Constants.kLongCANTimeoutMs),
+		TalonSRXUtil.checkError(
+			motor1.configReverseSoftLimitEnable(false, Constants.kLongCANTimeoutMs),
 				"Could not enable reverse (up) soft limit switch elevator: ");
 
-		// configure magic motion
-		TalonSRXUtil.checkError(motor1.config_kP(kHighGearSlot, Constants.kElevatorKp, Constants.kLongCANTimeoutMs),
-				"Could not set elevator kp: ");
+		TalonSRXUtil.checkError(
+			motor1.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs),
+				"Could not set voltage compensation saturation elevator: ");
 
-		TalonSRXUtil.checkError(motor1.config_kI(kHighGearSlot, Constants.kElevatorKi, Constants.kLongCANTimeoutMs),
-				"Could not set elevator ki: ");
+		// configure position PID
+		TalonSRXUtil.checkError(
+			motor1.config_kP(kPositionPIDSlot, Constants.kElevatorPositionKp, Constants.kLongCANTimeoutMs),
+				"Could not set elevator position kp: ");
 
-		TalonSRXUtil.checkError(motor1.config_kD(kHighGearSlot, Constants.kElevatorKd + Constants.kElevatorKd / 100.0,
-				Constants.kLongCANTimeoutMs), "Could not set elevator kd: ");
+		TalonSRXUtil.checkError(
+			motor1.config_kI(kPositionPIDSlot, Constants.kElevatorPositionKi, Constants.kLongCANTimeoutMs),
+				"Could not set elevator position ki: ");
 
-		TalonSRXUtil.checkError(motor1.config_kF(kHighGearSlot, Constants.kElevatorKf, Constants.kLongCANTimeoutMs),
-				"Could not set elevator kf: ");
+		TalonSRXUtil.checkError(
+			motor1.config_kD(kPositionPIDSlot, Constants.kElevatorPositionKd, Constants.kLongCANTimeoutMs),
+				"Could not set elevator position kd: ");
 
-		TalonSRXUtil.checkError(motor1.configMaxIntegralAccumulator(kHighGearSlot,
+		TalonSRXUtil.checkError(
+			motor1.config_kF(kPositionPIDSlot, Constants.kElevatorPositionKf, Constants.kLongCANTimeoutMs),
+				"Could not set elevator position kf: ");
+
+		TalonSRXUtil.checkError(
+			motor1.config_IntegralZone(kPositionPIDSlot, Constants.kElevatorIZone, Constants.kLongCANTimeoutMs),
+				"Could not set elevator position i zone: ");
+
+		TalonSRXUtil.checkError(
+			motor1.configMaxIntegralAccumulator(kPositionPIDSlot,
 				Constants.kElevatorMaxIntegralAccumulator, Constants.kLongCANTimeoutMs),
-				"Could not set elevator max integral: ");
+				"Could not set elevator position max integral: ");
 
 		TalonSRXUtil.checkError(
-				motor1.config_IntegralZone(kHighGearSlot, Constants.kElevatorIZone, Constants.kLongCANTimeoutMs),
-				"Could not set elevator i zone: ");
+			motor1.configAllowableClosedloopError(kPositionPIDSlot, Constants.kElevatorDeadband,
+				Constants.kLongCANTimeoutMs), "Could not set elevator position deadband: ");
 
-		TalonSRXUtil.checkError(motor1.configAllowableClosedloopError(kHighGearSlot, Constants.kElevatorDeadband,
-				Constants.kLongCANTimeoutMs), "Could not set elevator deadband: ");
+		// configure magic motion
+		TalonSRXUtil.checkError(
+			motor1.config_kP(kMotionMagicSlot, Constants.kElevatorMotionMagicKp, Constants.kLongCANTimeoutMs),
+				"Could not set elevator motion magic kp: ");
 
 		TalonSRXUtil.checkError(
-				motor1.configMotionAcceleration(Constants.kElevatorAcceleration, Constants.kLongCANTimeoutMs),
-				"Could not set elevator acceleration: ");
+			motor1.config_kI(kMotionMagicSlot, Constants.kElevatorMotionMagicKi, Constants.kLongCANTimeoutMs),
+				"Could not set elevator motion magic ki: ");
 
 		TalonSRXUtil.checkError(
-				motor1.configMotionCruiseVelocity(Constants.kElevatorCruiseVelocity, Constants.kLongCANTimeoutMs),
-				"Could not set elevator cruise velocity: ");
+			motor1.config_kD(kMotionMagicSlot, Constants.kElevatorMotionMagicKd, Constants.kLongCANTimeoutMs),
+				"Could not set elevator motion magic kd: ");
 
-		motor1.configSetParameter(ParamEnum.eClearPositionOnLimitF, 0, 0, 0, 0);
-		motor1.configSetParameter(ParamEnum.eClearPositionOnLimitR, 0, 0, 0, 0);
+		TalonSRXUtil.checkError(
+			motor1.config_kF(kMotionMagicSlot, Constants.kElevatorMotionMagicKf, Constants.kLongCANTimeoutMs),
+				"Could not set elevator motion magic kf: ");
 
-		motor1.selectProfileSlot(0, 0);
+		TalonSRXUtil.checkError(
+			motor1.config_IntegralZone(kMotionMagicSlot, Constants.kElevatorIZone, Constants.kLongCANTimeoutMs),
+				"Could not set elevator motion magic i zone: ");
 
-		motor1.overrideLimitSwitchesEnable(true);
-		motor1.overrideSoftLimitsEnable(false);
+		TalonSRXUtil.checkError(
+			motor1.configMaxIntegralAccumulator(kMotionMagicSlot,
+				Constants.kElevatorMaxIntegralAccumulator, Constants.kLongCANTimeoutMs),
+				"Could not set elevator motion magic max integral: ");
+
+		TalonSRXUtil.checkError(
+			motor1.configAllowableClosedloopError(kMotionMagicSlot, Constants.kElevatorDeadband,
+				Constants.kLongCANTimeoutMs), "Could not set elevator motion magic deadband: ");
+
+		TalonSRXUtil.checkError(
+			motor1.configMotionAcceleration(Constants.kElevatorAcceleration, Constants.kLongCANTimeoutMs), 
+				"Could not set elevator motion magic acceleration: ");
+
+		TalonSRXUtil.checkError(
+			motor1.configMotionSCurveStrength(Constants.kSmoothing, Constants.kLongCANTimeoutMs),
+				"Could not set elevator motion magic smoothing: ");
+
+		TalonSRXUtil.checkError(
+			motor1.configMotionCruiseVelocity(Constants.kElevatorCruiseVelocity, Constants.kLongCANTimeoutMs),
+				"Could not set elevator motion magic cruise velocity: ");
+
+		TalonSRXUtil.checkError(
+			motor1.configNominalOutputForward(Constants.kElevatorNominalForward, Constants.kLongCANTimeoutMs),
+				"Could not set nominal output forward: ");
+
+		TalonSRXUtil.checkError(
+			motor1.configNominalOutputReverse(Constants.kElevatorNominalReverse, Constants.kLongCANTimeoutMs),
+				"Could not set nominal output reverse: ");
+
+		TalonSRXUtil.checkError(
+			motor1.configPeakOutputForward(Constants.kElevatorPeakForward, Constants.kLongCANTimeoutMs),
+				"Could not set peak output forward: ");
+
+		TalonSRXUtil.checkError(
+			motor1.configPeakOutputReverse(Constants.kElevatorPeakReverse, Constants.kLongCANTimeoutMs),
+				"Could not set peak output reverse: ");
+		
+		TalonSRXUtil.checkError(
+			motor1.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kLongCANTimeoutMs),
+				"Could not set peak output reverse: ");
+
+		TalonSRXUtil.checkError(
+			motor1.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kLongCANTimeoutMs),
+				"Could not set peak output reverse: ");
+
+		TalonSRXUtil.checkError(
+			motor1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets , 10, Constants.kLongCANTimeoutMs),
+				"Could not set peak output reverse: ");
 
 		motor1.enableVoltageCompensation(true);
-
-		motor1.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, 20);
-		motor1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 20);
-
-	}
-
-	public void resetZeroPosition(double position) {
-		mpController.resetZeroPosition(position);
+		motor1.selectProfileSlot(kMotionMagicSlot, 0);
+		
+		// motor1.overrideLimitSwitchesEnable(true);
+		// motor1.overrideSoftLimitsEnable(true);
+		// motor1.configSetParameter(ParamEnum.eClearPositionOnLimitF, 0, 0, 0, 0);
+		// motor1.configSetParameter(ParamEnum.eClearPositionOnLimitR, 0, 0, 0, 0);
 	}
 
 	public synchronized void resetEncoders() {
@@ -249,36 +266,39 @@ public class Elevator extends Subsystem implements Loop {
 	}
 
 	public void setSpeed(double speed) {
-		motor1.set(ControlMode.PercentOutput, speed);
 		setElevatorControlMode(ElevatorControlMode.MANUAL);
+		motor1.set(ControlMode.PercentOutput, speed);
 	}
 
-	public void setSpeedJoystick(double speed) {
-		motor1.set(ControlMode.PercentOutput, speed);
+	public void setJoystickOpenLoop() {
 		setElevatorControlMode(ElevatorControlMode.JOYSTICK_MANUAL);
 	}
 
-	public void setPositionPID(double targetPositionInches) {
-		mpController.setPIDSlot(PID_SLOT);
-		updatePositionPID(targetPositionInches);
-		setElevatorControlMode(ElevatorControlMode.JOYSTICK_PID);
-		setFinished(false);
+	public void setJoystickPID() {
+		if (getElevatorControlMode() != ElevatorControlMode.JOYSTICK_POSITION_PID) {
+			setElevatorControlMode(ElevatorControlMode.JOYSTICK_POSITION_PID);
+			motor1.selectProfileSlot(kPositionPIDSlot, 0);
+		}
+		targetPositionTicks = motor1.getSelectedSensorPosition();
 	}
 
-	public void updatePositionPID(double targetPositionInches) {
-		targetPositionInchesPID = limitPosition(targetPositionInches);
-		double startPositionInches = motor1.getPositionWorld();
-		mpController.setTarget(targetPositionInchesPID,
-				targetPositionInchesPID > startPositionInches ? KF_UP : KF_DOWN);
+	public synchronized void setMotionMagicPosition(double positionInchesOffGround) {
+		if (getElevatorControlMode() != ElevatorControlMode.MOTION_MAGIC) {
+			setElevatorControlMode(ElevatorControlMode.MOTION_MAGIC);
+			motor1.selectProfileSlot(kMotionMagicSlot, 0);
+		}
+		targetPositionTicks = getEncoderTicks(positionInchesOffGround);
+		motor1.set(ControlMode.MotionMagic, targetPositionTicks, DemandType.ArbitraryFeedForward, Constants.kElevatorFeedforwardNoBall);
 	}
 
-	public void setPositionMP(double targetPositionInches) {
-		double startPositionInches = motor1.getPositionWorld();
-		mpController.setMPTarget(startPositionInches, limitPosition(targetPositionInches),
-				MP_MAX_VELOCITY_INCHES_PER_SEC, MP_T1, MP_T2);
-		setFinished(false);
-		firstMpPoint = true;
-		setElevatorControlMode(ElevatorControlMode.MOTION_PROFILE);
+	private int getEncoderTicks(double positionInchesOffGround) {
+		double positionInchesFromHome = positionInchesOffGround - Constants.HOME_POSITION_INCHES;
+		return (int)(positionInchesFromHome * currentInchesToEncoderTicks);
+	}
+
+	public synchronized boolean hasFinishedTrajectory() {
+		return elevatorControlMode == ElevatorControlMode.MOTION_MAGIC
+				&& Util.epsilonEquals(motor1.getActiveTrajectoryPosition(), targetPositionTicks, 5);
 	}
 
 	private double limitPosition(double targetPosition) {
@@ -293,48 +313,28 @@ public class Elevator extends Subsystem implements Loop {
 
 	@Override
 	public void onStart(double timestamp) {
-		mpController = new MPTalonPIDController(periodMs, motorControllers);
-		mpController.setPID(mpPIDParams, MP_SLOT);
-		mpController.setPID(pidPIDParamsHiGear, PID_SLOT);
-		mpController.setPIDSlot(PID_SLOT);
-		mpController.setPID(pidPIDParamsHiGear, PID_SLOT);
-		mpController.setPIDSlot(PID_SLOT);
 	}
 
 	@Override
 	public void onStop(double timestamp) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onLoop(double timestamp) {
 		synchronized (Elevator.this) {
-
-			readPeriodicInputs();
 			switch (getElevatorControlMode()) {
-			case JOYSTICK_PID:
+			case MOTION_MAGIC:
+				break;
+			case JOYSTICK_POSITION_PID:
 				controlPidWithJoystick();
 				break;
 			case JOYSTICK_MANUAL:
 				controlManualWithJoystick();
 				break;
-			case MOTION_MAGIC:
-				writePeriodicOutputs();
-				break;
-			case MOTION_PROFILE:
-				if (!isFinished()) {
-					if (firstMpPoint) {
-						mpController.setPIDSlot(MP_SLOT);
-						firstMpPoint = false;
-					}
-					setFinished(mpController.controlLoopUpdate());
-					if (isFinished()) {
-						mpController.setPIDSlot(PID_SLOT);
-					}
-				}
+			case MANUAL:
 				break;
 			default:
+				System.out.println("Unknown elevator control mode");
 				break;
 			}
 		}
@@ -342,112 +342,39 @@ public class Elevator extends Subsystem implements Loop {
 
 	private void controlPidWithJoystick() {
 		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-		double deltaPosition = joystickPosition * joystickInchesPerMs;
-		targetPositionInchesPID = targetPositionInchesPID + deltaPosition;
-		updatePositionPID(targetPositionInchesPID);
+		double deltaPosition = joystickPosition * joystickTicksPerMs;
+		targetPositionTicks = targetPositionTicks + deltaPosition;
+		motor1.set(ControlMode.Position, targetPositionTicks, DemandType.ArbitraryFeedForward, Constants.kElevatorFeedforwardNoBall);
 	}
 
 	private void controlManualWithJoystick() {
 		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
-		setSpeedJoystick(joyStickSpeed);
-	}
-
-	public synchronized void setMotionMagicPosition(double positionInchesOffGround) {
-		double positionInchesFromHome = positionInchesOffGround - kHomePositionInches;
-		double encoderPosition = positionInchesFromHome * currentEncoderTicksToInches;
-		setElevatorControlMode(ElevatorControlMode.MOTION_MAGIC);
-		setClosedLoopRawPosition(encoderPosition);
-	}
-
-	private synchronized void setClosedLoopRawPosition(double encoderPosition) {
-		if (elevatorControlMode != ElevatorControlMode.MOTION_MAGIC) {
-			elevatorControlMode = ElevatorControlMode.MOTION_MAGIC;
-			motor1.selectProfileSlot(kHighGearSlot, 0);
-		}
-		mPeriodicIO.demand = encoderPosition;
-	}
-
-	public synchronized boolean hasFinishedTrajectory() {
-		System.out.println("Error=" + motor1.getClosedLoopError());
-		return elevatorControlMode == ElevatorControlMode.MOTION_MAGIC
-				&& Util.epsilonEquals(mPeriodicIO.active_trajectory_position, mPeriodicIO.demand, 5);
+		motor1.set(ControlMode.PercentOutput, joyStickSpeed);
 	}
 
 	public synchronized double getRPM() {
 		// We are using a CTRE mag encoder which is 4096 native units per revolution.
-		return mPeriodicIO.velocity_ticks_per_100ms * 10.0 / 4096.0 * 60.0;
+		double velocity_ticks_per_100ms = motor1.getSelectedSensorVelocity(0);
+		return velocity_ticks_per_100ms * 10.0 / 4096.0 * 60.0;
 	}
 
 	public synchronized double getInchesOffGround() {
-		return (mPeriodicIO.position_ticks / currentEncoderTicksToInches) + kHomePositionInches;
+		double position_ticks = motor1.getSelectedSensorPosition(0);
+		return (position_ticks / currentInchesToEncoderTicks) + Constants.HOME_POSITION_INCHES;
 	}
 
-	public synchronized double getSetpoint() {
+	public synchronized double getSetpointInches() {
 		return elevatorControlMode == ElevatorControlMode.MOTION_MAGIC
-				? mPeriodicIO.demand / currentEncoderTicksToInches + kHomePositionInches
+				? targetPositionTicks / currentInchesToEncoderTicks + Constants.HOME_POSITION_INCHES
 				: Double.NaN;
-	}
-
-	public synchronized double getActiveTrajectoryAccelG() {
-		return mPeriodicIO.active_trajectory_accel_g;
-	}
-
-	public synchronized void readPeriodicInputs() {
-		final double t = Timer.getFPGATimestamp();
-		mPeriodicIO.position_ticks = motor1.getSelectedSensorPosition(0);
-		mPeriodicIO.velocity_ticks_per_100ms = motor1.getSelectedSensorVelocity(0);
-		if (motor1.getControlMode() == ControlMode.MotionMagic) {
-			mPeriodicIO.active_trajectory_position = motor1.getActiveTrajectoryPosition();
-			final int newVel = motor1.getActiveTrajectoryVelocity();
-			// TODO check sign of elevator accel
-			if (Util.epsilonEquals(newVel, Constants.kElevatorCruiseVelocity, 5)
-					|| Util.epsilonEquals(newVel, mPeriodicIO.active_trajectory_velocity, 5)) {
-				// Elevator is ~constant velocity.
-				mPeriodicIO.active_trajectory_accel_g = 0.0;
-			} else if (newVel > mPeriodicIO.active_trajectory_velocity) {
-				// Elevator is accelerating downwards.
-				mPeriodicIO.active_trajectory_accel_g = -Constants.kElevatorAcceleration * 10.0
-						/ (currentEncoderTicksToInches * 386.09);
-			} else {
-				// Elevator is accelerating upwards.
-				mPeriodicIO.active_trajectory_accel_g = Constants.kElevatorAcceleration * 10.0
-						/ (currentEncoderTicksToInches * 386.09);
-			}
-			mPeriodicIO.active_trajectory_velocity = newVel;
-		} else {
-			mPeriodicIO.active_trajectory_position = Integer.MIN_VALUE;
-			mPeriodicIO.active_trajectory_velocity = 0;
-			mPeriodicIO.active_trajectory_accel_g = 0.0;
-		}
-		mPeriodicIO.output_percent = motor1.getMotorOutputPercent();
-		mPeriodicIO.limit_switch = motor1.getSensorCollection().isFwdLimitSwitchClosed();
-		mPeriodicIO.t = t;
-
-		if (getInchesOffGround() > Constants.kElevatorEpsilon) {
-			mPeriodicIO.feedforward = mIntake.hasBall() ? Constants.kElevatorFeedforwardWithBall
-					: Constants.kElevatorFeedforwardNoBall;
-		} else {
-			mPeriodicIO.feedforward = 0.0;
-		}
-	}
-
-	public synchronized void writePeriodicOutputs() {
-		if (elevatorControlMode == ElevatorControlMode.MOTION_MAGIC) {
-			motor1.set(ControlMode.MotionMagic, mPeriodicIO.demand, DemandType.ArbitraryFeedForward,
-					mPeriodicIO.feedforward);
-		} else {
-			motor1.set(ControlMode.PercentOutput, mPeriodicIO.demand, DemandType.ArbitraryFeedForward,
-					mPeriodicIO.feedforward);
-			System.out.print("Not in MM");
-		}
 	}
 
 	public void setFrontLegState(FrontLegShiftState state) {
 		frontShiftState = state;
-		if (state == FrontLegShiftState.IN) {
+		if (state == FrontLegShiftState.LOCKED) {
 			frontLegShift.set(false);
 			System.out.println("FL IN NOT CLIMB");
-		} else if (state == FrontLegShiftState.OUT) {
+		} else if (state == FrontLegShiftState.ENGAGED) {
 			frontLegShift.set(true);
 			System.out.println("FL OUT CLIMB MODE");
 		}
@@ -455,10 +382,10 @@ public class Elevator extends Subsystem implements Loop {
 
 	public void setBackLegState(BackLegShiftState state) {
 		backShiftState = state;
-		if (state == BackLegShiftState.IN) {
+		if (state == BackLegShiftState.LOCKED) {
 			backLegShift.set(false);
 			System.out.println("BL IN NOT CLIMB");
-		} else if (state == BackLegShiftState.OUT) {
+		} else if (state == BackLegShiftState.ENGAGED) {
 			backLegShift.set(true);
 			System.out.println("BL OUT CLIMB MODE");
 		}
@@ -466,45 +393,45 @@ public class Elevator extends Subsystem implements Loop {
 
 	public void setElevatorClimbState(ElevatorClimbShiftState state) {
 		elevatorClimbShiftState = state;
-		if (state == ElevatorClimbShiftState.IN) {
+		if (state == ElevatorClimbShiftState.LOCKED) {
 			elevatorShift.set(false);
 			System.out.println("GG IN CLIMB");
-		} else if (state == ElevatorClimbShiftState.OUT) {
+		} else if (state == ElevatorClimbShiftState.ENGAGED) {
 			elevatorShift.set(true);
 			System.out.println("GG OUT NOT ClIMb");
 		}
 	}
 
 	public void setRobotClimbMode() {
-		joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_GGG;
-		currentEncoderTicksToInches = ENCODER_TICKS_TO_INCHES_GGG;
-		setFrontLegState(FrontLegShiftState.OUT);
-		setBackLegState(BackLegShiftState.OUT);
-		setElevatorClimbState(ElevatorClimbShiftState.IN);
+		joystickTicksPerMs = JOYSTICK_TICKS_PER_MS_GGG;
+		currentInchesToEncoderTicks = INCHES_TO_ENCODER_TICKS_GGG;
+		setFrontLegState(FrontLegShiftState.ENGAGED);
+		setBackLegState(BackLegShiftState.ENGAGED);
+		setElevatorClimbState(ElevatorClimbShiftState.LOCKED);
 	}
 
 	public void setRobotClimbFront() {
-		joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_GGG;
-		currentEncoderTicksToInches = ENCODER_TICKS_TO_INCHES_GGG;
-		setFrontLegState(FrontLegShiftState.OUT);
-		setBackLegState(BackLegShiftState.IN);
-		setElevatorClimbState(ElevatorClimbShiftState.IN);
+		joystickTicksPerMs = JOYSTICK_TICKS_PER_MS_GGG;
+		currentInchesToEncoderTicks = INCHES_TO_ENCODER_TICKS_GGG;
+		setFrontLegState(FrontLegShiftState.ENGAGED);
+		setBackLegState(BackLegShiftState.LOCKED);
+		setElevatorClimbState(ElevatorClimbShiftState.LOCKED);
 	}
 
 	public void setRobotClimbBack() {
-		joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_GGG;
-		currentEncoderTicksToInches = ENCODER_TICKS_TO_INCHES_GGG;
-		setFrontLegState(FrontLegShiftState.IN);
-		setBackLegState(BackLegShiftState.OUT);
-		setElevatorClimbState(ElevatorClimbShiftState.IN);
+		joystickTicksPerMs = JOYSTICK_TICKS_PER_MS_GGG;
+		currentInchesToEncoderTicks = INCHES_TO_ENCODER_TICKS_GGG;
+		setFrontLegState(FrontLegShiftState.LOCKED);
+		setBackLegState(BackLegShiftState.ENGAGED);
+		setElevatorClimbState(ElevatorClimbShiftState.LOCKED);
 	}
 
 	public void setRobotScoreMode() {
-		joystickInchesPerMs = JOYSTICK_INCHES_PER_MS_ELEVATOR;
-		currentEncoderTicksToInches = ENCODER_TICKS_TO_INCHES_ELEVATOR;
-		setFrontLegState(FrontLegShiftState.IN);
-		setBackLegState(BackLegShiftState.IN);
-		setElevatorClimbState(ElevatorClimbShiftState.OUT);
+		joystickTicksPerMs = JOYSTICK_TICKS_PER_MS_ELEVATOR;
+		currentInchesToEncoderTicks = INCHES_TO_ENCODER_TICKS_ELEVATOR;
+		setFrontLegState(FrontLegShiftState.LOCKED);
+		setBackLegState(BackLegShiftState.LOCKED);
+		setElevatorClimbState(ElevatorClimbShiftState.ENGAGED);
 	}
 
 	public FrontLegShiftState getFrontShiftState() {
@@ -527,17 +454,13 @@ public class Elevator extends Subsystem implements Loop {
 		return (motor1.getOutputCurrent() + motor2.getOutputCurrent() + motor3.getOutputCurrent()) / 3;
 	}
 
-	public synchronized boolean isFinished() {
-		return isFinished;
-	}
+	// public boolean getMaxElevatorSensor() {
+	// 	return maxRevElevatorSensor.get();
+	// }
 
-	public synchronized void setFinished(boolean isFinished) {
-		this.isFinished = isFinished;
-	}
-
-	public double getPeriodMs() {
-		return periodMs;
-	}
+	// public boolean getMinElevatorSensor() {
+	// 	return minRevElevatorSensor.get();
+	// }
 
 	public void updateStatus(Robot.OperationMode operationMode) {
 		if (operationMode == Robot.OperationMode.TEST) {
@@ -547,31 +470,21 @@ public class Elevator extends Subsystem implements Loop {
 				SmartDashboard.putNumber("Elevator Motor 2 Amps", motor2.getOutputCurrent());
 				SmartDashboard.putNumber("Elevator Motor 3 Amps", motor3.getOutputCurrent());
 				SmartDashboard.putNumber("Elevator Average Amps", getAverageMotorCurrent());
-				SmartDashboard.putNumber("Elevator Target PID Position", targetPositionInchesPID);
+				SmartDashboard.putNumber("Elevator Target Position Ticks", targetPositionTicks);
+				SmartDashboard.putNumber("Elevator Position Inches", getInchesOffGround());
+				SmartDashboard.putNumber("ActTrajVelocity", motor1.getActiveTrajectoryVelocity());
+				SmartDashboard.putNumber("ActTrajPosition", motor1.getActiveTrajectoryPosition());
+				SmartDashboard.putNumber("SensorVel", motor1.getSelectedSensorVelocity());
+				SmartDashboard.putNumber("SensorPos", motor1.getSelectedSensorPosition());
+				SmartDashboard.putNumber("MotorOutputPercent", motor1.getMotorOutputPercent());
+				SmartDashboard.putNumber("ClosedLoopError", motor1.getClosedLoopError());
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
-			SmartDashboard.putNumber("Elevator Sensor Velocity", motor1.getSelectedSensorVelocity());
-			SmartDashboard.putNumber("Elevator Position Inches Poofs", getInchesOffGround());
-			SmartDashboard.putNumber("Position Ticks Poofs", mPeriodicIO.position_ticks);
+			// SmartDashboard.putBoolean("Elevator Max Switch = ", getMaxElevatorSensor());
+			// SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
 
 		}
-	}
-
-	public static class PeriodicIO {
-		// INPUTS
-		public int position_ticks;
-		public int velocity_ticks_per_100ms;
-		public double active_trajectory_accel_g;
-		public int active_trajectory_velocity;
-		public int active_trajectory_position;
-		public double output_percent;
-		public boolean limit_switch;
-		public double feedforward;
-		public double t;
-
-		// OUTPUTS
-		public double demand;
 	}
 
 	public static Elevator getInstance() {
