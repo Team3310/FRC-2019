@@ -66,7 +66,7 @@ public class Constants {
     public static final double kElevatorMotionMagicKd = 0.08; // (4+4)/100;
     public static final double kElevatorMotionMagicKf = 0.12; //0.197; // 0.06;
 
-    public static final double kElevatorFeedforwardNoBall = 0.0; //0.197;// 33000;
+    public static final double kElevatorFeedforwardNoBall = 0.035; //0.197;// 33000;
     public static final double kElevatorFeedforwardWithBall = 0.0; //0.297;// 33000;
     public static final int kElevatorMaxIntegralAccumulator = 500000; // todo: tune me
     public static final int kElevatorIZone = 200;

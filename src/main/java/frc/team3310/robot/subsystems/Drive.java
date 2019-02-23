@@ -779,11 +779,11 @@ public class Drive extends Subsystem implements Loop {
 		}
 
 		double pitchAngle = updatePitchWindow();
-		if (Math.abs(pitchAngle) > PITCH_THRESHOLD) {
-			m_moveOutput = Math.signum(pitchAngle) * -1.0;
-			m_steerOutput = 0;
-			System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
-		}
+		// if (Math.abs(pitchAngle) > PITCH_THRESHOLD) {
+		// 	m_moveOutput = Math.signum(pitchAngle) * -1.0;
+		// 	m_steerOutput = 0;
+		// 	System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
+		// }
 
 		if (cameraTrackTapeButton) {
 			setPipeline(0);

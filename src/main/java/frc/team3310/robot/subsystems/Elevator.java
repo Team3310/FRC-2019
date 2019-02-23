@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,7 +44,7 @@ public class Elevator extends Subsystem implements Loop {
 	public static final double TEST_SPEED_UP = 0.3;
 	public static final double TEST_SPEED_DOWN = -0.2;
 	public static final double AUTO_ZERO_SPEED = -0.2;
-	public static final double JOYSTICK_TICKS_PER_MS_ELEVATOR = 0.25 * INCHES_TO_ENCODER_TICKS_ELEVATOR;
+	public static final double JOYSTICK_TICKS_PER_MS_ELEVATOR = 0.5 * INCHES_TO_ENCODER_TICKS_ELEVATOR;
 	public static final double JOYSTICK_TICKS_PER_MS_GGG = JOYSTICK_TICKS_PER_MS_ELEVATOR / INCHES_TO_ENCODER_TICKS_ELEVATOR * INCHES_TO_ENCODER_TICKS_GGG * 0.8;
 
 	// Motor controllers
@@ -78,6 +77,7 @@ public class Elevator extends Subsystem implements Loop {
 	private double joystickTicksPerMs = JOYSTICK_TICKS_PER_MS_ELEVATOR;
 	private double currentInchesToEncoderTicks = INCHES_TO_ENCODER_TICKS_ELEVATOR;
 	private double targetPositionTicks = 0;
+	private double joyStickSpeed;
 	public boolean elevatorCargoMode = false;
 
 	private ElevatorControlMode elevatorControlMode = ElevatorControlMode.MOTION_MAGIC;
@@ -324,6 +324,7 @@ public class Elevator extends Subsystem implements Loop {
 		synchronized (Elevator.this) {
 			switch (getElevatorControlMode()) {
 			case MOTION_MAGIC:
+				controlMotionMagicWithJoystick();
 				break;
 			case JOYSTICK_POSITION_PID:
 				controlPidWithJoystick();
@@ -340,6 +341,15 @@ public class Elevator extends Subsystem implements Loop {
 		}
 	}
 
+	private void controlMotionMagicWithJoystick() {
+		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
+		if (Math.abs(joystickPosition) > 0.05) {
+			double deltaPosition = joystickPosition * joystickTicksPerMs;
+			targetPositionTicks = targetPositionTicks + deltaPosition;
+			motor1.set(ControlMode.MotionMagic, targetPositionTicks, DemandType.ArbitraryFeedForward, Constants.kElevatorFeedforwardNoBall);
+		}
+	}
+
 	private void controlPidWithJoystick() {
 		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
 		double deltaPosition = joystickPosition * joystickTicksPerMs;
@@ -348,7 +358,7 @@ public class Elevator extends Subsystem implements Loop {
 	}
 
 	private void controlManualWithJoystick() {
-		double joyStickSpeed = -Robot.oi.getOperatorController().getLeftYAxis();
+		joyStickSpeed = 0.3 * -Robot.oi.getOperatorController().getLeftYAxis();
 		motor1.set(ControlMode.PercentOutput, joyStickSpeed);
 	}
 
@@ -478,6 +488,7 @@ public class Elevator extends Subsystem implements Loop {
 				SmartDashboard.putNumber("SensorPos", motor1.getSelectedSensorPosition());
 				SmartDashboard.putNumber("MotorOutputPercent", motor1.getMotorOutputPercent());
 				SmartDashboard.putNumber("ClosedLoopError", motor1.getClosedLoopError());
+				SmartDashboard.putNumber("Elevator Joystick", joyStickSpeed);
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {

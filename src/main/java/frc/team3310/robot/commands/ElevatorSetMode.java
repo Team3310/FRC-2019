@@ -20,9 +20,11 @@ public class ElevatorSetMode extends Command {
     protected void initialize() {
     	if (controlMode == ElevatorControlMode.JOYSTICK_POSITION_PID) {
     		Robot.elevator.setJoystickPID();
+            System.out.println("In PID joystick mode");
     	}
     	else if (controlMode == ElevatorControlMode.JOYSTICK_MANUAL) {
-    		Robot.elevator.setJoystickOpenLoop();
+            Robot.elevator.setJoystickOpenLoop();
+            System.out.println("In manual joystick mode");
     	}
     	else {
     		Robot.elevator.setSpeed(0.0);
