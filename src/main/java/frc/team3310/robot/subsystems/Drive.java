@@ -16,9 +16,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.Constants;
@@ -49,17 +47,16 @@ import frc.team3310.utility.lib.trajectory.timing.TimedState;
 public class Drive extends Subsystem implements Loop {
 	private static Drive instance;
 
-	public static enum DriveControlMode { // REMOVED ADAPTIVE_PURSUIT added PATH_FOLLOWING and OPEN_LOOP Poofs
+	public static enum DriveControlMode {
 		JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, MANUAL, VELOCITY_SETPOINT, CAMERA_TRACK, PATH_FOLLOWING,
 		OPEN_LOOP, CAMERA_TRACK_DRIVE
 	};
 
 	// One revolution of the wheel = Pi * D inches = 60/24 revs due to gears * 36/12
 	// revs due mag encoder gear on ball shifter * 4096 ticks
-	public static final double ENCODER_TICKS_TO_INCHES = (36.0 / 12.0) * (60.0 / 24.0) * 4096.0 / (5.8 * Math.PI);
-	public static final double ENCODER_REVS_TO_WHEEL_REVS = (36.0 / 12.0) * (60.0 / 24.0);
+	public static final double ENCODER_TICKS_TO_INCHES = 4096.0 / (Constants.kDriveWheelDiameterInches * Math.PI);
 	private static final double DRIVE_ENCODER_PPR = 4096.;
-	public static final double TRACK_WIDTH_INCHES = 24.56; // 26.937;
+	public static final double TRACK_WIDTH_INCHES = 23.92; // 24.56; // 26.937;
 
 	public static final double MP_STRAIGHT_T1 = 600;
 	public static final double MP_STRAIGHT_T2 = 300;
@@ -124,9 +121,8 @@ public class Drive extends Subsystem implements Loop {
 	private boolean isFinished;
 	private DriveControlMode driveControlMode = DriveControlMode.JOYSTICK;
 
-	private static final int kLowGearPositionControlSlot = 0;
-	private static final int kHighGearVelocityControlSlot = 1;
-	private static final int kLowGearVelocityControlSlot = 2;
+	private static final int kPositionControlSlot = 0;
+	private static final int kVelocityControlSlot = 1;
 
 	private MPTalonPIDController mpStraightController;
 	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.15); // 4 colsons
@@ -153,8 +149,13 @@ public class Drive extends Subsystem implements Loop {
 
 	private double mLastValidGyroAngle;
 	private double mCameraVelocity;
-	private double kCamera = 0.7; // .8
-	private double kCameraDrive = 0.04; // .05
+	private double kCamera = 0.4; // .7
+	private double kCameraDriveClose = 0.08; // .04
+	private double kCameraDriveMid = 0.04; // .04
+	private double kCameraDriveFar = 0.025; // .04
+	private double kCameraClose = 10;
+	private double kCameraMid = 15;
+	private double kCameraFar = 20;
 
 	// Hardware states //Poofs
 	private PeriodicIO mPeriodicIO;
@@ -173,15 +174,11 @@ public class Drive extends Subsystem implements Loop {
 	public double LEDMode;
 	public double camMode;
 
-	// Ultrasonic
-	public Ultrasonic ultrasonicLeft = new Ultrasonic(2, 9);
-	public Ultrasonic ultrasonicRight = new Ultrasonic(7, 8);
-
 	@Override
 	public void onStart(double timestamp) {
 		synchronized (Drive.this) {
 			mpStraightController = new MPTalonPIDController(periodMs, motorControllers);
-			mpStraightController.setPID(mpStraightPIDParams, kLowGearPositionControlSlot);
+			mpStraightController.setPID(mpStraightPIDParams, kPositionControlSlot);
 			mpTurnController = new MPSoftwarePIDController(periodMs, mpTurnPIDParams, motorControllers);
 			pidTurnController = new SoftwarePIDController(pidTurnPIDParams, motorControllers);
 		}
@@ -245,12 +242,12 @@ public class Drive extends Subsystem implements Loop {
 			rightDrive1.configPeakOutputReverse(-1.0f, TalonSRXEncoder.TIMEOUT_MS);
 
 			System.out.println("configureTalonsForSpeedControl");
-			leftDrive1.selectProfileSlot(kHighGearVelocityControlSlot, TalonSRXEncoder.PID_IDX);
+			leftDrive1.selectProfileSlot(kVelocityControlSlot, TalonSRXEncoder.PID_IDX);
 			leftDrive1.configNominalOutputForward(Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			leftDrive1.configNominalOutputReverse(-Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			leftDrive1.configClosedloopRamp(Constants.kDriveVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
 
-			rightDrive1.selectProfileSlot(kHighGearVelocityControlSlot, TalonSRXEncoder.PID_IDX);
+			rightDrive1.selectProfileSlot(kVelocityControlSlot, TalonSRXEncoder.PID_IDX);
 			rightDrive1.configNominalOutputForward(Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			rightDrive1.configNominalOutputReverse(-Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			rightDrive1.configClosedloopRamp(Constants.kDriveVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
@@ -340,11 +337,11 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	public double getLeftWheelRotations() {
-		return getLeftEncoderRotations() / ENCODER_REVS_TO_WHEEL_REVS;
+		return getLeftEncoderRotations();
 	}
 
 	public double getRightWheelRotations() {
-		return getRightEncoderRotations() / ENCODER_REVS_TO_WHEEL_REVS;
+		return getRightEncoderRotations();
 	}
 
 	public double getLeftWheelDistance() {
@@ -360,7 +357,7 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	public double getRightLinearVelocity() {
-		return rotationsToInches(getRightVelocityNativeUnits() * 10.0 / DRIVE_ENCODER_PPR / ENCODER_REVS_TO_WHEEL_REVS);
+		return rotationsToInches(getRightVelocityNativeUnits() * 10.0 / DRIVE_ENCODER_PPR);
 	}
 
 	public double getLeftVelocityNativeUnits() {
@@ -368,7 +365,7 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	public double getLeftLinearVelocity() {
-		return rotationsToInches(getLeftVelocityNativeUnits() * 10.0 / DRIVE_ENCODER_PPR / ENCODER_REVS_TO_WHEEL_REVS);
+		return rotationsToInches(getLeftVelocityNativeUnits() * 10.0 / DRIVE_ENCODER_PPR);
 	}
 
 	public double getLinearVelocity() {
@@ -459,8 +456,8 @@ public class Drive extends Subsystem implements Loop {
 			double desiredAbsoluteAngle) {
 		double yawAngle = useAbsolute ? BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), desiredAbsoluteAngle)
 				: getGyroAngleDeg();
-		mpStraightController.setPID(mpStraightPIDParams, kLowGearPositionControlSlot);
-		mpStraightController.setPIDSlot(kLowGearPositionControlSlot);
+		mpStraightController.setPID(mpStraightPIDParams, kPositionControlSlot);
+		mpStraightController.setPIDSlot(kPositionControlSlot);
 		mpStraightController.setMPStraightTarget(0, distanceInches, maxVelocity, MP_STRAIGHT_T1, MP_STRAIGHT_T2,
 				useGyroLock, yawAngle, true);
 		setControlMode(DriveControlMode.MP_STRAIGHT);
@@ -578,8 +575,8 @@ public class Drive extends Subsystem implements Loop {
 			// We entered a velocity control state.
 			setBrakeMode(true);
 			mAutoShift = false;
-			leftDrive1.selectProfileSlot(kLowGearVelocityControlSlot, 0);
-			rightDrive1.selectProfileSlot(kLowGearVelocityControlSlot, 0);
+			leftDrive1.selectProfileSlot(kVelocityControlSlot, 0);
+			rightDrive1.selectProfileSlot(kVelocityControlSlot, 0);
 			leftDrive1.configNeutralDeadband(0.0, 0);
 			rightDrive1.configNeutralDeadband(0.0, 0);
 
@@ -654,18 +651,18 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	public synchronized void reloadGains() {
-		leftDrive1.config_kP(kLowGearVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kI(kLowGearVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kD(kLowGearVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kF(kLowGearVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveVelocityIZone,
+		leftDrive1.config_kP(kVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kI(kVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kD(kVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kF(kVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_IntegralZone(kVelocityControlSlot, Constants.kDriveVelocityIZone,
 				Constants.kLongCANTimeoutMs);
 
-		rightDrive1.config_kP(kLowGearVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kI(kLowGearVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kD(kLowGearVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kF(kLowGearVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveVelocityIZone,
+		rightDrive1.config_kP(kVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kI(kVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kD(kVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kF(kVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_IntegralZone(kVelocityControlSlot, Constants.kDriveVelocityIZone,
 				Constants.kLongCANTimeoutMs);
 
 	}
@@ -684,20 +681,17 @@ public class Drive extends Subsystem implements Loop {
 
 		double deltaLeftTicks = ((mPeriodicIO.left_position_ticks - prevLeftTicks) / 4096.0) * Math.PI;
 		if (deltaLeftTicks > 0.0) {
-			mPeriodicIO.left_distance += deltaLeftTicks * Constants.kDriveWheelDiameterInches
-					/ ENCODER_REVS_TO_WHEEL_REVS;
+			mPeriodicIO.left_distance += deltaLeftTicks * Constants.kDriveWheelDiameterInches;
 		} else {
-			mPeriodicIO.left_distance += deltaLeftTicks * Constants.kDriveWheelDiameterInches
-					/ ENCODER_REVS_TO_WHEEL_REVS;
+			mPeriodicIO.left_distance += deltaLeftTicks * Constants.kDriveWheelDiameterInches;
 		}
 
 		double deltaRightTicks = ((mPeriodicIO.right_position_ticks - prevRightTicks) / 4096.0) * Math.PI;
 		if (deltaRightTicks > 0.0) {
-			mPeriodicIO.right_distance += deltaRightTicks * Constants.kDriveWheelDiameterInches
-					/ ENCODER_REVS_TO_WHEEL_REVS;
+			mPeriodicIO.right_distance += deltaRightTicks * Constants.kDriveWheelDiameterInches;
 		} else {
-			mPeriodicIO.right_distance += deltaRightTicks * Constants.kDriveWheelDiameterInches
-					/ ENCODER_REVS_TO_WHEEL_REVS;
+			mPeriodicIO.right_distance += deltaRightTicks * Constants.kDriveWheelDiameterInches;
+
 		}
 
 		if (mCSVWriter != null) {
@@ -729,7 +723,7 @@ public class Drive extends Subsystem implements Loop {
 	public synchronized void setControlMode(DriveControlMode controlMode) {
 		this.driveControlMode = controlMode;
 		if (controlMode == DriveControlMode.HOLD) {
-			mpStraightController.setPID(mpHoldPIDParams, kLowGearPositionControlSlot);
+			mpStraightController.setPID(mpHoldPIDParams, kPositionControlSlot);
 			leftDrive1.setPosition(0);
 			leftDrive1.set(ControlMode.Position, 0);
 			rightDrive1.setPosition(0);
@@ -764,7 +758,7 @@ public class Drive extends Subsystem implements Loop {
 		if (m_drive == null)
 			return;
 
-		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getButtonY().get();
+		boolean cameraTrackTapeButton = OI.getInstance().getDriverController().getRightTrigger().get();
 
 		m_moveInput = OI.getInstance().getDriverController().getLeftYAxis();
 		m_steerInput = -OI.getInstance().getDriverController().getRightXAxis();
@@ -780,9 +774,9 @@ public class Drive extends Subsystem implements Loop {
 
 		double pitchAngle = updatePitchWindow();
 		// if (Math.abs(pitchAngle) > PITCH_THRESHOLD) {
-		// 	m_moveOutput = Math.signum(pitchAngle) * -1.0;
-		// 	m_steerOutput = 0;
-		// 	System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
+		// m_moveOutput = Math.signum(pitchAngle) * -1.0;
+		// m_steerOutput = 0;
+		// System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
 		// }
 
 		if (cameraTrackTapeButton) {
@@ -792,10 +786,21 @@ public class Drive extends Subsystem implements Loop {
 			double cameraSteer = 0;
 			mLastValidGyroAngle = getGyroAngleDeg();
 			if (isLimeValid) {
+				double kCameraDrive = kCameraDriveClose;
+				if (limeX <= kCameraClose) {
+					kCameraDrive = kCameraDriveClose;
+					System.out.println(" Close Valid lime angle = " + limeX);
+				} else if (limeX < kCameraMid) {
+					kCameraDrive = kCameraDriveMid;
+					System.out.println("Mid Valid lime angle = " + limeX);
+				} else if (limeX < kCameraFar) {
+					kCameraDrive = kCameraDriveFar;
+					System.out.println("Far Valid lime angle = " + limeX);
+				}
 				cameraSteer = limeX * kCameraDrive;
-				System.out.println("Valid lime angle = " + limeX);
+				System.out.println("Valid lime angle = " + kCameraDrive);
 			} else {
-				System.out.println("In Valid lime angle = " + limeX);
+				// System.out.println("In Valid lime angle = " + limeX);
 				cameraSteer = -m_steerOutput;
 			}
 			m_steerOutput = -cameraSteer;
@@ -1084,14 +1089,7 @@ public class Drive extends Subsystem implements Loop {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Vison = ", onTarget());
-			SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
-			SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
-			SmartDashboard.putNumber("Drive Left 1 Amps", leftDrive1.getOutputCurrent());
-			SmartDashboard.putNumber("Drive Left 2 Amps", leftDrive2.getOutputCurrent());
-			SmartDashboard.putNumber("Drive Left 3 Amps", leftDrive3.getOutputCurrent());
-			SmartDashboard.putNumber("Drive Right 1 Amps", rightDrive1.getOutputCurrent());
-			SmartDashboard.putNumber("Drive Right 2 Amps", rightDrive2.getOutputCurrent());
-			SmartDashboard.putNumber("Drive Right 3 Amps", rightDrive3.getOutputCurrent());
+
 
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());

@@ -17,7 +17,7 @@ public class Constants {
     public static final double kTrackScrubFactor = 0.924; // Tune me!
 
     // Tuned dynamics
-    public static final double kRobotLinearInertia = 60.0; // kg TODO tune
+    public static final double kRobotLinearInertia = 48.0; // kg TODO tune
     public static final double kRobotAngularInertia = 10.0; // kg m^2 TODO tune
     public static final double kRobotAngularDrag = 12.0; // N*m / (rad/sec) TODO tune
     public static final double kDriveVIntercept = 1.055; // V
@@ -52,48 +52,48 @@ public class Constants {
     public static double kDriveMaxSetpoint = 17.0 * 12.0; // 17 fps
 
     // 2019 Motion Magic
-    // PID gains for elevator velocity loop 
+    // PID gains for elevator velocity loop
     // Units: setpoint, error, and output are in native units per 100ms.
     // Elevator encoder is CTRE mag encoder which is 4096 native units per
     // revolution.
-    public static final double kElevatorPositionKp = 0.075;
-    public static final double kElevatorPositionKi = 0.0; 
-    public static final double kElevatorPositionKd = 0.0; 
-    public static final double kElevatorPositionKf = 0.0; 
+    public static final double kElevatorPositionKp = 0.075; // 0.075;
+    public static final double kElevatorPositionKi = 0.00;
+    public static final double kElevatorPositionKd = 0.00;
+    public static final double kElevatorPositionKf = 0.00;
 
     public static final double kElevatorMotionMagicKp = 0.4;
     public static final double kElevatorMotionMagicKi = 0.002; // 0.0;
     public static final double kElevatorMotionMagicKd = 0.08; // (4+4)/100;
-    public static final double kElevatorMotionMagicKf = 0.12; //0.197; // 0.06;
+    public static final double kElevatorMotionMagicKf = 0.12; // 0.197; // 0.06;
 
-    public static final double kElevatorFeedforwardNoBall = 0.035; //0.197;// 33000;
-    public static final double kElevatorFeedforwardWithBall = 0.0; //0.297;// 33000;
+    public static final double kElevatorFeedforwardNoBall = 0.035; // 0.197;// 33000;
+    public static final double kElevatorFeedforwardWithBall = 0.0; // 0.297;// 33000;
     public static final int kElevatorMaxIntegralAccumulator = 500000; // todo: tune me
     public static final int kElevatorIZone = 200;
     public static final int kElevatorDeadband = 0;
     public static final int kElevatorCruiseVelocity = 10475; // 12500; //Max Velocity 10475
     public static final int kElevatorAcceleration = 15000;// 33000; //Max Velocity / Time to reach top .82
     public static final double kElevatorEpsilon = 1.0;// 33000;
-    public static final int kSmoothing = 4;
+    public static final int kElevatorScurveStrength = 4;
     public static final double kElevatorNominalForward = 0.05;
     public static final double kElevatorNominalReverse = -0.05;
     public static final double kElevatorPeakForward = 1.0;
     public static final double kElevatorPeakReverse = -1.0;
-    
+
     // 2019 Elevator Levels
-	public static final double HOME_POSITION_INCHES = 7.5;
+    public static final double HOME_POSITION_INCHES = 7.5;
     public static final double ZERO_POSITION_INCHES = 7.5;
     public static final double MIN_POSITION_INCHES = HOME_POSITION_INCHES;
     public static final double MAX_POSITION_INCHES = 83.5;
     public static final double AFTER_INTAKE_POSITION_INCHES = 11.5;
-    public static final double HATCH_LEVEL_1 = 19.0;
-    public static final double HATCH_LEVEL_2 = 47.0;
-    public static final double HATCH_LEVEL_3 = 75.0;
+    public static final double HATCH_LEVEL_1 = 21.0;
+    public static final double HATCH_LEVEL_2 = 49.0;
+    public static final double HATCH_LEVEL_3 = 77.0;
     public static final double BALL_LEVEL_1 = 29.5;
     public static final double BALL_LEVEL_2 = 57.5;
     public static final double BALL_LEVEL_3 = 83.5;
     public static final double BALL_LEVEL_CARGO = 42.0;
-    public static final double LOADING_STATION_HATCH = 20.0;
+    public static final double LOADING_STATION_HATCH = 19.5;
     public static final double CLIMB = 15;
 
     /* I/O */

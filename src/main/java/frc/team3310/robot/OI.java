@@ -54,7 +54,7 @@ public class OI {
 
   private OI() {
     // Driver controller
-    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
+    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
     m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Xbox());
 
     // Driver Controls
@@ -66,16 +66,16 @@ public class OI {
     driveFowardClimb.whenPressed(new DriveForwardClimb(.5));
     driveFowardClimb.whenReleased(new DriveForwardClimb(0));
 
-    Button climbFront = m_driver.getRightTrigger();
+    Button climbFront = m_driver.getDPadDown();
     climbFront.whenPressed(new SetRobotClimbFront());
 
-    Button climbBack = m_driver.getLeftTrigger();
+    Button climbBack = m_driver.getDPadUp();
     climbBack.whenPressed(new SetRobotClimbBack());
 
-    Button climbState = m_driver.getRightBumper();
+    Button climbState = m_driver.getDPadRight();
     climbState.whenPressed(new SetRobotClimbMode());
 
-    Button scoreState = m_driver.getLeftBumper();
+    Button scoreState = m_driver.getDPadLeft();
     scoreState.whenPressed(new SetRobotScoreMode());
 
     // Operator Controls
@@ -133,13 +133,13 @@ public class OI {
     autoZero.whenPressed(new ElevatorAutoZero(true));
 
     // Smartdashboard
-    Button turnCompressorOff = new InternalButton();
-    turnCompressorOff.whenPressed(new TurnCompressorOff());
-    SmartDashboard.putData("Compressor Off", turnCompressorOff);
+    // Button turnCompressorOff = new InternalButton();
+    // turnCompressorOff.whenPressed(new TurnCompressorOff());
+    // SmartDashboard.putData("Compressor Off", turnCompressorOff);
 
-    Button turnCompressorOn = new InternalButton();
-    turnCompressorOn.whenPressed(new TurnCompressorOff());
-    SmartDashboard.putData("Compressor On", turnCompressorOn);
+    // Button turnCompressorOn = new InternalButton();
+    // turnCompressorOn.whenPressed(new TurnCompressorOff());
+    // SmartDashboard.putData("Compressor On", turnCompressorOn);
 
     Button resetElevatorEncoders = new InternalButton();
     resetElevatorEncoders.whenPressed(new ResetElevatorEncoder());
