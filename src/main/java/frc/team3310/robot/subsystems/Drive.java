@@ -3,10 +3,13 @@ package frc.team3310.robot.subsystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
@@ -15,7 +18,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,8 +54,7 @@ public class Drive extends Subsystem implements Loop {
 		OPEN_LOOP, CAMERA_TRACK_DRIVE
 	};
 
-	// One revolution of the wheel = Pi * D inches = 60/24 revs due to gears * 36/12
-	// revs due mag encoder gear on ball shifter * 4096 ticks
+	// One revolution of the wheel = Pi * D inches = 4096 ticks
 	public static final double ENCODER_TICKS_TO_INCHES = 4096.0 / (Constants.kDriveWheelDiameterInches * Math.PI);
 	private static final double DRIVE_ENCODER_PPR = 4096.;
 	public static final double TRACK_WIDTH_INCHES = 23.92; // 24.56; // 26.937;
@@ -85,7 +86,6 @@ public class Drive extends Subsystem implements Loop {
 
 	private boolean isRed = true;
 	private boolean mIsBrakeMode;
-	private boolean mIsHighGear;
 
 	private long periodMs = (long) (Constants.kLooperDt * 1000.0);
 
@@ -122,7 +122,8 @@ public class Drive extends Subsystem implements Loop {
 	private DriveControlMode driveControlMode = DriveControlMode.JOYSTICK;
 
 	private static final int kPositionControlSlot = 0;
-	private static final int kPathFollowingControlSlot = 1;
+	private static final int kVelocityControlSlot = 1;
+	private int currentControlSlot = kPositionControlSlot;
 
 	private MPTalonPIDController mpStraightController;
 	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.15); // 4 colsons
@@ -139,7 +140,6 @@ public class Drive extends Subsystem implements Loop {
 	private PIDParams pidTurnPIDParams = new PIDParams(0.04, 0.001, 0.4, 0, 0, 0.0, 100); // i=0.0008
 
 	private PigeonIMU gyroPigeon;
-	private Solenoid speedShift;
 	private double[] yprPigeon = new double[3];
 	private boolean useGyroLock;
 	private double gyroLockAngleDeg;
@@ -159,7 +159,6 @@ public class Drive extends Subsystem implements Loop {
 
 	// Hardware states //Poofs
 	private PeriodicIO mPeriodicIO;
-	private boolean mAutoShift;
 	private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
 	private DriveMotionPlanner mMotionPlanner;
 	private Rotation2d mGyroOffset = Rotation2d.identity();
@@ -212,6 +211,9 @@ public class Drive extends Subsystem implements Loop {
 					updatePathFollower();
 					writePeriodicOutputs();
 					break;
+				case OPEN_LOOP:
+					writePeriodicOutputs();
+					break;
 				case CAMERA_TRACK:
 					updateCameraTrack();
 					return;
@@ -242,24 +244,34 @@ public class Drive extends Subsystem implements Loop {
 			rightDrive1.configPeakOutputReverse(-1.0f, TalonSRXEncoder.TIMEOUT_MS);
 
 			System.out.println("configureTalonsForSpeedControl");
-			leftDrive1.selectProfileSlot(kPathFollowingControlSlot, TalonSRXEncoder.PID_IDX);
+			leftDrive1.selectProfileSlot(kVelocityControlSlot, TalonSRXEncoder.PID_IDX);
 			leftDrive1.configNominalOutputForward(Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			leftDrive1.configNominalOutputReverse(-Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			leftDrive1.configClosedloopRamp(Constants.kDriveVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
 
-			rightDrive1.selectProfileSlot(kPathFollowingControlSlot, TalonSRXEncoder.PID_IDX);
+			rightDrive1.selectProfileSlot(kVelocityControlSlot, TalonSRXEncoder.PID_IDX);
 			rightDrive1.configNominalOutputForward(Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			rightDrive1.configNominalOutputReverse(-Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			rightDrive1.configClosedloopRamp(Constants.kDriveVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
 		}
 	}
 
+	private void configureMaster(TalonSRX talon) {
+        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
+        talon.enableVoltageCompensation(true);
+        talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
+        talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs);
+        talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
+        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
+        talon.configNeutralDeadband(0.04, 0);
+    }
+
 	private Drive() {
 		try {
 			mPeriodicIO = new PeriodicIO();
 
 			leftDrive1 = TalonSRXFactory.createTalonEncoder(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID,
-					ENCODER_TICKS_TO_INCHES, false, FeedbackDevice.QuadEncoder);
+					ENCODER_TICKS_TO_INCHES, false, FeedbackDevice.CTRE_MagEncoder_Relative);
 			leftDrive2 = TalonSRXFactory.createPermanentSlaveTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR2_CAN_ID,
 					RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID);
 			leftDrive3 = TalonSRXFactory.createPermanentSlaveTalon(RobotMap.DRIVETRAIN_LEFT_MOTOR3_CAN_ID,
@@ -288,18 +300,24 @@ public class Drive extends Subsystem implements Loop {
 			rightDrive2.setInverted(false);
 			rightDrive3.setInverted(false);
 
+			configureMaster(leftDrive1);
+			configureMaster(rightDrive1);
+
 			motorControllers.add(leftDrive1);
 			motorControllers.add(rightDrive1);
 
 			m_drive = new BHRDifferentialDrive(leftDrive1, rightDrive1);
 			m_drive.setSafetyEnabled(false);
+
 			mMotionPlanner = new DriveMotionPlanner();
 
 			gyroPigeon = new PigeonIMU(rightDrive2);
+			rightDrive2.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
 
 			reloadGains();
 			setBrakeMode(true);
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");
 		}
 	}
@@ -553,7 +571,6 @@ public class Drive extends Subsystem implements Loop {
 	public synchronized void setOpenLoop(DriveSignal signal) {
 		if (driveControlMode != DriveControlMode.OPEN_LOOP) {
 			setBrakeMode(false);
-			mAutoShift = true;
 
 			System.out.println("Switching to open loop");
 			System.out.println(signal);
@@ -571,17 +588,6 @@ public class Drive extends Subsystem implements Loop {
 	 * Configures talons for velocity control
 	 */
 	public synchronized void setVelocity(DriveSignal signal, DriveSignal feedforward) {
-		if (driveControlMode != DriveControlMode.PATH_FOLLOWING) {
-			// We entered a velocity control state.
-			setBrakeMode(true);
-			mAutoShift = false;
-			leftDrive1.selectProfileSlot(kPathFollowingControlSlot, 0);
-			rightDrive1.selectProfileSlot(kPathFollowingControlSlot, 0);
-			leftDrive1.configNeutralDeadband(0.0, 0);
-			rightDrive1.configNeutralDeadband(0.0, 0);
-
-			driveControlMode = DriveControlMode.PATH_FOLLOWING;
-		}
 		mPeriodicIO.left_demand = signal.getLeft();
 		mPeriodicIO.right_demand = signal.getRight();
 		mPeriodicIO.left_feedforward = feedforward.getLeft();
@@ -593,7 +599,15 @@ public class Drive extends Subsystem implements Loop {
 			mOverrideTrajectory = false;
 			mMotionPlanner.reset();
 			mMotionPlanner.setTrajectory(trajectory);
-			driveControlMode = DriveControlMode.PATH_FOLLOWING;
+
+			// We entered a velocity control state.
+			setBrakeMode(true);
+			leftDrive1.selectProfileSlot(kVelocityControlSlot, 0);
+			rightDrive1.selectProfileSlot(kVelocityControlSlot, 0);
+			leftDrive1.configNeutralDeadband(0.0, 0);
+			rightDrive1.configNeutralDeadband(0.0, 0);
+
+			setControlMode(DriveControlMode.PATH_FOLLOWING);
 		}
 	}
 
@@ -639,30 +653,19 @@ public class Drive extends Subsystem implements Loop {
 		}
 	}
 
-	private void handleAutoShift() { // Check
-		final double linear_velocity = Math.abs(getLinearVelocity());
-		final double angular_velocity = Math.abs(getAngularVelocity());
-		if (mIsHighGear && linear_velocity < Constants.kDriveDownShiftVelocity
-				&& angular_velocity < Constants.kDriveDownShiftAngularVelocity) {
-			setHighGear(false);
-		} else if (!mIsHighGear && linear_velocity > Constants.kDriveUpShiftVelocity) {
-			setHighGear(true);
-		}
-	}
-
 	public synchronized void reloadGains() {
-		leftDrive1.config_kP(kPathFollowingControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kI(kPathFollowingControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kD(kPathFollowingControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kF(kPathFollowingControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_IntegralZone(kPathFollowingControlSlot, Constants.kDriveVelocityIZone,
+		leftDrive1.config_kP(kVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kI(kVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kD(kVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kF(kVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_IntegralZone(kVelocityControlSlot, Constants.kDriveVelocityIZone,
 				Constants.kLongCANTimeoutMs);
 
-		rightDrive1.config_kP(kPathFollowingControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kI(kPathFollowingControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kD(kPathFollowingControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kF(kPathFollowingControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_IntegralZone(kPathFollowingControlSlot, Constants.kDriveVelocityIZone,
+		rightDrive1.config_kP(kVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kI(kVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kD(kVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kF(kVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_IntegralZone(kVelocityControlSlot, Constants.kDriveVelocityIZone,
 				Constants.kLongCANTimeoutMs);
 
 	}
@@ -806,19 +809,6 @@ public class Drive extends Subsystem implements Loop {
 			m_steerOutput = -cameraSteer;
 		}
 		m_drive.arcadeDrive(-m_moveOutput, -m_steerOutput);
-	}
-
-	// Delete
-	public boolean isHighGear() {
-		return mIsHighGear;
-	}
-
-	// Delete
-	public synchronized void setHighGear(boolean wantsHighGear) {
-		if (wantsHighGear != mIsHighGear) {
-			mIsHighGear = wantsHighGear;
-			speedShift.set(wantsHighGear);
-		}
 	}
 
 	public boolean isBrakeMode() {

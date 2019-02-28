@@ -41,7 +41,6 @@ public class CollectCurvatureData implements Action {
 
     @Override
     public void start() {
-        mDrive.setHighGear(mHighGear);
         mDrive.setOpenLoop(new DriveSignal(kStartPower, kStartPower));
         mStartTime = Timer.getFPGATimestamp();
     }

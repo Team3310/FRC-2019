@@ -40,7 +40,6 @@ public class CollectVelocityData implements Action {
 
     @Override
     public void start() {
-        mDrive.setHighGear(mHighGear);
         mStartTime = Timer.getFPGATimestamp();
     }
 

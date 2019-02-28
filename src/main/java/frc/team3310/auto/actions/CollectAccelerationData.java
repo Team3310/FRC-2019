@@ -40,7 +40,6 @@ public class CollectAccelerationData implements Action {
 
     @Override
     public void start() {
-        mDrive.setHighGear(mHighGear);
         mDrive.setOpenLoop(new DriveSignal((mReverse ? -1.0 : 1.0) * kPower, (mReverse ? -1.0 : 1.0) * (mTurn ? -1.0 : 1.0) * kPower));
         mStartTime = Timer.getFPGATimestamp();
         mPrevTime = mStartTime;

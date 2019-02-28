@@ -1,11 +1,14 @@
 package frc.team3310.utility.lib.drivers;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 public class TalonSRXEncoder extends WPI_TalonSRX {
-	public static int TIMEOUT_MS = 0;
+	public static int TIMEOUT_MS = 100;
 	public static int PID_IDX = 0;
 
 	private double encoderTicksToWorld;
@@ -17,7 +20,10 @@ public class TalonSRXEncoder extends WPI_TalonSRX {
 
 	public TalonSRXEncoder(int deviceNumber, double encoderTicksToWorld, boolean isRight, FeedbackDevice feedbackDevice) {
 		super(deviceNumber);
-		this.configSelectedFeedbackSensor(feedbackDevice, PID_IDX, TIMEOUT_MS);
+		final ErrorCode sensorPresent = this.configSelectedFeedbackSensor(feedbackDevice, PID_IDX, TIMEOUT_MS);
+        if (sensorPresent != ErrorCode.OK) {
+            DriverStation.reportError("Could not detect encoder for device ID = " + deviceNumber + " : " + sensorPresent, false);
+        }
 		this.encoderTicksToWorld = encoderTicksToWorld;
 		this.isRight = isRight;
 	}
