@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.team254.path</groupId>
-	<artifactId>CheesyPath</artifactId>
+	<groupId>frc.team3310.path</groupId>
+	<artifactId>HawkPath</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Cheesy Path</name>
+	<name>Hawk Path</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<java-version>1.8</java-version>
@@ -28,12 +28,18 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
-	</dependencies>
+    <dependency>
+        <groupId>gov.nist.math</groupId>
+        <artifactId>jama</artifactId>
+        <version>1.0.3</version>
+    </dependency>	
+</dependencies>
 	<build>
-		<finalName>CheesyPath</finalName>
+		<finalName>HawkPath</finalName>
+		<sourceDirectory>src/main/java/frc/team3310/</sourceDirectory>
 		<pluginManagement>
 			<plugins>
-				<plugin>
+		<plugin>
 					<groupId>org.apache.tomcat.maven</groupId>
 					<artifactId>tomcat7-maven-plugin</artifactId>
 					<version>2.2</version>
@@ -48,6 +54,21 @@
 					<configuration>
 						<source>${java-version}</source>
 						<target>${java-version}</target>
+          					<includes>
+							<include>**/path/**</include>
+							<include>**/utility/lib/spline/**</include>
+							<include>**/utility/lib/geometry/**</include>
+							<include>**/utility/lib/physics/**</include>
+							<include>**/utility/lib/trajectory/**</include>
+							<include>**/utility/CSVWritable.java</include>
+							<include>**/utility/Interpolable.java</include>
+							<include>**/utility/Util.java</include>
+							<include>**/utility/Units.java</include>
+							<include>**/utility/PolynomialRegression.java</include>
+							<include>**/robot/Constants.java</include>
+							<include>**/robot/planners/DriveMotionPlanner.java</include>
+							<include>**/robot/paths/TrajectoryGenerator.java</include>
+						</includes>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -56,7 +77,7 @@
 					<version>2.4</version>
 					<configuration>
 						<warSourceDirectory>src/main/webapp</warSourceDirectory>
-						<warName>cheesy-path</warName>
+						<warName>hawk-path</warName>
 						<failOnMissingWebXml>false</failOnMissingWebXml>
 					</configuration>
 				</plugin>

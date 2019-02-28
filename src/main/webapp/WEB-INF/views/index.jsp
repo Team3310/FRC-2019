@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cheesy Path</title>
+    <title>Hawk Path</title>
 
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
     <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
@@ -21,6 +21,9 @@
     <canvas id='field'></canvas>
 </div>
 <div class='buttonContainer'>
+    <select onchange='importTrajectory()' id="trajectory-list">
+        <option selected value="base">Select Trajectory</option>
+	</select>
     <button onclick='addPoint()'>Add Point</button>
     <button onclick='update()'>Update</button>
     <button onclick='draw(3)'>Animate</button>
@@ -39,15 +42,6 @@
     </thead>
     <tbody>
     <tr>
-        <td class='drag-handler'></td>
-        <td class='x'><input type='number' value='20'></td>
-        <td class='y'><input type='number' value='-95'></td>
-        <td class='heading'><input type='number' value='0'></td>
-        <td class='comments'><input type='search' placeholder='Comments'></td>
-        <td class='enabled'><input type='checkbox' checked></td>
-        <td class='delete'>
-            <button onclick='$(this).parent().parent().remove();update()'>&times;</button>
-        </td>
     </tr>
     </tbody>
 </table>

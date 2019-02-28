@@ -1,7 +1,9 @@
 package frc.team3310.path.controller;
 
+import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import frc.team3310.robot.paths.TrajectoryGenerator;
+import frc.team3310.robot.paths.TrajectoryGenerator.TrajectorySet;
 import frc.team3310.utility.lib.geometry.Pose2d;
 import frc.team3310.utility.lib.geometry.Pose2dWithCurvature;
 import frc.team3310.utility.lib.geometry.Rotation2d;
@@ -16,10 +20,13 @@ import frc.team3310.utility.lib.geometry.Translation2d;
 import frc.team3310.utility.lib.spline.QuinticHermiteSpline;
 import frc.team3310.utility.lib.spline.Spline;
 import frc.team3310.utility.lib.spline.SplineGenerator;
+import frc.team3310.utility.lib.trajectory.Trajectory;
+import frc.team3310.utility.lib.trajectory.timing.TimedState;
 
 @RestController
 @RequestMapping("api")
 public class APIController {
+
     @RequestMapping(value = "/calculate_splines", method = RequestMethod.POST)
     public @ResponseBody String calcSplines(@RequestBody String message) {
         message = message.substring(0, message.length() - 1);
@@ -41,6 +48,84 @@ public class APIController {
             points.add(new Pose2d(new Translation2d(x, y), Rotation2d.fromDegrees(heading)));
         }
 
+        return pointsToSpline(points);
+    }
+
+    @RequestMapping(value = "/get_trajectory", method = RequestMethod.POST)
+    public @ResponseBody String getTrajectory(@RequestBody String trajectoryName) {
+        trajectoryName = trajectoryName.substring(0, trajectoryName.length() - 1);
+
+        System.out.println("Loading Trajectory = " + trajectoryName);
+
+        try {
+            trajectoryName = URLDecoder.decode(trajectoryName, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        TrajectoryGenerator trajectories = TrajectoryGenerator.getInstance();
+        trajectories.generateTrajectories();
+
+        Trajectory<TimedState<Pose2dWithCurvature>> trajectory = null;
+        try {
+            boolean isLeft = false;
+            boolean isMirrored = false;
+            if (trajectoryName.endsWith("_Left")) {
+                trajectoryName = trajectoryName.substring(0, trajectoryName.length() - 5);
+                isLeft = true;
+                isMirrored = true;
+            }
+            else if (trajectoryName.endsWith("_Right")) {
+                trajectoryName = trajectoryName.substring(0, trajectoryName.length() - 6);
+                isLeft = false;
+                isMirrored = true;
+            }
+
+            Field field = TrajectorySet.class.getField(trajectoryName);
+
+            if (isMirrored) {
+                TrajectorySet.MirroredTrajectory mirroredTrajectory = (TrajectorySet.MirroredTrajectory)field.get(trajectories.getTrajectorySet());
+                trajectory = mirroredTrajectory.get(isLeft);
+            }
+            else {
+                trajectory = (Trajectory<TimedState<Pose2dWithCurvature>>)field.get(trajectories.getTrajectorySet());
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Unable to find trajectory = " + trajectoryName);
+        }
+        
+        ArrayList<Pose2dWithCurvature> positions = new ArrayList<>();
+        for (int i = 0; i < trajectory.length(); i++) {
+            positions.add(trajectory.getState(i).state());
+        }
+
+        return trajectoryToJson(positions);
+    }
+
+    @RequestMapping(value = "/get_trajectory_list", method = RequestMethod.POST)
+    public @ResponseBody String getTrajectoryList(@RequestBody String message) {
+        TrajectoryGenerator trajectories = TrajectoryGenerator.getInstance();
+        trajectories.generateTrajectories();
+
+        StringBuilder strBuilder = new StringBuilder();
+        strBuilder.append("{\"trajectories\":[");
+
+        Field[] allFields = TrajectorySet.class.getDeclaredFields();
+        for (Field field : allFields) {
+            if (field.getType().equals(TrajectorySet.MirroredTrajectory.class)) {
+                strBuilder.append("\"" + field.getName() + "_Left" + "\",");
+                strBuilder.append("\"" + field.getName() + "_Right" + "\",");
+            }
+            else if (field.getType().equals(Trajectory.class)) {
+                strBuilder.append("\"" + field.getName() + "\",");
+            }
+        }
+
+        return strBuilder.substring(0, strBuilder.length() - 1) + "]}";
+    }
+
+    private String pointsToSpline(ArrayList<Pose2d> points) {
         ArrayList<QuinticHermiteSpline> mQuinticHermiteSplines = new ArrayList<>();
         ArrayList<Spline> mSplines = new ArrayList<>();
         ArrayList<Pose2dWithCurvature> positions = new ArrayList<>();
@@ -60,6 +145,10 @@ public class APIController {
             positions.addAll(SplineGenerator.parameterizeSplines(mSplines));
         }
 
+        return trajectoryToJson(positions);
+    }
+
+    private String trajectoryToJson(ArrayList<Pose2dWithCurvature> positions) {
         String json = "{\"points\":[";
         for (Pose2dWithCurvature pose : positions) {
             json += poseToJSON(pose) + ",";

@@ -8,15 +8,15 @@ let wto;
 let change = "propertychange change click keyup input paste";
 let animating = false;
 
-const fieldWidth = 886; // inches
-const fieldHeight = 360; // inches
-const xOffset = 120;
-const yOffset = 180;
-const width = 1604; //pixels
-const height = 651; //pixels
+const fieldWidth = 650.25; // inches
+const fieldHeight = 322.5; // inches
+const xOffset = 0;
+const yOffset = 161.25;
+const width = 1468; //pixels
+const height = 718; //pixels
 
-const robotWidth = 28; // inches
-const robotHeight = 33; // inches
+const robotWidth = 32; // inches
+const robotHeight = 32; // inches
 
 const waypointRadius = 7;
 const splineWidth = 2;
@@ -375,6 +375,24 @@ function init() {
     imageFlipped = new Image();
     imageFlipped.src = '/resources/img/fieldFlipped.png';
     rebind();
+
+    $.post({
+        url: "/api/get_trajectory_list",
+        data: "list",
+        success: function (data) {
+            if (data === "no") {
+                return;
+            }
+
+            let vals = JSON.parse(data).trajectories;
+            var $dropdown = $("#trajectory-list");
+            $dropdown.empty();
+            $.each(vals, function(index, value) {
+                $dropdown.append("<option>" + value + "</option>");
+            });       
+        }
+    });
+
 }
 
 function clear() {
@@ -400,7 +418,7 @@ function rebind() {
 function addPoint() {
     let prev;
     if (waypoints.length > 0) prev = waypoints[waypoints.length - 1].translation;
-    else prev = new Translation2d(50, 50);
+    else prev = new Translation2d(-50, -50);
     $("tbody").append("<tr>" + "<td class='drag-handler'></td>"
         + "<td class='x'><input type='number' value='" + (prev.x + 50) + "'></td>"
         + "<td class='y'><input type='number' value='" + (prev.y + 50) + "'></td>"
@@ -408,6 +426,16 @@ function addPoint() {
         + "<td class='comments'><input type='search' placeholder='Comments'></td>"
         + "<td class='enabled'><input type='checkbox' checked></td>"
         + "<td class='delete'><button onclick='$(this).parent().parent().remove();update()'>&times;</button></td></tr>");
+    update();
+    rebind();
+}
+
+function clearPoints() {
+    var elmtTable = $("tbody")[0];
+
+    for (var i = elmtTable.rows.length - 1; i > -1; i--) {
+        elmtTable.deleteRow(i);
+    }
     update();
     rebind();
 }
@@ -477,6 +505,41 @@ function update() {
         }
     });
 }
+
+function importTrajectory() {
+
+    clearPoints();
+    draw(1);
+ 
+    var dropdown = $("#trajectory-list")[0];
+    let name = dropdown.value;
+
+    var title = $('#title')[0];
+    title.placeholder = name;
+
+    $.post({
+        url: "/api/get_trajectory",
+        data: name,
+        success: function (data) {
+            if (data === "no") {
+                return;
+            }
+
+            console.log(data);
+
+            let points = JSON.parse(data).points;
+
+            splinePoints = [];
+            for (let i in points) {
+                let point = points[i];
+                splinePoints.push(new Pose2d(new Translation2d(point.x, point.y), Rotation2d.fromRadians(point.rotation)));
+            }
+
+            draw(2);
+        }
+    });
+}
+
 
 let flipped = false;
 
