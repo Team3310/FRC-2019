@@ -3,7 +3,6 @@ package frc.team3310.robot.subsystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -123,7 +122,6 @@ public class Drive extends Subsystem implements Loop {
 
 	private static final int kPositionControlSlot = 0;
 	private static final int kVelocityControlSlot = 1;
-	private int currentControlSlot = kPositionControlSlot;
 
 	private MPTalonPIDController mpStraightController;
 	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.15); // 4 colsons
