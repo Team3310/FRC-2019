@@ -51,9 +51,9 @@
               "_title": "Autonomous"
             }
           },
-          "8,2": {
+          "0,3": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -62,17 +62,6 @@
               "_title": "Vison \u003d ",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "4,4": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Toggle Button",
-              "_source0": "network_table:///SmartDashboard/Reset Elevator Encoder/pressed",
-              "_title": "Reset Elevator Encoder/pressed"
             }
           },
           "0,1": {
@@ -147,6 +136,72 @@
               "_title": "Elevator Min Switch \u003d ",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "9,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Right Drive Ticks",
+              "_title": "Right Drive Ticks"
+            }
+          },
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Left Drive Ticks",
+              "_title": "Left Drive Ticks"
+            }
+          },
+          "4,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Switch",
+              "_source0": "network_table:///SmartDashboard/Reset Sensor/pressed",
+              "_title": "Reset Sensor/pressed"
+            }
+          },
+          "9,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Limelight_PipelineName",
+              "_title": "Limelight_PipelineName"
+            }
+          },
+          "8,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Limelight_Stream",
+              "_title": "Limelight_Stream"
+            }
+          },
+          "0,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Limelight_Interface",
+              "_title": "Limelight_Interface"
             }
           }
         }

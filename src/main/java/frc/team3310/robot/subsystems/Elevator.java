@@ -269,11 +269,11 @@ public class Elevator extends Subsystem implements Loop {
 	}
 
 	public boolean getMaxElevatorSensor() {
-		return maxRevElevatorSensor.get();
+		return !maxRevElevatorSensor.get();
 	}
 
 	public boolean getMinElevatorSensor() {
-		return minRevElevatorSensor.get();
+		return !minRevElevatorSensor.get();
 	}
 
 	public boolean getClimbFrontTop() {
@@ -396,11 +396,12 @@ public class Elevator extends Subsystem implements Loop {
 	}
 
 	// private void controlPidWithJoystick() {
-	// 	double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-	// 	double deltaPosition = joystickPosition * joystickTicksPerMs;
-	// 	targetPositionTicks = targetPositionTicks + deltaPosition;
-	// 	motor1.set(ControlMode.Position, targetPositionTicks, DemandType.ArbitraryFeedForward,
-	// 			Constants.kElevatorFeedforwardNoBall);
+	// double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
+	// double deltaPosition = joystickPosition * joystickTicksPerMs;
+	// targetPositionTicks = targetPositionTicks + deltaPosition;
+	// motor1.set(ControlMode.Position, targetPositionTicks,
+	// DemandType.ArbitraryFeedForward,
+	// Constants.kElevatorFeedforwardNoBall);
 	// }
 
 	private void controlManualWithJoystick() {
@@ -538,12 +539,13 @@ public class Elevator extends Subsystem implements Loop {
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Elevator Max Switch = ", getMaxElevatorSensor());
 			SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
-			SmartDashboard.putBoolean("Climb Front Top = ", getClimbFrontTop());
-			SmartDashboard.putBoolean("Climb Front Bot = ", getClimbFrontBot());
-			SmartDashboard.putBoolean("Climb Rear Top = ", getClimbFrontTop());
-			SmartDashboard.putBoolean("Climb Rear Bot = ", getClimbRearBot());
-			SmartDashboard.putBoolean("Platform Detect Front = ", getPlatformDetectFront());
-			SmartDashboard.putBoolean("Plaform Detect Bot = ", getPlatformDetectRear());
+			// SmartDashboard.putBoolean("Climb Front Top = ", getClimbFrontTop());
+			// SmartDashboard.putBoolean("Climb Front Bot = ", getClimbFrontBot());
+			// SmartDashboard.putBoolean("Climb Rear Top = ", getClimbFrontTop());
+			// SmartDashboard.putBoolean("Climb Rear Bot = ", getClimbRearBot());
+			// SmartDashboard.putBoolean("Platform Detect Front = ",
+			// getPlatformDetectFront());
+			// SmartDashboard.putBoolean("Plaform Detect Bot = ", getPlatformDetectRear());
 
 		}
 	}

@@ -18,8 +18,6 @@ import frc.team3310.utility.lib.drivers.TalonSRXFactory;
 public class Intake extends Subsystem {
 	private static Intake instance;
 
-	public static final double INTAKE_REAR_EJECT_FAST_SPEED = 1.0;
-	public static final double INTAKE_REAR_EJECT_MEDIUM_SPEED = 0.8; // 0.7 //0.8
 	public static final double INTAKE_LOAD_SPEED = -.99;
 	public static final double INTAKE_LOAD_SLOW_SPEED = -0.4;
 	public static final double INTAKE_EJECT_SPEED = 0.8;
@@ -76,7 +74,7 @@ public class Intake extends Subsystem {
 		} else if (state == BallArmState.IN && Robot.drive.isLimeValid && Robot.drive.limeArea < 9) {
 			System.out.println("To far to score");
 		}
-		
+
 		else if (state == BallArmState.OUT) {
 			ballArms.set(true);
 		}

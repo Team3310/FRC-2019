@@ -10,6 +10,7 @@ package frc.team3310.robot;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.robot.commands.CharacterizeStraight;
 import frc.team3310.robot.commands.DriveForwardClimb;
 import frc.team3310.robot.commands.EjectBallFast;
 import frc.team3310.robot.commands.EjectBallSlow;
@@ -25,12 +26,11 @@ import frc.team3310.robot.commands.IntakeBallHold;
 import frc.team3310.robot.commands.IntakeBallManual;
 import frc.team3310.robot.commands.IntakeHatch;
 import frc.team3310.robot.commands.IntakeHatchArms;
-import frc.team3310.robot.commands.ResetElevatorEncoder;
+import frc.team3310.robot.commands.ResetSensor;
 import frc.team3310.robot.commands.SetRobotClimbBack;
 import frc.team3310.robot.commands.SetRobotClimbFront;
 import frc.team3310.robot.commands.SetRobotClimbMode;
 import frc.team3310.robot.commands.SetRobotScoreMode;
-import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.controller.GameController;
 import frc.team3310.robot.controller.Playstation;
 import frc.team3310.robot.controller.Xbox;
@@ -51,7 +51,7 @@ public class OI {
     }
     return instance;
   }
-
+  
   private OI() {
     // Driver controller
     m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
@@ -78,6 +78,10 @@ public class OI {
     Button scoreState = m_driver.getDPadLeft();
     scoreState.whenPressed(new SetRobotScoreMode());
 
+    Button IntakeHatchManualD = m_driver.getLeftTrigger();
+    IntakeHatchManualD.whenReleased(new IntakeHatchArms(HatchArmState.IN));
+    IntakeHatchManualD.whenReleased(new ElevatorHatchLevel());
+
     // Operator Controls
     // Elevator
     Button intakeBallAndLift = m_operator.getButtonX();
@@ -95,7 +99,7 @@ public class OI {
     // Intake
     Button IntakeHatch = m_operator.getRightBumper();
     IntakeHatch.whenPressed(new IntakeHatch());
-    IntakeHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
+    // IntakeHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
 
     Button IntakeBallManual = m_operator.getRightTrigger();
     IntakeBallManual.whenPressed(new IntakeBallManual());
@@ -141,9 +145,13 @@ public class OI {
     // turnCompressorOn.whenPressed(new TurnCompressorOff());
     // SmartDashboard.putData("Compressor On", turnCompressorOn);
 
-    Button resetElevatorEncoders = new InternalButton();
-    resetElevatorEncoders.whenPressed(new ResetElevatorEncoder());
-    SmartDashboard.putData("Reset Elevator Encoder", resetElevatorEncoders);
+    Button resetSensors = new InternalButton();
+    resetSensors.whenPressed(new ResetSensor());
+    SmartDashboard.putData("Reset Sensor", resetSensors);
+
+    Button CharacterizeStraight = new InternalButton();
+    CharacterizeStraight.whenPressed(new CharacterizeStraight());
+    SmartDashboard.putData("Characterize Straight", CharacterizeStraight);
   }
 
   public GameController getDriverController() {

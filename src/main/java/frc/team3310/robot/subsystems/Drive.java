@@ -122,7 +122,7 @@ public class Drive extends Subsystem implements Loop {
 	private DriveControlMode driveControlMode = DriveControlMode.JOYSTICK;
 
 	private static final int kPositionControlSlot = 0;
-	private static final int kVelocityControlSlot = 1;
+	private static final int kPathFollowingControlSlot = 1;
 
 	private MPTalonPIDController mpStraightController;
 	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.15); // 4 colsons
@@ -152,7 +152,7 @@ public class Drive extends Subsystem implements Loop {
 	private double kCamera = 0.4; // .7
 	private double kCameraDriveClose = 0.08; // .04
 	private double kCameraDriveMid = 0.04; // .04
-	private double kCameraDriveFar = 0.025; // .04
+	private double kCameraDriveFar = 0.03; // .04
 	private double kCameraClose = 10;
 	private double kCameraMid = 15;
 	private double kCameraFar = 20;
@@ -242,12 +242,12 @@ public class Drive extends Subsystem implements Loop {
 			rightDrive1.configPeakOutputReverse(-1.0f, TalonSRXEncoder.TIMEOUT_MS);
 
 			System.out.println("configureTalonsForSpeedControl");
-			leftDrive1.selectProfileSlot(kVelocityControlSlot, TalonSRXEncoder.PID_IDX);
+			leftDrive1.selectProfileSlot(kPathFollowingControlSlot, TalonSRXEncoder.PID_IDX);
 			leftDrive1.configNominalOutputForward(Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			leftDrive1.configNominalOutputReverse(-Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			leftDrive1.configClosedloopRamp(Constants.kDriveVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
 
-			rightDrive1.selectProfileSlot(kVelocityControlSlot, TalonSRXEncoder.PID_IDX);
+			rightDrive1.selectProfileSlot(kPathFollowingControlSlot, TalonSRXEncoder.PID_IDX);
 			rightDrive1.configNominalOutputForward(Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			rightDrive1.configNominalOutputReverse(-Constants.kDriveNominalOutput, TalonSRXEncoder.TIMEOUT_MS);
 			rightDrive1.configClosedloopRamp(Constants.kDriveVelocityRampRate, TalonSRXEncoder.TIMEOUT_MS);
@@ -575,8 +575,8 @@ public class Drive extends Subsystem implements Loop {
 			// We entered a velocity control state.
 			setBrakeMode(true);
 			mAutoShift = false;
-			leftDrive1.selectProfileSlot(kVelocityControlSlot, 0);
-			rightDrive1.selectProfileSlot(kVelocityControlSlot, 0);
+			leftDrive1.selectProfileSlot(kPathFollowingControlSlot, 0);
+			rightDrive1.selectProfileSlot(kPathFollowingControlSlot, 0);
 			leftDrive1.configNeutralDeadband(0.0, 0);
 			rightDrive1.configNeutralDeadband(0.0, 0);
 
@@ -651,18 +651,18 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	public synchronized void reloadGains() {
-		leftDrive1.config_kP(kVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kI(kVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kD(kVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_kF(kVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_IntegralZone(kVelocityControlSlot, Constants.kDriveVelocityIZone,
+		leftDrive1.config_kP(kPathFollowingControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kI(kPathFollowingControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kD(kPathFollowingControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kF(kPathFollowingControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_IntegralZone(kPathFollowingControlSlot, Constants.kDriveVelocityIZone,
 				Constants.kLongCANTimeoutMs);
 
-		rightDrive1.config_kP(kVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kI(kVelocityControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kD(kVelocityControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kF(kVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_IntegralZone(kVelocityControlSlot, Constants.kDriveVelocityIZone,
+		rightDrive1.config_kP(kPathFollowingControlSlot, Constants.kDriveVelocityKp, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kI(kPathFollowingControlSlot, Constants.kDriveVelocityKi, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kD(kPathFollowingControlSlot, Constants.kDriveVelocityKd, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kF(kPathFollowingControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_IntegralZone(kPathFollowingControlSlot, Constants.kDriveVelocityIZone,
 				Constants.kLongCANTimeoutMs);
 
 	}
@@ -1089,7 +1089,6 @@ public class Drive extends Subsystem implements Loop {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Vison = ", onTarget());
-
 
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());

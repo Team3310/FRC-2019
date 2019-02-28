@@ -10,8 +10,8 @@ import frc.team3310.utility.ReflectingCSVWriter;
 import frc.team3310.utility.lib.physics.DriveCharacterization;
 
 public class CollectVelocityData extends Command {
-    private static final double kMaxPower = 0.25;
-    private static final double kRampRate = 0.02;
+    private static final double kMaxPower = 0.5;
+    private static final double kRampRate = 0.04;
     private static final Drive mDrive = Drive.getInstance();
 
     private final ReflectingCSVWriter<DriveCharacterization.VelocityDataPoint> mCSVWriter;
@@ -33,7 +33,8 @@ public class CollectVelocityData extends Command {
         mVelocityData = data;
         mReverse = reverse;
         mTurn = turn;
-        mCSVWriter = new ReflectingCSVWriter<>("/home/lvuser/VELOCITY_DATA.csv", DriveCharacterization.VelocityDataPoint.class);
+        mCSVWriter = new ReflectingCSVWriter<>("/home/lvuser/VELOCITY_DATA.csv",
+                DriveCharacterization.VelocityDataPoint.class);
     }
 
     @Override
@@ -48,10 +49,13 @@ public class CollectVelocityData extends Command {
             isFinished = true;
             return;
         }
-        mDrive.setOpenLoop(new DriveSignal((mReverse ? -1.0 : 1.0) * percentPower, (mReverse ? -1.0 : 1.0) * (mTurn ? -1.0 : 1.0) * percentPower));
+        System.out.println("Vel power = " + percentPower);
+        mDrive.setOpenLoop(new DriveSignal((mReverse ? -1.0 : 1.0) * percentPower,
+                (mReverse ? -1.0 : 1.0) * (mTurn ? -1.0 : 1.0) * percentPower));
         mVelocityData.add(new DriveCharacterization.VelocityDataPoint(
-                (Math.abs(mDrive.getLeftVelocityNativeUnits()) + Math.abs(mDrive.getRightVelocityNativeUnits())) / 4096.0 * Math.PI * 10, //convert velocity to radians per second
-                percentPower * 12.0 //convert to volts
+                (Math.abs(mDrive.getLeftVelocityNativeUnits()) + Math.abs(mDrive.getRightVelocityNativeUnits()))
+                        / 4096.0 * Math.PI * 10, // convert velocity to radians per second
+                percentPower * 12.0 // convert to volts
         ));
         mCSVWriter.add(mVelocityData.get(mVelocityData.size() - 1));
     }
@@ -69,6 +73,6 @@ public class CollectVelocityData extends Command {
 
     @Override
     protected void interrupted() {
-  
+
     }
 }

@@ -127,7 +127,7 @@ public class TrajectoryGenerator {
     public static final Pose2d kCenterStartPose = new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0));
     public static final Pose2d kSimpleSwitchStartPose = new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0));
     public static final Pose2d kRightSwitchPose = new Pose2d(new Translation2d(100.0, 0.0), Rotation2d.fromDegrees(0.0));
-    public static final Pose2d kLeftSwitchPose = new Pose2d(new Translation2d(100.0, -36.0), Rotation2d.fromDegrees(0.0));
+    public static final Pose2d kLeftSwitchPose = new Pose2d(new Translation2d(100.0, 0.0), Rotation2d.fromDegrees(0.0));
 
     // public static final Pose2d kCenterStartPose = new Pose2d(0.0, -4.0, Rotation2d.fromDegrees(180.0));
     // public static final Pose2d kSimpleSwitchStartPose = new Pose2d(0.0, -2.0, Rotation2d.fromDegrees(180.0));

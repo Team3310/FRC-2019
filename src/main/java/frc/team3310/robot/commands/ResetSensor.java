@@ -10,8 +10,8 @@ package frc.team3310.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.Robot;
 
-public class ResetElevatorEncoder extends Command {
-  public ResetElevatorEncoder() {
+public class ResetSensor extends Command {
+  public ResetSensor() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -20,6 +20,7 @@ public class ResetElevatorEncoder extends Command {
   @Override
   protected void initialize() {
     Robot.elevator.resetEncoders();
+    Robot.drive.zeroSensors();
   }
 
   // Called repeatedly when this Command is scheduled to run
