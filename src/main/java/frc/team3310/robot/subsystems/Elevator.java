@@ -277,7 +277,7 @@ public class Elevator extends Subsystem implements Loop {
 	}
 
 	public boolean getClimbFrontTop() {
-		return climbFrontTop.get();
+		return !climbFrontTop.get();
 	}
 
 	public boolean getClimbFrontBot() {
@@ -285,7 +285,7 @@ public class Elevator extends Subsystem implements Loop {
 	}
 
 	public boolean getClimbRearTop() {
-		return climbRearTop.get();
+		return !climbRearTop.get();
 	}
 
 	public boolean getClimbRearBot() {
@@ -371,7 +371,7 @@ public class Elevator extends Subsystem implements Loop {
 				controlMotionMagicWithJoystick();
 				break;
 			case JOYSTICK_POSITION_PID:
-				// controlPidWithJoystick();
+				controlPidWithJoystick();
 				break;
 			case JOYSTICK_MANUAL:
 				controlManualWithJoystick();
@@ -395,14 +395,13 @@ public class Elevator extends Subsystem implements Loop {
 		}
 	}
 
-	// private void controlPidWithJoystick() {
-	// double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-	// double deltaPosition = joystickPosition * joystickTicksPerMs;
-	// targetPositionTicks = targetPositionTicks + deltaPosition;
-	// motor1.set(ControlMode.Position, targetPositionTicks,
-	// DemandType.ArbitraryFeedForward,
-	// Constants.kElevatorFeedforwardNoBall);
-	// }
+	private void controlPidWithJoystick() {
+		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
+		double deltaPosition = joystickPosition * joystickTicksPerMs;
+		targetPositionTicks = targetPositionTicks + deltaPosition;
+		motor1.set(ControlMode.Position, targetPositionTicks, DemandType.ArbitraryFeedForward,
+				Constants.kElevatorFeedforwardNoBall);
+	}
 
 	private void controlManualWithJoystick() {
 		joyStickSpeed = 0.3 * -Robot.oi.getOperatorController().getLeftYAxis();
@@ -537,15 +536,16 @@ public class Elevator extends Subsystem implements Loop {
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
-			SmartDashboard.putBoolean("Elevator Max Switch = ", getMaxElevatorSensor());
-			SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
-			// SmartDashboard.putBoolean("Climb Front Top = ", getClimbFrontTop());
+			// SmartDashboard.putBoolean("Elevator Max Switch = ", getMaxElevatorSensor());
+			// SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
+			SmartDashboard.putBoolean("Climb Front Top = ", getClimbFrontTop());
 			// SmartDashboard.putBoolean("Climb Front Bot = ", getClimbFrontBot());
-			// SmartDashboard.putBoolean("Climb Rear Top = ", getClimbFrontTop());
+			SmartDashboard.putBoolean("Climb Rear Top = ", getClimbFrontTop());
 			// SmartDashboard.putBoolean("Climb Rear Bot = ", getClimbRearBot());
-			// SmartDashboard.putBoolean("Platform Detect Front = ",
-			// getPlatformDetectFront());
-			// SmartDashboard.putBoolean("Plaform Detect Bot = ", getPlatformDetectRear());
+			SmartDashboard.putBoolean("Platform Detect Front = ", getPlatformDetectFront());
+			SmartDashboard.putBoolean("Plaform Detect Rear = ", getPlatformDetectRear());
+			// SmartDashboard.putNumber("Elevator Position Inches",
+			// motor1.getPositionWorld());
 
 		}
 	}

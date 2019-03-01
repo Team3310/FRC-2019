@@ -17,6 +17,7 @@ import frc.team3310.robot.commands.EjectBallSlow;
 import frc.team3310.robot.commands.EjectBallStop;
 import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorAutoZero;
+import frc.team3310.robot.commands.ElevatorClimbEndGame;
 import frc.team3310.robot.commands.ElevatorHatchLevel;
 import frc.team3310.robot.commands.ElevatorSetMode;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
@@ -51,7 +52,7 @@ public class OI {
     }
     return instance;
   }
-  
+
   private OI() {
     // Driver controller
     m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
@@ -65,6 +66,9 @@ public class OI {
     Button driveFowardClimb = m_driver.getButtonB();
     driveFowardClimb.whenPressed(new DriveForwardClimb(.5));
     driveFowardClimb.whenReleased(new DriveForwardClimb(0));
+
+    Button climb = m_driver.getButtonY();
+    climb.whenPressed(new ElevatorClimbEndGame());
 
     Button climbFront = m_driver.getDPadDown();
     climbFront.whenPressed(new SetRobotClimbFront());
@@ -149,9 +153,9 @@ public class OI {
     resetSensors.whenPressed(new ResetSensor());
     SmartDashboard.putData("Reset Sensor", resetSensors);
 
-    Button CharacterizeStraight = new InternalButton();
-    CharacterizeStraight.whenPressed(new CharacterizeStraight());
-    SmartDashboard.putData("Characterize Straight", CharacterizeStraight);
+    // Button CharacterizeStraight = new InternalButton();
+    // CharacterizeStraight.whenPressed(new CharacterizeStraight());
+    // SmartDashboard.putData("Characterize Straight", CharacterizeStraight);
   }
 
   public GameController getDriverController() {

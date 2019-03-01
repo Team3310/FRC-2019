@@ -1077,7 +1077,10 @@ public class Drive extends Subsystem implements Loop {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Vison = ", onTarget());
-
+			SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
+			SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_ticks);
+			SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_ticks);
+			SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
 			}

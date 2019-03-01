@@ -51,7 +51,7 @@
               "_title": "Autonomous"
             }
           },
-          "0,3": {
+          "0,2": {
             "size": [
               2,
               1
@@ -64,7 +64,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "0,1": {
+          "1,1": {
             "size": [
               1,
               1
@@ -77,7 +77,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "0,2": {
+          "0,1": {
             "size": [
               1,
               1
@@ -90,31 +90,9 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "8,1": {
+          "8,2": {
             "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Left Drive Distance",
-              "_title": "Left Drive Distance"
-            }
-          },
-          "9,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Right Drive Distance",
-              "_title": "Right Drive Distance"
-            }
-          },
-          "1,2": {
-            "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -125,9 +103,9 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "1,1": {
+          "8,1": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -136,28 +114,6 @@
               "_title": "Elevator Min Switch \u003d ",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "9,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Right Drive Ticks",
-              "_title": "Right Drive Ticks"
-            }
-          },
-          "8,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Left Drive Ticks",
-              "_title": "Left Drive Ticks"
             }
           },
           "4,4": {
@@ -171,37 +127,56 @@
               "_title": "Reset Sensor/pressed"
             }
           },
-          "9,4": {
+          "2,4": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Limelight_PipelineName",
-              "_title": "Limelight_PipelineName"
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Climb Front Top \u003d ",
+              "_title": "Climb Front Top \u003d ",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           },
-          "8,4": {
+          "6,4": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Limelight_Stream",
-              "_title": "Limelight_Stream"
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Climb Rear Top \u003d ",
+              "_title": "Climb Rear Top \u003d ",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           },
           "0,4": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Limelight_Interface",
-              "_title": "Limelight_Interface"
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Platform Detect Front \u003d ",
+              "_title": "Platform Detect Front \u003d ",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "8,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Plaform Detect Bot \u003d ",
+              "_title": "Plaform Detect Bot \u003d ",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }
@@ -240,7 +215,13 @@
               "_source0": "network_table:///LiveWindow/Ungrouped",
               "_title": "Ungrouped",
               "Layout/Label position": "BOTTOM",
-              "_children": []
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/Talon SRX [3]/Value",
+                  "_title": "Talon SRX [3]/Value"
+                }
+              ]
             }
           },
           "4,0": {

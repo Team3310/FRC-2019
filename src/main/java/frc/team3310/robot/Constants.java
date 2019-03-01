@@ -44,9 +44,9 @@ public class Constants {
     public static final double kRobotLinearInertia = 48.0; // kg TODO tune
     public static final double kRobotAngularInertia = 10.0; // kg m^2 TODO tune
     public static final double kRobotAngularDrag = 12.0; // N*m / (rad/sec) TODO tune
-    public static final double kDriveVIntercept = 0.00001; //0.928112644250295; // V
+    public static final double kDriveVIntercept = 0.00001; // 0.928112644250295; // V
     public static final double kDriveKv = 0.000001;// 0.14242500692715937; // V per rad/s
-    public static final double kDriveKa = 0.000001; //0.03305866811140018; // V per rad/s^2
+    public static final double kDriveKa = 0.000001; // 0.03305866811140018; // V per rad/s^2
 
     // Geometry
     // 2019 Robot Values
@@ -61,7 +61,7 @@ public class Constants {
     public static final double kDriveDownShiftAngularVelocity = Math.PI / 2.0; // rad/sec
     public static final double kDriveUpShiftVelocity = 11.0 * 12.0; // inches per second
 
-    public static final double kPathKX = 0.0;//4.0; // units/s per unit of error
+    public static final double kPathKX = 0.0;// 4.0; // units/s per unit of error
     public static final double kPathLookaheadTime = 0.4; // seconds to look ahead along the path for steering
     public static final double kPathMinLookaheadDistance = 24.0; // inches
 
@@ -71,7 +71,7 @@ public class Constants {
     public static final double kDriveVelocityKf = 0.0;
     public static final int kDriveVelocityIZone = 0;
     public static final double kDriveVoltageRampRate = 0.0;
-    public static double kDriveVelocityRampRate = 0.0; //0.05; // 0.02
+    public static double kDriveVelocityRampRate = 0.0; // 0.05; // 0.02
     public static double kDriveNominalOutput = 0.0;// 0.5 / 12.0;
     public static double kDriveMaxSetpoint = 11.0 * 12.0; // 11 fps
 
@@ -104,7 +104,6 @@ public class Constants {
     public static final double kElevatorPeakForward = 1.0;
     public static final double kElevatorPeakReverse = -1.0;
 
-
     // 2019 Elevator Levels
     public static final double HOME_POSITION_INCHES = 7.5;
     public static final double ZERO_POSITION_INCHES = 7.5;
@@ -119,7 +118,7 @@ public class Constants {
     public static final double BALL_LEVEL_3 = 83.5;
     public static final double BALL_LEVEL_CARGO = 42.0;
     public static final double LOADING_STATION_HATCH = 19.5;
-    public static final double CLIMB = 15;
+    public static final double CLIMB = 95;
 
     /* I/O */
     // (Note that if multiple talons are dedicated to a mechanism, any sensors

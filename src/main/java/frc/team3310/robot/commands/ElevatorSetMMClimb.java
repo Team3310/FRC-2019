@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.subsystems.Elevator;
 
-public class ElevatorSetPositionMM extends Command {
+public class ElevatorSetMMClimb extends Command {
   private double targetPositionInches;
   private boolean isAtTarget;
   private static final double MIN_DELTA_TARGET = 0.3;
 
-  public ElevatorSetPositionMM(double targetPositionInches) {
+  public ElevatorSetMMClimb(double targetPositionInches) {
     this.targetPositionInches = targetPositionInches;
     requires(Robot.elevator);
   }
@@ -42,7 +42,8 @@ public class ElevatorSetPositionMM extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (Elevator.getInstance().hasFinishedTrajectory()) {
+    if (Elevator.getInstance().hasFinishedTrajectory() ||Robot.elevator.getClimbFrontTop() == true
+        || Elevator.getInstance().getClimbRearTop() == true) {
       System.out.println("Trajectory finished");
       return true;
     }
@@ -51,7 +52,6 @@ public class ElevatorSetPositionMM extends Command {
 
   // Called once after isFinished returns true
   protected void end() {
-    Robot.elevator.setJoystickPID();
     System.out.println("Elevator set MP end");
   }
 
