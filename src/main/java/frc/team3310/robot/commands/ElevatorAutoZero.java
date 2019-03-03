@@ -31,7 +31,7 @@ public class ElevatorAutoZero extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		double currentElevatorPosition = Robot.elevator.getPositionInches();
+		double currentElevatorPosition = Robot.elevator.getElevatorPositionInches();
 		double elevatorPositionChange = lastElevatorPosition - currentElevatorPosition;
 		lastElevatorPosition = currentElevatorPosition;
 		boolean test = encoderCount > 2 && Math.abs(elevatorPositionChange) < MIN_ELEVATOR_POSITION_CHANGE
@@ -52,7 +52,7 @@ public class ElevatorAutoZero extends Command {
 	protected void end() {
 		Robot.elevator.setSpeed(0);
 		Robot.elevator.resetEncoders();
-		Robot.elevator.setMotionMagicPosition(Constants.HOME_POSITION_INCHES);
+		Robot.elevator.setElevatorMotionMagicPosition(Constants.HOME_POSITION_INCHES);
 		System.out.println("Elevator Zeroed");
 	}
 

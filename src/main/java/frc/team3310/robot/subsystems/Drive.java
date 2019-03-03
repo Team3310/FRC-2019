@@ -35,10 +35,12 @@ import frc.team3310.utility.MPTalonPIDController;
 import frc.team3310.utility.PIDParams;
 import frc.team3310.utility.ReflectingCSVWriter;
 import frc.team3310.utility.SoftwarePIDController;
+import frc.team3310.utility.Util;
 import frc.team3310.utility.lib.control.RobotStatus;
 import frc.team3310.utility.lib.drivers.TalonSRXChecker;
 import frc.team3310.utility.lib.drivers.TalonSRXEncoder;
 import frc.team3310.utility.lib.drivers.TalonSRXFactory;
+import frc.team3310.utility.lib.drivers.TalonSRXUtil;
 import frc.team3310.utility.lib.geometry.Pose2d;
 import frc.team3310.utility.lib.geometry.Pose2dWithCurvature;
 import frc.team3310.utility.lib.geometry.Rotation2d;
@@ -55,6 +57,7 @@ public class Drive extends Subsystem implements Loop {
 
 	// One revolution of the wheel = Pi * D inches = 4096 ticks
 	public static final double ENCODER_TICKS_TO_INCHES = 4096.0 / (Constants.kDriveWheelDiameterInches * Math.PI);
+	public static final double INCHES_TO_ENCODER_TICKS_MIDDLE_DRIVE = 42.0 / 18.0 * 4096.0 / (2.38 * Math.PI);
 	private static final double DRIVE_ENCODER_PPR = 4096.;
 	public static final double TRACK_WIDTH_INCHES = 23.92; // 24.56; // 26.937;
 
@@ -80,6 +83,7 @@ public class Drive extends Subsystem implements Loop {
 	private TalonSRX rightDrive3;
 
 	private TalonSRX middleDrive;
+	private static final int kMiddleDriveMotionMagicSlot = 0;
 
 	private BHRDifferentialDrive m_drive;
 
@@ -130,7 +134,9 @@ public class Drive extends Subsystem implements Loop {
 	private PIDParams mpHoldPIDParams = new PIDParams(1, 0, 0, 0.0, 0.0, 0.0);
 
 	private MPSoftwarePIDController mpTurnController; // p i d a v g izone
-	private PIDParams mpTurnPIDParams = new PIDParams(0.07, 0.00002, 0.5, 0.00025, 0.008, 0.0, 100); // 4 colson wheels
+	private PIDParams mpTurnPIDParams = new PIDParams(0.035, 0.000, 0.0, 0.00025
+	, 0.00375, 0.0, 100); // 4 colson
+																										// wheels
 	// private PIDParams mpTurnPIDParams = new PIDParams(0.03, 0.00002, 0.4, 0.0004,
 	// 0.0030, 0.0, 100); // 4 omni
 
@@ -170,6 +176,8 @@ public class Drive extends Subsystem implements Loop {
 	public boolean isLimeValid;
 	public double LEDMode;
 	public double camMode;
+
+	public double targetMiddlePositionTicks;
 
 	@Override
 	public void onStart(double timestamp) {
@@ -255,14 +263,14 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	private void configureMaster(TalonSRX talon) {
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
-        talon.enableVoltageCompensation(true);
-        talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs);
-        talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
-        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
-        talon.configNeutralDeadband(0.04, 0);
-    }
+		talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
+		talon.enableVoltageCompensation(true);
+		talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
+		talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs);
+		talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
+		talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
+		talon.configNeutralDeadband(0.04, 0);
+	}
 
 	private Drive() {
 		try {
@@ -298,6 +306,10 @@ public class Drive extends Subsystem implements Loop {
 			rightDrive2.setInverted(false);
 			rightDrive3.setInverted(false);
 
+			middleDrive.setNeutralMode(NeutralMode.Brake);
+			middleDrive.setInverted(true);
+			middleDrive.setSensorPhase(true);
+
 			configureMaster(leftDrive1);
 			configureMaster(rightDrive1);
 
@@ -312,10 +324,74 @@ public class Drive extends Subsystem implements Loop {
 			gyroPigeon = new PigeonIMU(rightDrive2);
 			rightDrive2.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
 
+			middleDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
+					Constants.kLongCANTimeoutMs);
+
+			TalonSRXUtil.checkError(middleDrive.config_kP(kMiddleDriveMotionMagicSlot,
+					Constants.kMiddleDriveMotionMagicKp, Constants.kLongCANTimeoutMs),
+					"Could not set middle drive motion magic kp: ");
+
+			TalonSRXUtil.checkError(middleDrive.config_kI(kMiddleDriveMotionMagicSlot,
+					Constants.kMiddleDriveMotionMagicKi, Constants.kLongCANTimeoutMs),
+					"Could not set middle drive motion magic ki: ");
+
+			TalonSRXUtil.checkError(middleDrive.config_kD(kMiddleDriveMotionMagicSlot,
+					Constants.kMiddleDriveMotionMagicKd, Constants.kLongCANTimeoutMs),
+					"Could not set middle drive motion magic kd: ");
+
+			TalonSRXUtil.checkError(middleDrive.config_kF(kMiddleDriveMotionMagicSlot,
+					Constants.kMiddleDriveMotionMagicKf, Constants.kLongCANTimeoutMs),
+					"Could not set middle drive motion magic kf: ");
+
+			TalonSRXUtil.checkError(middleDrive.config_IntegralZone(kMiddleDriveMotionMagicSlot,
+					Constants.kMiddleDriveIZone, Constants.kLongCANTimeoutMs),
+					"Could not set middle drive motion magic i zone: ");
+
+			TalonSRXUtil.checkError(
+					middleDrive.configMaxIntegralAccumulator(kMiddleDriveMotionMagicSlot,
+							Constants.kMiddleDriveMaxIntegralAccumulator, Constants.kLongCANTimeoutMs),
+					"Could not set middle drive motion magic max integral: ");
+
+			TalonSRXUtil.checkError(
+					middleDrive.configAllowableClosedloopError(kMiddleDriveMotionMagicSlot,
+							Constants.kMiddleDriveDeadband, Constants.kLongCANTimeoutMs),
+					"Could not set middle drive motion magic deadband: ");
+
+			TalonSRXUtil.checkError(middleDrive.configMotionAcceleration(Constants.kMiddleDriveAcceleration,
+					Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic acceleration: ");
+
+			TalonSRXUtil.checkError(middleDrive.configMotionSCurveStrength(Constants.kMiddleDriveScurveStrength,
+					Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic smoothing: ");
+
+			TalonSRXUtil.checkError(middleDrive.configMotionCruiseVelocity(Constants.kMiddleDriveCruiseVelocity,
+					Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic cruise velocity: ");
+
+			TalonSRXUtil.checkError(middleDrive.configNominalOutputForward(Constants.kMiddleDriveNominalForward,
+					Constants.kLongCANTimeoutMs), "Could not set nominal output forward: ");
+
+			TalonSRXUtil.checkError(middleDrive.configNominalOutputReverse(Constants.kMiddleDriveNominalReverse,
+					Constants.kLongCANTimeoutMs), "Could not set nominal output reverse: ");
+
+			TalonSRXUtil.checkError(
+					middleDrive.configPeakOutputForward(Constants.kMiddleDrivePeakForward, Constants.kLongCANTimeoutMs),
+					"Could not set peak output forward: ");
+
+			TalonSRXUtil.checkError(
+					middleDrive.configPeakOutputReverse(Constants.kMiddleDrivePeakReverse, Constants.kLongCANTimeoutMs),
+					"Could not set peak output reverse: ");
+
+			TalonSRXUtil.checkError(middleDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10,
+					Constants.kLongCANTimeoutMs), "Could not set peak output reverse: ");
+
+			TalonSRXUtil.checkError(middleDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10,
+					Constants.kLongCANTimeoutMs), "Could not set peak output reverse: ");
+
+			TalonSRXUtil.checkError(middleDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10,
+					Constants.kLongCANTimeoutMs), "Could not set peak output reverse: ");
+
 			reloadGains();
 			setBrakeMode(true);
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");
 		}
 	}
@@ -459,6 +535,7 @@ public class Drive extends Subsystem implements Loop {
 	public void zeroSensors() {
 		resetEncoders();
 		resetGyro();
+		resetMiddleEncoder();
 	}
 	// End
 
@@ -806,6 +883,7 @@ public class Drive extends Subsystem implements Loop {
 			}
 			m_steerOutput = -cameraSteer;
 		}
+
 		m_drive.arcadeDrive(-m_moveOutput, -m_steerOutput);
 	}
 
@@ -1013,6 +1091,29 @@ public class Drive extends Subsystem implements Loop {
 		}
 	}
 
+	public synchronized void setMiddleDriveMotionMagicPosition(double positionInches) {
+		middleDrive.selectProfileSlot(kMiddleDriveMotionMagicSlot, 0);
+		targetMiddlePositionTicks = getMiddleEncoderTicks(positionInches);
+		middleDrive.set(ControlMode.MotionMagic, targetMiddlePositionTicks);
+	}
+
+	private void resetMiddleEncoder() {
+		middleDrive.setSelectedSensorPosition(0, 0, 100);
+	}
+
+	private int getMiddleEncoderTicks(double positionInches) {
+		return (int) (positionInches * INCHES_TO_ENCODER_TICKS_MIDDLE_DRIVE);
+	}
+
+	public synchronized double getMiddleEncoderInches() {
+		double position_ticks = middleDrive.getSelectedSensorPosition(0);
+		return position_ticks / INCHES_TO_ENCODER_TICKS_MIDDLE_DRIVE;
+	}
+
+	public synchronized boolean hasFinishedTrajectory() {
+		return Util.epsilonEquals(middleDrive.getActiveTrajectoryPosition(), targetMiddlePositionTicks, 5);
+	}
+
 	public static class PeriodicIO {
 		// INPUTS
 		public int left_position_ticks;
@@ -1077,10 +1178,13 @@ public class Drive extends Subsystem implements Loop {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Vison = ", onTarget());
-			SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
-			SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_ticks);
-			SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_ticks);
-			SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
+			// SmartDashboard.putNumber("Right Drive Ticks",
+			// mPeriodicIO.right_position_ticks);
+			// SmartDashboard.putNumber("Left Drive Ticks",
+			// mPeriodicIO.left_position_ticks);
+			SmartDashboard.putNumber("Middle Encoder", middleDrive.getSelectedSensorPosition());
+			SmartDashboard.putNumber("Middle Encoder Inches", getMiddleEncoderInches());
+
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
 			}

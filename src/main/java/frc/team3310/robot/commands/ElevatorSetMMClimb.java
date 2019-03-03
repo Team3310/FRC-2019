@@ -13,8 +13,8 @@ import frc.team3310.robot.subsystems.Elevator;
 
 public class ElevatorSetMMClimb extends Command {
   private double targetPositionInches;
-  private boolean isAtTarget;
-  private static final double MIN_DELTA_TARGET = 0.3;
+  // private boolean isAtTarget;
+  // private static final double MIN_DELTA_TARGET = 0.3;
 
   public ElevatorSetMMClimb(double targetPositionInches) {
     this.targetPositionInches = targetPositionInches;
@@ -24,14 +24,10 @@ public class ElevatorSetMMClimb extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if (Math.abs(targetPositionInches - Robot.elevator.getPositionInches()) < MIN_DELTA_TARGET) {
-      isAtTarget = true;
-    } else {
-      isAtTarget = false;
-      Robot.elevator.setMotionMagicPosition(targetPositionInches);
-    }
-    // System.out.println("Elevator set MP initialized, target = " +
-    // targetPositionInches);
+    // if (Math.abs(targetPositionInches - Robot.elevator.getClimbPositionInches())
+    // < MIN_DELTA_TARGET) {
+    Robot.elevator.setClimbMotionMagicPosition(targetPositionInches);
+    System.out.println("Elevator set MP initialized, target = " + targetPositionInches);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -42,9 +38,12 @@ public class ElevatorSetMMClimb extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (Elevator.getInstance().hasFinishedTrajectory() ||Robot.elevator.getClimbFrontTop() == true
-        || Elevator.getInstance().getClimbRearTop() == true) {
-      System.out.println("Trajectory finished");
+    if (Elevator.getInstance().hasFinishedTrajectory()) {
+      System.out.println("Trajectory finished end");
+      return true;
+    }
+    if (Robot.elevator.getClimbFrontTop() || Elevator.getInstance().getClimbRearTop()) {
+      System.out.println("Trajectory finished limit switch");
       return true;
     }
     return false;
@@ -53,6 +52,9 @@ public class ElevatorSetMMClimb extends Command {
   // Called once after isFinished returns true
   protected void end() {
     System.out.println("Elevator set MP end");
+    // Robot.elevator.setJoystickPID();
+    // Robot.elevator.resetEncoders();
+
   }
 
   // Called when another command which requires one or more of the same
@@ -60,6 +62,8 @@ public class ElevatorSetMMClimb extends Command {
   protected void interrupted() {
     System.out.println("ElevatorSetPositionMP interrupted");
     end();
-    // Robot.elevator.setPositionPID(Robot.elevator.getPositionInches());
+    Robot.elevator.setJoystickPID();
+    // Robot.elevator.resetEncoders();
+
   }
 }

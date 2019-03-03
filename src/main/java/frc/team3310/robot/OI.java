@@ -10,8 +10,8 @@ package frc.team3310.robot;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team3310.robot.commands.CharacterizeStraight;
-import frc.team3310.robot.commands.DriveForwardClimb;
+import frc.team3310.robot.commands.DriveForwardRearClimb;
+import frc.team3310.robot.commands.DriveMiddleSetMMPosition;
 import frc.team3310.robot.commands.EjectBallFast;
 import frc.team3310.robot.commands.EjectBallSlow;
 import frc.team3310.robot.commands.EjectBallStop;
@@ -62,13 +62,17 @@ public class OI {
     Button ejectHatch = m_driver.getButtonA();
     ejectHatch.whenPressed(new EjectHatch());
     ejectHatch.whenReleased(new IntakeBallArms(BallArmState.IN));
+    ejectHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
 
     Button driveFowardClimb = m_driver.getButtonB();
-    driveFowardClimb.whenPressed(new DriveForwardClimb(.5));
-    driveFowardClimb.whenReleased(new DriveForwardClimb(0));
+    driveFowardClimb.whenPressed(new DriveForwardRearClimb(.8));
+    driveFowardClimb.whenReleased(new DriveForwardRearClimb(0));
 
     Button climb = m_driver.getButtonY();
     climb.whenPressed(new ElevatorClimbEndGame());
+
+    Button driveClimbAUto = m_driver.getButtonX();
+    driveClimbAUto.whenPressed(new DriveMiddleSetMMPosition(18));
 
     Button climbFront = m_driver.getDPadDown();
     climbFront.whenPressed(new SetRobotClimbFront());

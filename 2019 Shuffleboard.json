@@ -51,7 +51,7 @@
               "_title": "Autonomous"
             }
           },
-          "0,2": {
+          "8,3": {
             "size": [
               2,
               1
@@ -140,7 +140,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "6,4": {
+          "8,4": {
             "size": [
               2,
               1
@@ -166,17 +166,39 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "8,4": {
+          "6,4": {
             "size": [
               2,
               1
             ],
             "content": {
               "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Plaform Detect Bot \u003d ",
-              "_title": "Plaform Detect Bot \u003d ",
+              "_source0": "network_table:///SmartDashboard/Plaform Detect Rear \u003d ",
+              "_title": "Plaform Detect Rear \u003d ",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "0,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Climb Position Inches",
+              "_title": "Climb Position Inches"
+            }
+          },
+          "0,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Elevator Target Position Ticks",
+              "_title": "Elevator Target Position Ticks"
             }
           }
         }

@@ -35,18 +35,18 @@ public class Constants {
 
     // Wheels
     // 2019 Robot Values
-    public static final double kDriveWheelTrackWidthInches = 23.92;
-    public static final double kDriveWheelDiameterInches = 4.188; // 3.875
+    public static final double kDriveWheelTrackWidthInches = 28.00; // 22.61;
+    public static final double kDriveWheelDiameterInches = 3.922; // 3.875
     public static final double kDriveWheelRadiusInches = kDriveWheelDiameterInches / 2.0;
-    public static final double kTrackScrubFactor = 0.924; // Tune me!
+    public static final double kTrackScrubFactor = 0.9; // 0.924; // Tune me!
 
     // Tuned dynamics
     public static final double kRobotLinearInertia = 48.0; // kg TODO tune
     public static final double kRobotAngularInertia = 10.0; // kg m^2 TODO tune
     public static final double kRobotAngularDrag = 12.0; // N*m / (rad/sec) TODO tune
-    public static final double kDriveVIntercept = 0.00001; // 0.928112644250295; // V
-    public static final double kDriveKv = 0.000001;// 0.14242500692715937; // V per rad/s
-    public static final double kDriveKa = 0.000001; // 0.03305866811140018; // V per rad/s^2
+    public static final double kDriveVIntercept = 0.928112644250295; // V
+    public static final double kDriveKv = 0.1602500692715937; // 0.14242500692715937; // V per rad/s
+    public static final double kDriveKa = 0.011505866811140018; // V per rad/s^2
 
     // Geometry
     // 2019 Robot Values
@@ -61,18 +61,18 @@ public class Constants {
     public static final double kDriveDownShiftAngularVelocity = Math.PI / 2.0; // rad/sec
     public static final double kDriveUpShiftVelocity = 11.0 * 12.0; // inches per second
 
-    public static final double kPathKX = 0.0;// 4.0; // units/s per unit of error
+    public static final double kPathKX = 4.0;// 4.0; // units/s per unit of error
     public static final double kPathLookaheadTime = 0.4; // seconds to look ahead along the path for steering
     public static final double kPathMinLookaheadDistance = 24.0; // inches
 
-    public static final double kDriveVelocityKp = 0.0; // 0.9;
+    public static final double kDriveVelocityKp = 0.9; // 0.9;
     public static final double kDriveVelocityKi = 0.0;
-    public static final double kDriveVelocityKd = 0.0; // 10.0;
+    public static final double kDriveVelocityKd = 10.0; // 10.0;
     public static final double kDriveVelocityKf = 0.0;
     public static final int kDriveVelocityIZone = 0;
     public static final double kDriveVoltageRampRate = 0.0;
-    public static double kDriveVelocityRampRate = 0.0; // 0.05; // 0.02
-    public static double kDriveNominalOutput = 0.0;// 0.5 / 12.0;
+    public static double kDriveVelocityRampRate = 0.05; // 0.05; // 0.02
+    public static double kDriveNominalOutput = 0.1;// 0.5 / 12.0;
     public static double kDriveMaxSetpoint = 11.0 * 12.0; // 11 fps
 
     // 2019 Motion Magic
@@ -104,21 +104,37 @@ public class Constants {
     public static final double kElevatorPeakForward = 1.0;
     public static final double kElevatorPeakReverse = -1.0;
 
+    public static final double kMiddleDriveMotionMagicKp = 0.4;// 0.4;
+    public static final double kMiddleDriveMotionMagicKi = 0.002; // 0.002; // 0.0;
+    public static final double kMiddleDriveMotionMagicKd = 0.08; // 0.08; // (4+4)/100;
+    public static final double kMiddleDriveMotionMagicKf = 0.25; // 0.197; // 0.06;
+    public static final int kMiddleDriveCruiseVelocity = 1500; // Max Velocity 10475
+    public static final int kMiddleDriveAcceleration = 5000;// 33000; //Max Velocity / Time to reach top .82
+    public static final int kMiddleDriveMaxIntegralAccumulator = 500000; // todo: tune me
+    public static final int kMiddleDriveIZone = 200;
+    public static final int kMiddleDriveDeadband = 0;
+    public static final double kMiddleDriveEpsilon = 1.0;// 33000;
+    public static final int kMiddleDriveScurveStrength = 4;
+    public static final double kMiddleDriveNominalForward = 0.05;
+    public static final double kMiddleDriveNominalReverse = -0.05;
+    public static final double kMiddleDrivePeakForward = 1.0;
+    public static final double kMiddleDrivePeakReverse = -1.0;
+
     // 2019 Elevator Levels
-    public static final double HOME_POSITION_INCHES = 7.5;
+    public static final double HOME_POSITION_INCHES = 20.5; //7.5;
     public static final double ZERO_POSITION_INCHES = 7.5;
     public static final double MIN_POSITION_INCHES = HOME_POSITION_INCHES;
     public static final double MAX_POSITION_INCHES = 83.5;
     public static final double AFTER_INTAKE_POSITION_INCHES = 11.5;
-    public static final double HATCH_LEVEL_1 = 19.5;
-    public static final double HATCH_LEVEL_2 = 49.0;
-    public static final double HATCH_LEVEL_3 = 77.0;
+    public static final double HATCH_LEVEL_1 = 20.5;
+    public static final double HATCH_LEVEL_2 = 50.0;
+    public static final double HATCH_LEVEL_3 = 78.0;
     public static final double BALL_LEVEL_1 = 29.5;
     public static final double BALL_LEVEL_2 = 57.5;
     public static final double BALL_LEVEL_3 = 83.5;
     public static final double BALL_LEVEL_CARGO = 42.0;
     public static final double LOADING_STATION_HATCH = 19.5;
-    public static final double CLIMB = 95;
+    public static final double CLIMB = 19;
 
     /* I/O */
     // (Note that if multiple talons are dedicated to a mechanism, any sensors

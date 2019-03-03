@@ -16,8 +16,8 @@ public class EjectBallFast extends CommandGroup {
    * Add your docs here.
    */
   public EjectBallFast() {
-    addParallel(new IntakeHatchArms(HatchArmState.OUT));
+    // addParallel(new IntakeHatchArms(HatchArmState.OUT));
     addSequential(new IntakeSetSpeed(Intake.INTAKE_EJECT_SPEED));
-    
+
   }
 }

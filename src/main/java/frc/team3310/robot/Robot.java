@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.robot.commands.AutoStartLevel1OutsideRocketFront;
+import frc.team3310.robot.commands.DriveAbsoluteTurnMP;
 import frc.team3310.robot.commands.DriveMotionCommand;
 import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.loops.Looper;
@@ -28,6 +30,7 @@ import frc.team3310.robot.subsystems.Elevator.ElevatorClimbShiftState;
 import frc.team3310.robot.subsystems.Elevator.FrontLegShiftState;
 import frc.team3310.robot.subsystems.Intake;
 import frc.team3310.robot.subsystems.RobotStateEstimator;
+import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import frc.team3310.utility.lib.control.RobotStatus;
 
 public class Robot extends TimedRobot {
@@ -90,9 +93,9 @@ public class Robot extends TimedRobot {
 		autonTaskChooser = new SendableChooser<Command>();
 		autonTaskChooser.addOption("Test Motion", new DriveMotionCommand(
 				TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true));
-		autonTaskChooser.addOption("Test Mirrored Motion", new DriveMotionCommand(
-				TrajectoryGenerator.getInstance().getTrajectorySet().centerPyramidCubeToScaleLeft.left, true));
+		autonTaskChooser.addOption("L1 Start Outside Rocket Front", new AutoStartLevel1OutsideRocketFront());
 
+		autonTaskChooser.addOption("Turn 90", new DriveAbsoluteTurnMP(90, 180, MPSoftwareTurnType.TANK));
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 
 		LiveWindow.setEnabled(false);
@@ -163,9 +166,9 @@ public class Robot extends TimedRobot {
 		drive.endGyroCalibration();
 		zeroAllSensors();
 
-//		if (operationMode != OperationMode.COMPETITION) {
-			Scheduler.getInstance().add(new ElevatorAutoZero(true));
-//		} 
+		// if (operationMode != OperationMode.COMPETITION) {
+		// Scheduler.getInstance().add(new ElevatorAutoZero(true));
+		// }
 	}
 
 	// Called constantly through teleOp
