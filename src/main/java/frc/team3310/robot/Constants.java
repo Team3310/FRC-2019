@@ -121,12 +121,12 @@ public class Constants {
     public static final double kMiddleDrivePeakReverse = -1.0;
 
     // 2019 Elevator Levels
-    public static final double HOME_POSITION_INCHES = 20.5; //7.5;
+    public static final double HOME_POSITION_INCHES = 7.5;//20.5; // 7.5;
     public static final double ZERO_POSITION_INCHES = 7.5;
     public static final double MIN_POSITION_INCHES = HOME_POSITION_INCHES;
     public static final double MAX_POSITION_INCHES = 83.5;
     public static final double AFTER_INTAKE_POSITION_INCHES = 11.5;
-    public static final double HATCH_LEVEL_1 = 20.5;
+    public static final double HATCH_LEVEL_1 = 21.5;
     public static final double HATCH_LEVEL_2 = 50.0;
     public static final double HATCH_LEVEL_3 = 78.0;
     public static final double BALL_LEVEL_1 = 29.5;
@@ -134,7 +134,7 @@ public class Constants {
     public static final double BALL_LEVEL_3 = 83.5;
     public static final double BALL_LEVEL_CARGO = 42.0;
     public static final double LOADING_STATION_HATCH = 19.5;
-    public static final double CLIMB = 19;
+    public static final double CLIMB = 19.5;
 
     /* I/O */
     // (Note that if multiple talons are dedicated to a mechanism, any sensors

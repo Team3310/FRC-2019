@@ -10,8 +10,6 @@ package frc.team3310.robot;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team3310.robot.commands.DriveForwardRearClimb;
-import frc.team3310.robot.commands.DriveMiddleSetMMPosition;
 import frc.team3310.robot.commands.EjectBallFast;
 import frc.team3310.robot.commands.EjectBallSlow;
 import frc.team3310.robot.commands.EjectBallStop;
@@ -32,6 +30,8 @@ import frc.team3310.robot.commands.SetRobotClimbBack;
 import frc.team3310.robot.commands.SetRobotClimbFront;
 import frc.team3310.robot.commands.SetRobotClimbMode;
 import frc.team3310.robot.commands.SetRobotScoreMode;
+import frc.team3310.robot.commands.TurnCompressorOff;
+import frc.team3310.robot.commands.TurnCompressorOn;
 import frc.team3310.robot.controller.GameController;
 import frc.team3310.robot.controller.Playstation;
 import frc.team3310.robot.controller.Xbox;
@@ -64,15 +64,8 @@ public class OI {
     ejectHatch.whenReleased(new IntakeBallArms(BallArmState.IN));
     ejectHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
 
-    Button driveFowardClimb = m_driver.getButtonB();
-    driveFowardClimb.whenPressed(new DriveForwardRearClimb(.8));
-    driveFowardClimb.whenReleased(new DriveForwardRearClimb(0));
-
     Button climb = m_driver.getButtonY();
     climb.whenPressed(new ElevatorClimbEndGame());
-
-    Button driveClimbAUto = m_driver.getButtonX();
-    driveClimbAUto.whenPressed(new DriveMiddleSetMMPosition(18));
 
     Button climbFront = m_driver.getDPadDown();
     climbFront.whenPressed(new SetRobotClimbFront());
@@ -107,7 +100,6 @@ public class OI {
     // Intake
     Button IntakeHatch = m_operator.getRightBumper();
     IntakeHatch.whenPressed(new IntakeHatch());
-    // IntakeHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
 
     Button IntakeBallManual = m_operator.getRightTrigger();
     IntakeBallManual.whenPressed(new IntakeBallManual());
@@ -145,21 +137,18 @@ public class OI {
     autoZero.whenPressed(new ElevatorAutoZero(true));
 
     // Smartdashboard
-    // Button turnCompressorOff = new InternalButton();
-    // turnCompressorOff.whenPressed(new TurnCompressorOff());
-    // SmartDashboard.putData("Compressor Off", turnCompressorOff);
+    Button turnCompressorOff = new InternalButton();
+    turnCompressorOff.whenPressed(new TurnCompressorOff());
+    SmartDashboard.putData("Compressor Off", turnCompressorOff);
 
-    // Button turnCompressorOn = new InternalButton();
-    // turnCompressorOn.whenPressed(new TurnCompressorOff());
-    // SmartDashboard.putData("Compressor On", turnCompressorOn);
+    Button turnCompressorOn = new InternalButton();
+    turnCompressorOn.whenPressed(new TurnCompressorOn());
+    SmartDashboard.putData("Compressor On", turnCompressorOn);
 
     Button resetSensors = new InternalButton();
     resetSensors.whenPressed(new ResetSensor());
     SmartDashboard.putData("Reset Sensor", resetSensors);
 
-    // Button CharacterizeStraight = new InternalButton();
-    // CharacterizeStraight.whenPressed(new CharacterizeStraight());
-    // SmartDashboard.putData("Characterize Straight", CharacterizeStraight);
   }
 
   public GameController getDriverController() {

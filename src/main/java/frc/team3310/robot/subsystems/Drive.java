@@ -18,6 +18,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.Constants;
@@ -134,8 +135,7 @@ public class Drive extends Subsystem implements Loop {
 	private PIDParams mpHoldPIDParams = new PIDParams(1, 0, 0, 0.0, 0.0, 0.0);
 
 	private MPSoftwarePIDController mpTurnController; // p i d a v g izone
-	private PIDParams mpTurnPIDParams = new PIDParams(0.035, 0.000, 0.0, 0.00025
-	, 0.00375, 0.0, 100); // 4 colson
+	private PIDParams mpTurnPIDParams = new PIDParams(0.035, 0.000, 0.0, 0.00025, 0.00375, 0.0, 100); // 4 colson
 																										// wheels
 	// private PIDParams mpTurnPIDParams = new PIDParams(0.03, 0.00002, 0.4, 0.0004,
 	// 0.0030, 0.0, 100); // 4 omni
@@ -152,9 +152,9 @@ public class Drive extends Subsystem implements Loop {
 	private double gyroOffsetDeg = 0;
 
 	private double mLastValidGyroAngle;
-	private double mCameraVelocity;
-	private double kCamera = 0.4; // .7
-	private double kCameraDriveClose = 0.08; // .04
+	private double mCameraVelocity = 0;
+	private double kCamera = 0.04; // .7
+	private double kCameraDriveClose = 0.072; // .04
 	private double kCameraDriveMid = 0.04; // .04
 	private double kCameraDriveFar = 0.03; // .04
 	private double kCameraClose = 10;
@@ -176,6 +176,10 @@ public class Drive extends Subsystem implements Loop {
 	public boolean isLimeValid;
 	public double LEDMode;
 	public double camMode;
+	public boolean onTarget;
+
+	// Ultrasonic
+	// public Ultrasonic ultrasonic = new Ultrasonic(0, 1);
 
 	public double targetMiddlePositionTicks;
 
@@ -222,6 +226,7 @@ public class Drive extends Subsystem implements Loop {
 					break;
 				case CAMERA_TRACK:
 					updateCameraTrack();
+					onTarget();
 					return;
 				default:
 					System.out.println("Unknown drive control mode: " + currentControlMode);
@@ -621,6 +626,14 @@ public class Drive extends Subsystem implements Loop {
 		updateVelocitySetpoint(left_inches_per_sec, right_inches_per_sec);
 	}
 
+	public synchronized void setVelocityNativeUnits(double left_velocity_ticks_per_100ms,
+			double right_velocity_ticks_per_100ms) {
+		leftDrive1.set(ControlMode.Velocity, mPeriodicIO.left_demand, DemandType.ArbitraryFeedForward,
+				mPeriodicIO.left_feedforward + Constants.kDriveVelocityKd * mPeriodicIO.left_accel / 1023.0);
+		rightDrive1.set(ControlMode.Velocity, mPeriodicIO.right_demand, DemandType.ArbitraryFeedForward,
+				mPeriodicIO.right_feedforward + Constants.kDriveVelocityKd * mPeriodicIO.right_accel / 1023.0);
+	}
+
 	/**
 	 * Adjust Velocity setpoint (if already in velocity mode)
 	 * 
@@ -1006,7 +1019,7 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	// Checks if vison targets are found
-	public boolean onTarget() {
+	public boolean isValid() {
 		return isLimeValid;
 	}
 
@@ -1033,12 +1046,14 @@ public class Drive extends Subsystem implements Loop {
 		double deltaVelocity = 0;
 		mLastValidGyroAngle = getGyroAngleDeg();
 		if (isLimeValid) {
-			deltaVelocity = limeX * kCamera;
+			deltaVelocity = limeX * kCamera * mCameraVelocity;
 			System.out.println("Valid lime angle = " + limeX);
 		} else {
-			deltaVelocity = (getGyroAngleDeg() - mLastValidGyroAngle) * kCamera;
+			deltaVelocity = (getGyroAngleDeg() - mLastValidGyroAngle) * kCamera * mCameraVelocity;
 			System.out.println("In Valid lime angle = " + limeX);
 		}
+		// setVelocityNativeUnits(mCameraVelocity + deltaVelocity, mCameraVelocity -
+		// deltaVelocity);
 		updateVelocitySetpoint(mCameraVelocity + deltaVelocity, mCameraVelocity - deltaVelocity);
 	}
 
@@ -1047,17 +1062,25 @@ public class Drive extends Subsystem implements Loop {
 	 * 
 	 * @see Path
 	 */
-	public synchronized void setCameraTrack(double straightVelocity) {
-		if (driveControlMode != DriveControlMode.CAMERA_TRACK) {
-			setFinished(false);
-			configureTalonsForSpeedControl(); // Our Equivalent to Poofs SetVelocity?
-			driveControlMode = DriveControlMode.CAMERA_TRACK;
-			mLastValidGyroAngle = getGyroAngleDeg();
-			mCameraVelocity = straightVelocity;
+	public synchronized void setCameraTrack() {
+		// double straightVelocity = (mPeriodicIO.left_velocity_ticks_per_100ms
+		// + mPeriodicIO.right_velocity_ticks_per_100ms) / 2;
+		double straightVelocity = (leftDrive1.getVelocityWorld() + rightDrive1.getVelocityWorld()) / 2;
+		setFinished(false);
+		mOverrideTrajectory = true;
+		// configureTalonsForSpeedControl();
+		driveControlMode = DriveControlMode.CAMERA_TRACK;
+		mLastValidGyroAngle = getGyroAngleDeg();
+		mCameraVelocity = straightVelocity;
+	}
+
+	public boolean onTarget() {
+		if (limeX < 5) {
+			onTarget = true;
 		} else {
-			setVelocitySetpoint(0, 0);
-			System.out.println("Oh NOOOO in velocity set point for camera track");
+			onTarget = false;
 		}
+		return onTarget;
 	}
 
 	// End
@@ -1113,6 +1136,16 @@ public class Drive extends Subsystem implements Loop {
 	public synchronized boolean hasFinishedTrajectory() {
 		return Util.epsilonEquals(middleDrive.getActiveTrajectoryPosition(), targetMiddlePositionTicks, 5);
 	}
+
+	// Ultrasonic
+	// public void setAutomatic() {
+	// ultrasonic.setAutomaticMode(true); // turns on automatic mode
+	// }
+
+	// public double ultrasonicDistance() {
+	// return ultrasonic.getRangeInches(); // reads the range on the ultrasonic
+	// sensor
+	// }
 
 	public static class PeriodicIO {
 		// INPUTS
@@ -1177,13 +1210,8 @@ public class Drive extends Subsystem implements Loop {
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
-			SmartDashboard.putBoolean("Vison = ", onTarget());
-			// SmartDashboard.putNumber("Right Drive Ticks",
-			// mPeriodicIO.right_position_ticks);
-			// SmartDashboard.putNumber("Left Drive Ticks",
-			// mPeriodicIO.left_position_ticks);
-			SmartDashboard.putNumber("Middle Encoder", middleDrive.getSelectedSensorPosition());
-			SmartDashboard.putNumber("Middle Encoder Inches", getMiddleEncoderInches());
+			SmartDashboard.putBoolean("Vison = ", isValid());
+			// SmartDashboard.putNumber("Ultrasonic Distance", ultrasonicDistance());
 
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());

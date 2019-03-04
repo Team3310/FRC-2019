@@ -51,7 +51,7 @@
               "_title": "Autonomous"
             }
           },
-          "8,3": {
+          "0,2": {
             "size": [
               2,
               1
@@ -90,7 +90,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "8,2": {
+          "8,1": {
             "size": [
               2,
               1
@@ -103,7 +103,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "8,1": {
+          "8,2": {
             "size": [
               2,
               1
@@ -122,7 +122,7 @@
               1
             ],
             "content": {
-              "_type": "Toggle Switch",
+              "_type": "Toggle Button",
               "_source0": "network_table:///SmartDashboard/Reset Sensor/pressed",
               "_title": "Reset Sensor/pressed"
             }
@@ -133,27 +133,23 @@
               1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Climb Front Top \u003d ",
-              "_title": "Climb Front Top \u003d ",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_type": "Toggle Button",
+              "_source0": "network_table:///SmartDashboard/Compressor Off/pressed",
+              "_title": "Compressor Off/pressed"
             }
           },
-          "8,4": {
+          "6,4": {
             "size": [
               2,
               1
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Climb Rear Top \u003d ",
-              "_title": "Climb Rear Top \u003d ",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "_type": "Toggle Button",
+              "_source0": "network_table:///SmartDashboard/Compressor On/pressed",
+              "_title": "Compressor On/pressed"
             }
           },
-          "0,4": {
+          "0,3": {
             "size": [
               2,
               1
@@ -166,39 +162,50 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "6,4": {
+          "8,3": {
             "size": [
               2,
               1
             ],
             "content": {
               "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Plaform Detect Rear \u003d ",
-              "_title": "Plaform Detect Rear \u003d ",
+              "_source0": "network_table:///SmartDashboard/Plaform Detect Bot \u003d ",
+              "_title": "Plaform Detect Bot \u003d ",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "0,3": {
+          "8,4": {
             "size": [
               2,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Climb Position Inches",
-              "_title": "Climb Position Inches"
+              "_source0": "network_table:///SmartDashboard/SensorVel",
+              "_title": "SensorVel"
             }
           },
-          "0,2": {
+          "0,4": {
             "size": [
-              2,
+              1,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Elevator Target Position Ticks",
-              "_title": "Elevator Target Position Ticks"
+              "_source0": "network_table:///SmartDashboard/Limelight_PipelineName",
+              "_title": "Limelight_PipelineName"
+            }
+          },
+          "1,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Limelight_Stream",
+              "_title": "Limelight_Stream"
             }
           }
         }

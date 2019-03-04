@@ -16,9 +16,8 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.commands.AutoStartLevel1OutsideRocketFront;
+import frc.team3310.robot.commands.AutoTestTracking;
 import frc.team3310.robot.commands.DriveAbsoluteTurnMP;
-import frc.team3310.robot.commands.DriveMotionCommand;
-import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.AirCompressor;
@@ -91,8 +90,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 
 		autonTaskChooser = new SendableChooser<Command>();
-		autonTaskChooser.addOption("Test Motion", new DriveMotionCommand(
-				TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true));
+		autonTaskChooser.addOption("Test Motion", new AutoTestTracking());
 		autonTaskChooser.addOption("L1 Start Outside Rocket Front", new AutoStartLevel1OutsideRocketFront());
 
 		autonTaskChooser.addOption("Turn 90", new DriveAbsoluteTurnMP(90, 180, MPSoftwareTurnType.TANK));

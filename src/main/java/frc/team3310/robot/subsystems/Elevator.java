@@ -444,7 +444,7 @@ public class Elevator extends Subsystem implements Loop {
 	}
 
 	private void controlManualWithJoystick() {
-		joyStickSpeed = 0.3 * -Robot.oi.getOperatorController().getLeftYAxis();
+		joyStickSpeed = 1.0 * -Robot.oi.getOperatorController().getLeftYAxis();
 		motor1.set(ControlMode.PercentOutput, joyStickSpeed);
 	}
 
@@ -579,14 +579,10 @@ public class Elevator extends Subsystem implements Loop {
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Elevator Max Switch = ", getMaxElevatorSensor());
 			SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
-			SmartDashboard.putBoolean("Climb Front Top = ", getClimbFrontTop());
-			// SmartDashboard.putBoolean("Climb Front Bot = ", getClimbFrontBot());
-			SmartDashboard.putBoolean("Climb Rear Top = ", getClimbRearTop());
-			// SmartDashboard.putBoolean("Climb Rear Bot = ", getClimbRearBot());
 			SmartDashboard.putBoolean("Platform Detect Front = ", getPlatformDetectFront());
-			SmartDashboard.putBoolean("Plaform Detect Rear = ", getPlatformDetectRear());
-			SmartDashboard.putNumber("Climb Position Inches", getClimbPositionInches());
-			SmartDashboard.putNumber("Elevator Target Position Ticks", targetPositionTicks);
+			SmartDashboard.putBoolean("Plaform Detect Bot = ", getPlatformDetectRear());
+			SmartDashboard.putNumber("SensorVel", motor1.getSelectedSensorVelocity());
+
 		}
 	}
 
