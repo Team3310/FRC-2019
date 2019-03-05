@@ -11,13 +11,14 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
+import frc.team3310.robot.Constants;
 
 public class AutoStartLevel1SideRocketFrontTrack extends CommandGroup {
     /**
      * Add your docs here.
      */
     public AutoStartLevel1SideRocketFrontTrack() {
-        // addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
+        addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
 
         addParallel(new AutoCameraTrackWhenCrossedBoundary(165));
         addSequential(new DriveMotionCommand(
@@ -37,6 +38,8 @@ public class AutoStartLevel1SideRocketFrontTrack extends CommandGroup {
         addSequential(new IntakeHatchArms(HatchArmState.IN));
         addSequential(new DriveMotionCommand(
                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack.right, false));
-
+        addParallel(new AutoCameraTrackWhenCrossXBoundaryNegitive(25)); // 25
+        addSequential(new DriveMotionCommand(
+                TrajectoryGenerator.getInstance().getTrajectorySet().turn3ToRocketBack.right, false));
     }
 }
