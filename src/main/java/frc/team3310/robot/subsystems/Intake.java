@@ -43,8 +43,6 @@ public class Intake extends Subsystem {
 	private Solenoid ballArms;
 	private Solenoid hatchArms;
 
-	public boolean shootHatch = false;
-
 	private Intake() {
 		try {
 			leftArm = TalonSRXFactory.createDefaultTalon(RobotMap.INTAKE_LEFT_CAN_ID);

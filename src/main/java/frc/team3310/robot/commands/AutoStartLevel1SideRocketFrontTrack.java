@@ -22,24 +22,35 @@ public class AutoStartLevel1SideRocketFrontTrack extends CommandGroup {
 
         addParallel(new AutoCameraTrackWhenCrossedBoundary(165));
         addSequential(new DriveMotionCommand(
-                TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront.right, true));
+                TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront, true));
         addSequential(new EjectHatch());
         addSequential(new WaitCommand("Eject Break", 1));
         addParallel(new IntakeHatch());
         addSequential(new DriveMotionCommand(
-                TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontToTurn1.right, false));
+                TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontToTurn1, false));
 
         addSequential(
+<<<<<<< HEAD
                 new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1RocketToTurn2.right, false));
         addSequential(new WaitCommand("Turn Break", 1.5));
         addParallel(new AutoCameraTrackWhenCrossXBoundaryNegitive(45));
         addParallel(new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn2RocketToLoading.right,
+=======
+                new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1ToTurn2, false));
+        addSequential(new WaitCommand("Turn Break", 1.5));
+        addParallel(new AutoCameraTrackWhenCrossXBoundaryNegative(45));
+        addParallel(new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn2ToLoading,
+>>>>>>> 0effeeffa77ddbbd5777947ede369651e1a29e38
                 false), 4);
         addSequential(new IntakeHatchArms(HatchArmState.IN));
         addSequential(new DriveMotionCommand(
-                TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack.right, false));
-        addParallel(new AutoCameraTrackWhenCrossXBoundaryNegitive(25)); // 25
+                TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack, false));
+        addParallel(new AutoCameraTrackWhenCrossXBoundaryNegative(25)); // 25
         addSequential(new DriveMotionCommand(
+<<<<<<< HEAD
                 TrajectoryGenerator.getInstance().getTrajectorySet().turn3LoadingToRocketBack.right, false));
+=======
+                TrajectoryGenerator.getInstance().getTrajectorySet().turn3ToRocketBack, false));
+>>>>>>> 0effeeffa77ddbbd5777947ede369651e1a29e38
     }
 }
