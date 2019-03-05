@@ -23,7 +23,7 @@ public class Intake extends Subsystem {
 	public static final double INTAKE_EJECT_SPEED = 0.8;
 	public static final double INTAKE_EJECT_FAST_SPEED = 1.0; // Intake Eject Speed for first cube APR
 	public static final double INTAKE_EJECT_SLOW_SPEED = 0.3;
-	public static final double INTAKE_ADJUST_SPEED = 0.3;
+	public static final double INTAKE_ADJUST_SPEED = 0.4;
 	public static final double INTAKE_HOLD_SPEED = -0.15;
 
 	private TalonSRX leftArm;
