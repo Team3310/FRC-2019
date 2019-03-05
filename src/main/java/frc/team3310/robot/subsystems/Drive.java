@@ -179,7 +179,7 @@ public class Drive extends Subsystem implements Loop {
 	public boolean onTarget;
 
 	// Ultrasonic
-	// public Ultrasonic ultrasonic = new Ultrasonic(0, 1);
+	public Ultrasonic ultrasonic;
 
 	public double targetMiddlePositionTicks;
 
@@ -296,6 +296,8 @@ public class Drive extends Subsystem implements Loop {
 					RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID);
 
 			middleDrive = TalonSRXFactory.createDefaultTalon(RobotMap.DRIVE_MIDDLE_CLIMB_WHEEL);
+
+			ultrasonic = new Ultrasonic(RobotMap.ULTRA_SONIC_INPUT_CHANNEL, RobotMap.ULTRA_SONIC_OUTPUT_CHANNEL);
 
 			leftDrive1.setSafetyEnabled(false);
 			leftDrive1.setSensorPhase(false);

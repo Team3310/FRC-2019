@@ -37,7 +37,7 @@ public class AutoTestTracking extends CommandGroup {
     addParallel(new AutoCameraTrackWhenCrossXBoundaryNegitive(35)); // 25
 
     addSequential(
-        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1ToLoading.right, false));
+        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turnCargo1ToLoading.right, false));
 
   }
 }

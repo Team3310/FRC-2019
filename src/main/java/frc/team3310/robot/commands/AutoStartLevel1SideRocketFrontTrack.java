@@ -30,16 +30,16 @@ public class AutoStartLevel1SideRocketFrontTrack extends CommandGroup {
                 TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontToTurn1.right, false));
 
         addSequential(
-                new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1ToTurn2.right, false));
+                new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1RocketToTurn2.right, false));
         addSequential(new WaitCommand("Turn Break", 1.5));
         addParallel(new AutoCameraTrackWhenCrossXBoundaryNegitive(45));
-        addParallel(new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn2ToLoading.right,
+        addParallel(new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn2RocketToLoading.right,
                 false), 4);
         addSequential(new IntakeHatchArms(HatchArmState.IN));
         addSequential(new DriveMotionCommand(
                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack.right, false));
         addParallel(new AutoCameraTrackWhenCrossXBoundaryNegitive(25)); // 25
         addSequential(new DriveMotionCommand(
-                TrajectoryGenerator.getInstance().getTrajectorySet().turn3ToRocketBack.right, false));
+                TrajectoryGenerator.getInstance().getTrajectorySet().turn3LoadingToRocketBack.right, false));
     }
 }
