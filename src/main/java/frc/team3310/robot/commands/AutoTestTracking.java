@@ -32,12 +32,12 @@ public class AutoTestTracking extends CommandGroup {
     addSequential(new EjectHatch());
     addSequential(new WaitCommand("Eject Break", 1));
     addSequential(
-        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().cargoToTurn1, false));
+        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontToTurn1, false));
 
     addParallel(new AutoCameraTrackWhenCrossXBoundaryNegative(35)); // 25
 
     addSequential(
-        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1ToLoading, false));
+        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontTurn1ToLoading, false));
 
   }
 }
