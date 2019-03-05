@@ -24,7 +24,7 @@ public class DriveMotionPlannerTest {
 
         DriveMotionPlanner motion_planner = new DriveMotionPlanner();
         motion_planner.setFollowerType(DriveMotionPlanner.FollowerType.PURE_PURSUIT);
-        motion_planner.setTrajectory(new TrajectoryIterator<>(new TimedView<>(TrajectoryGenerator.getInstance().getTrajectorySet().centerStartToLeftSwitch)));
+        motion_planner.setTrajectory(new TrajectoryIterator<>(new TimedView<>(TrajectoryGenerator.getInstance().getTrajectorySet().centerStartToLeftSwitch.right)));
 
         double t = 0.0;
         Pose2d pose = motion_planner.setpoint().state().getPose();

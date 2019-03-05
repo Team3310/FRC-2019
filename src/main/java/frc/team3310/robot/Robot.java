@@ -22,6 +22,7 @@ import frc.team3310.robot.commands.DriveAbsoluteTurnMP;
 import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
+import frc.team3310.robot.paths.TrajectoryGenerator.RightLeftAutonSide;
 import frc.team3310.robot.subsystems.AirCompressor;
 import frc.team3310.robot.subsystems.Drive;
 import frc.team3310.robot.subsystems.Drive.DriveControlMode;
@@ -43,7 +44,7 @@ public class Robot extends TimedRobot {
 	public static final Intake intake = Intake.getInstance();
 	public static final AirCompressor compressor = AirCompressor.getInstance();
 	public static final RobotStateEstimator estimator = RobotStateEstimator.getInstance();
-	private TrajectoryGenerator mTrajectoryGenerator = TrajectoryGenerator.getInstance();
+	public static final TrajectoryGenerator trajectoryGenerator = TrajectoryGenerator.getInstance();
 
 	// Control looper
 	public static final Looper controlLoop = new Looper();
@@ -51,13 +52,15 @@ public class Robot extends TimedRobot {
 	// Choosers
 	private SendableChooser<OperationMode> operationModeChooser;
 	private SendableChooser<Command> autonTaskChooser;
+	private SendableChooser<RightLeftAutonSide> autonRightLeftChooser;
 	private Command autonomousCommand;
 
 	public static enum OperationMode {
 		TEST, PRACTICE, COMPETITION
 	};
-
 	public static OperationMode operationMode = OperationMode.COMPETITION;
+
+	public static RightLeftAutonSide rightLeftSide = RightLeftAutonSide.RIGHT;
 
 	// PDP
 	public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
@@ -83,7 +86,7 @@ public class Robot extends TimedRobot {
 		controlLoop.register(drive);
 		controlLoop.register(elevator);
 		RobotStateEstimator.getInstance().registerEnabledLoops(controlLoop);
-		mTrajectoryGenerator.generateTrajectories();
+		trajectoryGenerator.generateTrajectories();
 
 		operationModeChooser = new SendableChooser<OperationMode>();
 		operationModeChooser.addOption("Practice", OperationMode.PRACTICE);
@@ -99,6 +102,11 @@ public class Robot extends TimedRobot {
 		autonTaskChooser.addOption("Turn 90", new DriveAbsoluteTurnMP(90, 180, MPSoftwareTurnType.TANK));
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 
+		autonRightLeftChooser = new SendableChooser<RightLeftAutonSide>();
+		autonRightLeftChooser.addOption("Left", RightLeftAutonSide.LEFT);
+		autonRightLeftChooser.setDefaultOption("Right", RightLeftAutonSide.RIGHT);
+		SmartDashboard.putData("Auton Side", autonRightLeftChooser);
+
 		LiveWindow.setEnabled(false);
 		LiveWindow.disableAllTelemetry();
 
@@ -110,7 +118,6 @@ public class Robot extends TimedRobot {
 		elevator.setFrontLegState(FrontLegShiftState.LOCKED);
 		elevator.setBackLegState(BackLegShiftState.LOCKED);
 		elevator.setElevatorClimbState(ElevatorClimbShiftState.ENGAGED);
-
 	}
 
 	// Called every loop for all modes
@@ -138,6 +145,9 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		controlLoop.start();
 		drive.setIsRed(getAlliance().equals(Alliance.Red));
+
+		rightLeftSide = autonRightLeftChooser.getSelected();
+		trajectoryGenerator.setRightLeftAutonSide(rightLeftSide);
 
 		autonomousCommand = autonTaskChooser.getSelected();
 
@@ -192,5 +202,4 @@ public class Robot extends TimedRobot {
 		intake.updateStatus(operationMode);
 		robotState.updateStatus(operationMode);
 	}
-
 }

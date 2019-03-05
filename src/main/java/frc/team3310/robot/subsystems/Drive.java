@@ -700,7 +700,7 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	public boolean isDoneWithTrajectory() {
-		if (mMotionPlanner == null || driveControlMode != DriveControlMode.PATH_FOLLOWING) {
+		if (mMotionPlanner == null) {
 			return false;
 		}
 		return mMotionPlanner.isDone() || mOverrideTrajectory == true;

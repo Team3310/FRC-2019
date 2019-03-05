@@ -20,7 +20,7 @@ public class AutoStartLevel1OutsideRocketFront extends CommandGroup {
   public AutoStartLevel1OutsideRocketFront() {
     addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
     addSequential(new DriveMotionCommand(
-        TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront.right, true));
+        TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront, true));
     addSequential(new DriveSetSpeed(0.3, 0.2));
     addSequential(new EjectHatch(), .8);
     addParallel(new IntakeHatch());
