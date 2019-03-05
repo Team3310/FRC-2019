@@ -17,9 +17,9 @@ import frc.team3310.utility.lib.trajectory.timing.TimingConstraint;
 
 //TODO CHANGE ALL VALUES FOR 2019 FIELD/ROBOT
 public class TrajectoryGenerator {
-	public static enum RightLeftAutonSide {
-		RIGHT, LEFT
-	};
+        public static enum RightLeftAutonSide {
+                RIGHT, LEFT
+        };
 
         private static final double kMaxVelocity = 130.0;
         private static final double kMaxAccel = 130.0;
@@ -46,14 +46,14 @@ public class TrajectoryGenerator {
         private TrajectoryGenerator() {
                 mMotionPlanner = new DriveMotionPlanner();
         }
-        
-	public void setRightLeftAutonSide(RightLeftAutonSide side) {
-		this.rightLeftSide = side;
-	}
 
-	public RightLeftAutonSide getRightLeftAutonSide() {
-		return rightLeftSide;
-	}
+        public void setRightLeftAutonSide(RightLeftAutonSide side) {
+                this.rightLeftSide = side;
+        }
+
+        public RightLeftAutonSide getRightLeftAutonSide() {
+                return rightLeftSide;
+        }
 
         public void generateTrajectories() {
                 if (mTrajectorySet == null) {

@@ -24,15 +24,14 @@ public class AutoTestTracking extends CommandGroup {
     addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
     addParallel(new AutoCameraTrackWhenCrossedBoundary(175));
 
-    addSequential(new DriveMotionCommand(
-        TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoFront, true));
+    addSequential(
+        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoFront, true));
 
     // addParallel(new AutoCameraTrackWhenCrossXBoundaryNegitive(-290)); //25
 
     addSequential(new EjectHatch());
     addSequential(new WaitCommand("Eject Break", 1));
-    addSequential(
-        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontToTurn1, false));
+    addSequential(new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontToTurn1, false));
 
     addParallel(new AutoCameraTrackWhenCrossXBoundaryNegative(35)); // 25
 
