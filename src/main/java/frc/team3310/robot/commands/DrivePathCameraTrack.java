@@ -16,6 +16,7 @@ public class DrivePathCameraTrack extends Command {
 		Robot.drive.setCameraTrack();
 		// setTimeout(timeout);
 		Robot.drive.isLimeValid = true;
+		Robot.intake.shootHatch = false;
 	}
 
 	protected void execute() {
@@ -27,12 +28,15 @@ public class DrivePathCameraTrack extends Command {
 
 	protected void end() {
 		System.out.println("camera track finished");
-		// Robot.drive.setLimeLED(false);
+		System.out.println("Time to eject done camera track");
+		Robot.drive.overrideTrajectory(true);
+		Robot.intake.shootHatch = true;
 		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
 	}
 
 	protected void interrupted() {
 		System.out.println("camera track interrupted");
+		System.out.println("Time to eject done camera track");
 		end();
 	}
 }

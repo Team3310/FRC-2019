@@ -27,14 +27,14 @@ public class DriveMotionCommand extends Command {
     mTrajectory = new TrajectoryIterator<>(new TimedView<>(trajectory));
     mResetPose = resetPose;
     System.out.println(mTrajectory.getState().toCSV());
-}
+  }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
     System.out.println("Starting trajectory! (length=" + mTrajectory.getRemainingProgress() + ")");
     if (mResetPose) {
-        RobotStatus.getInstance().reset(Timer.getFPGATimestamp(), mTrajectory.getState().state().getPose());
+      RobotStatus.getInstance().reset(Timer.getFPGATimestamp(), mTrajectory.getState().state().getPose());
     }
     Robot.drive.startLogging();
     Drive.getInstance().setTrajectory(mTrajectory);
@@ -48,17 +48,19 @@ public class DriveMotionCommand extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (Drive.getInstance().isDoneWithTrajectory()) {
+    if (Drive.getInstance().isDoneWithTrajectory() || Robot.intake.shootHatch == true) {
       System.out.println("Trajectory finished");
       return true;
+    }
+    return false;
   }
-  return false;
-}
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
     Robot.drive.stopLogging();
+    System.out.println("Time to eject Path done ");
+
   }
 
   // Called when another command which requires one or more of the same

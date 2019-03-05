@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.commands.AutoStartLevel1OutsideRocketFront;
+import frc.team3310.robot.commands.AutoStartLevel1SideRocketFrontTrack;
 import frc.team3310.robot.commands.AutoTestTracking;
 import frc.team3310.robot.commands.DriveAbsoluteTurnMP;
+import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.AirCompressor;
@@ -92,7 +94,8 @@ public class Robot extends TimedRobot {
 		autonTaskChooser = new SendableChooser<Command>();
 		autonTaskChooser.addOption("Test Motion", new AutoTestTracking());
 		autonTaskChooser.addOption("L1 Start Outside Rocket Front", new AutoStartLevel1OutsideRocketFront());
-
+		autonTaskChooser.setDefaultOption("L1 Start Outside Rocket Front Track",
+				new AutoStartLevel1SideRocketFrontTrack());
 		autonTaskChooser.addOption("Turn 90", new DriveAbsoluteTurnMP(90, 180, MPSoftwareTurnType.TANK));
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 
@@ -164,9 +167,9 @@ public class Robot extends TimedRobot {
 		drive.endGyroCalibration();
 		zeroAllSensors();
 
-		// if (operationMode != OperationMode.COMPETITION) {
-		// Scheduler.getInstance().add(new ElevatorAutoZero(true));
-		// }
+		if (operationMode != OperationMode.COMPETITION) {
+			Scheduler.getInstance().add(new ElevatorAutoZero(true));
+		}
 	}
 
 	// Called constantly through teleOp

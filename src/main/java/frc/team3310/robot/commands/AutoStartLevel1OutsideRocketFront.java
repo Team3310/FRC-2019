@@ -19,17 +19,21 @@ public class AutoStartLevel1OutsideRocketFront extends CommandGroup {
    */
   public AutoStartLevel1OutsideRocketFront() {
     addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
-    addSequential(
-        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront.right, true));
+    addSequential(new DriveMotionCommand(
+        TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront.right, true));
     addSequential(new DriveSetSpeed(0.3, 0.2));
     addSequential(new EjectHatch(), .8);
     addParallel(new IntakeHatch());
-    addSequential(
-        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontToLoading.right, false));
-    addSequential(new DriveAbsoluteTurnMP(180, 180, MPSoftwareTurnType.TANK));
-    addSequential(new DriveSetSpeed(0.3, 0.5));
-    addSequential(new IntakeHatchArms(HatchArmState.IN));
-    addSequential(
-        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack.right, false));
+    // addSequential(
+    // new
+    // DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontToLoading.right,
+    // false));
+    // addSequential(new DriveAbsoluteTurnMP(180, 180, MPSoftwareTurnType.TANK));
+    // addSequential(new DriveSetSpeed(0.3, 0.5));
+    // addSequential(new IntakeHatchArms(HatchArmState.IN));
+    // addSequential(
+    // new
+    // DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack.right,
+    // false));
   }
 }

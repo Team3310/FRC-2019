@@ -8,15 +8,36 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team3310.robot.paths.TrajectoryGenerator;
+import frc.team3310.robot.Constants;
 
 public class AutoTestTracking extends CommandGroup {
   /**
    * Add your docs here.
    */
   public AutoTestTracking() {
-    addParallel(new AutoCameraTrackWhenCrossedBoundary(50));
-  addSequential(new DriveMotionCommand(
-				TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true));
+    // addParallel(new AutoCameraTrackWhenCrossedBoundary(50));
+    // addSequential(new DriveMotionCommand(
+    // TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch,
+    // true));
+    addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
+    addParallel(new AutoCameraTrackWhenCrossedBoundary(175));
+
+    addSequential(new DriveMotionCommand(
+        TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoFront.right, true));
+
+    // addParallel(new AutoCameraTrackWhenCrossXBoundaryNegitive(-290)); //25
+
+    addSequential(new EjectHatch());
+    addSequential(new WaitCommand("Eject Break", 1));
+    addSequential(
+        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().cargoToTurn1.right, false));
+
+    addParallel(new AutoCameraTrackWhenCrossXBoundaryNegitive(35)); // 25
+
+    addSequential(
+        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1ToLoading.right, false));
+
   }
 }

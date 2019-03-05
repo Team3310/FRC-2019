@@ -166,7 +166,7 @@ public class Drive extends Subsystem implements Loop {
 	private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
 	private DriveMotionPlanner mMotionPlanner;
 	private Rotation2d mGyroOffset = Rotation2d.identity();
-	private boolean mOverrideTrajectory = false;
+	public boolean mOverrideTrajectory = false;
 
 	// Vision
 	public double limeArea;
@@ -703,7 +703,7 @@ public class Drive extends Subsystem implements Loop {
 		if (mMotionPlanner == null || driveControlMode != DriveControlMode.PATH_FOLLOWING) {
 			return false;
 		}
-		return mMotionPlanner.isDone() || mOverrideTrajectory;
+		return mMotionPlanner.isDone() || mOverrideTrajectory == true;
 	}
 
 	public void overrideTrajectory(boolean value) {
@@ -1211,10 +1211,13 @@ public class Drive extends Subsystem implements Loop {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Vison = ", isValid());
-			// SmartDashboard.putNumber("Ultrasonic Distance", ultrasonicDistance());
-
+			SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
+			SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
+			SmartDashboard.putNumber("Middle Encoder", getMiddleEncoderInches());
+			SmartDashboard.putNumber("Yaw Angle Deg", getGyroAngleDeg());
+			SmartDashboard.putNumber("Pitch Angle Deg", getGyroPitchAngle());
 			if (getHeading() != null) {
-				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
+				SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
 			}
 		}
 	}

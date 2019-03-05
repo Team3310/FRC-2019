@@ -408,10 +408,10 @@ public class Elevator extends Subsystem implements Loop {
 		synchronized (Elevator.this) {
 			switch (getElevatorControlMode()) {
 			case MOTION_MAGIC:
-				controlMotionMagicWithJoystick();
+				// controlMotionMagicWithJoystick();
 				break;
 			case JOYSTICK_POSITION_PID:
-				controlPidWithJoystick();
+				// controlPidWithJoystick();
 				break;
 			case JOYSTICK_MANUAL:
 				controlManualWithJoystick();
@@ -425,23 +425,25 @@ public class Elevator extends Subsystem implements Loop {
 		}
 	}
 
-	private void controlMotionMagicWithJoystick() {
-		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-		if (Math.abs(joystickPosition) > 0.05) {
-			double deltaPosition = joystickPosition * joystickTicksPerMs;
-			targetPositionTicks = targetPositionTicks + deltaPosition;
-			motor1.set(ControlMode.MotionMagic, targetPositionTicks, DemandType.ArbitraryFeedForward,
-					Constants.kElevatorFeedforwardNoBall);
-		}
-	}
+	// private void controlMotionMagicWithJoystick() {
+	// double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
+	// if (Math.abs(joystickPosition) > 0.05) {
+	// double deltaPosition = joystickPosition * joystickTicksPerMs;
+	// targetPositionTicks = targetPositionTicks + deltaPosition;
+	// motor1.set(ControlMode.MotionMagic, targetPositionTicks,
+	// DemandType.ArbitraryFeedForward,
+	// Constants.kElevatorFeedforwardNoBall);
+	// }
+	// }
 
-	private void controlPidWithJoystick() {
-		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-		double deltaPosition = joystickPosition * joystickTicksPerMs;
-		targetPositionTicks = targetPositionTicks + deltaPosition;
-		motor1.set(ControlMode.Position, targetPositionTicks, DemandType.ArbitraryFeedForward,
-				Constants.kElevatorFeedforwardNoBall);
-	}
+	// private void controlPidWithJoystick() {
+	// double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
+	// double deltaPosition = joystickPosition * joystickTicksPerMs;
+	// targetPositionTicks = targetPositionTicks + deltaPosition;
+	// motor1.set(ControlMode.Position, targetPositionTicks,
+	// DemandType.ArbitraryFeedForward,
+	// Constants.kElevatorFeedforwardNoBall);
+	// }
 
 	private void controlManualWithJoystick() {
 		joyStickSpeed = 1.0 * -Robot.oi.getOperatorController().getLeftYAxis();
@@ -581,7 +583,8 @@ public class Elevator extends Subsystem implements Loop {
 			SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
 			SmartDashboard.putBoolean("Platform Detect Front = ", getPlatformDetectFront());
 			SmartDashboard.putBoolean("Plaform Detect Bot = ", getPlatformDetectRear());
-			SmartDashboard.putNumber("SensorVel", motor1.getSelectedSensorVelocity());
+			SmartDashboard.putNumber("Elevator Position Inches", getElevatorInchesOffGround());
+			SmartDashboard.putNumber("Elevator Target Position Ticks", targetPositionTicks);
 
 		}
 	}
