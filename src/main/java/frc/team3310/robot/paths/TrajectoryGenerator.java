@@ -96,7 +96,7 @@ public class TrajectoryGenerator {
         // axis for LEFT)
         public static final Pose2d kSideStartLevel1 = new Pose2d(63.7, -48.4, Rotation2d.fromDegrees(0.0));
 
-        public static final Pose2d kCenterToIntake = new Pose2d(new Translation2d(-24.0, 0.0), Rotation2d.identity());
+        public static final Pose2d kCenterToIntake = new Pose2d(new Translation2d(-18.0, 0.0), Rotation2d.identity());
 
         public static final Pose2d kSideStartLevel1Intake = kSideStartLevel1.transformBy(kCenterToIntake);
 
@@ -121,7 +121,7 @@ public class TrajectoryGenerator {
         public static final Pose2d kRocketFrontToTurn1APose = new Pose2d(new Translation2d(180, -80),
                         Rotation2d.fromDegrees(-105.00));
 
-        public static final Pose2d kTurn1ToTurn2Pose = new Pose2d(new Translation2d(215, -100),
+        public static final Pose2d kTurn1ToTurn2Pose = new Pose2d(new Translation2d(200, -100),
                         Rotation2d.fromDegrees(-160.00));
 
         public static final Pose2d kTurn1ToLoadingPose = new Pose2d(new Translation2d(30, -135),
@@ -138,6 +138,8 @@ public class TrajectoryGenerator {
 
         public static final Pose2d kRocketBackToTurnPose = new Pose2d(new Translation2d(250, -145),
                         Rotation2d.fromDegrees(-140.00));
+
+        // Cargo 2 Hatch (Middle/Side)
 
         public static final Pose2d kCargoTrackPoseSideStart = new Pose2d(new Translation2d(195, -15),
                         Rotation2d.fromDegrees(0.00));
@@ -197,21 +199,21 @@ public class TrajectoryGenerator {
 
                 private TrajectorySet() {
                         level1StartToRocketFront = new MirroredTrajectory(getLevel1StartToRocketFront());
-                        loadingToRocketBack = new MirroredTrajectory(getLoadingToRocketBack());
                         rocketFrontToTurn1 = new MirroredTrajectory(getRocketFrontToTurn1());
                         rocketFrontToTurn1A = new MirroredTrajectory(getRocketFrontToTurn1A());
                         turn1ToTurn2 = new MirroredTrajectory(getTurn1ToTurn2());
                         turn2ToLoading = new MirroredTrajectory(getTurn2ToLoading());
                         turn3ToRocketBack = new MirroredTrajectory(getTurn3ToRocketBack());
+                        loadingToRocketBack = new MirroredTrajectory(getLoadingToRocketBack());
                         level1StartToCargoFront = new MirroredTrajectory(getLevel1StartToCargoFront());
-                        cargoFrontToTurn1 = new MirroredTrajectory(getCargoFrontToWall());
+                        cargoFrontToTurn1 = new MirroredTrajectory(getCargoFrontToTurn1());
                         cargoFrontToTurn1A = new MirroredTrajectory(getCargoFrontToTurn1A());
                         cargoFrontTurn1ToLoading = new MirroredTrajectory(getCargoFrontTurn1ToLoading());
                         cargoFrontTurn1AToLoading = new MirroredTrajectory(getCargoFrontTurn1AToLoading());
                         rocketFrontTurn1AToLoading = new MirroredTrajectory(getRocketFrontTurn1AToLoading());
                         loadingToTurn1CargoSide1 = new MirroredTrajectory(getLoadingToTurn1CargoSide1());
                         turn1ToCargoSide1 = new MirroredTrajectory(getTurn1ToCargoSide1());
-
+ 
                         centerStartToLeftSwitch = new MirroredTrajectory(getCenterStartToLeftSwitch());
                         centerStartToRightSwitch = new MirroredTrajectory(getCenterStartToRightSwitch());
                         simpleStartToLeftSwitch = new MirroredTrajectory(getSimpleStartToLeftSwitch());
@@ -352,7 +354,7 @@ public class TrajectoryGenerator {
                                         kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
                 }
 
-                private Trajectory<TimedState<Pose2dWithCurvature>> getCargoFrontToWall() {
+                private Trajectory<TimedState<Pose2dWithCurvature>> getCargoFrontToTurn1() {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kCargoTrackPoseSideStart);
                         waypoints.add(kCargoFrontToTurn1Pose);

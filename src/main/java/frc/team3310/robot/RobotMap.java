@@ -48,4 +48,8 @@ public class RobotMap {
 	public static final int ELEVATOR_MAX_REV_SENSOR_DIO_ID = 8;
 	public static final int ELEVATOR_MIN_REV_SENSOR_DIO_ID = 9;
 
+	// PWM
+	public static final int ULTRA_SONIC_INPUT_CHANNEL = 0;
+	public static final int ULTRA_SONIC_OUTPUT_CHANNEL = 1;
+
 }
