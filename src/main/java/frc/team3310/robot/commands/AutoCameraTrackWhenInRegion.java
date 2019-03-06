@@ -11,19 +11,13 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team3310.utility.lib.geometry.Translation2d;
 
 public class AutoCameraTrackWhenInRegion extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
-  public AutoCameraTrackWhenInRegion(Translation2d bottomLeft, Translation2d topRight, boolean isOnLeft) {
-    this(bottomLeft, topRight, isOnLeft, 1.0);
+
+  public AutoCameraTrackWhenInRegion(Translation2d bottomLeftForRightSideAuton, Translation2d topRightForRightSideAuton) {
+    this(bottomLeftForRightSideAuton, topRightForRightSideAuton, 1.0);
   }
 
-  /**
-   * Add your docs here.
-   */
-  public AutoCameraTrackWhenInRegion(Translation2d bottomLeft, Translation2d topRight, boolean isOnLeft,
-      double velocityScale) {
-    addSequential(new WaitUntilInsideRegion(bottomLeft, topRight, isOnLeft));
+  public AutoCameraTrackWhenInRegion(Translation2d bottomLeftForRightSideAuton, Translation2d topRightForRightSideAuton, double velocityScale) {
+    addSequential(new WaitUntilInsideRegion(bottomLeftForRightSideAuton, topRightForRightSideAuton));
     addSequential(new DrivePathCameraTrack(velocityScale));
   }
 }
