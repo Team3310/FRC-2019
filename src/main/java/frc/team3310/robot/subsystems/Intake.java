@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.robot.Constants;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.RobotMap;
 import frc.team3310.utility.lib.drivers.TalonSRXChecker;
@@ -65,15 +66,16 @@ public class Intake extends Subsystem {
 	}
 
 	public void setBallArmState(BallArmState state) {
-		Robot.drive.updateLimelight();
 		System.out.println("Ball arm state = " + state);
 		if (state == BallArmState.IN) {
 			ballArms.set(false);
-
-		} else if (state == BallArmState.IN && Robot.drive.isLimeValid && Robot.drive.limeArea < 9) {
+			return;
+		} 
+		
+		Robot.drive.updateLimelight();
+		if (Robot.elevator.getElevatorInchesOffGround() > Constants.HATCH_LEVEL_2 && Robot.drive.lastValidLimeArea < 9) {
 			System.out.println("To far to score");
 		}
-
 		else if (state == BallArmState.OUT) {
 			ballArms.set(true);
 		}
