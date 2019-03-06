@@ -34,6 +34,7 @@ import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.commands.TurnCompressorOn;
 import frc.team3310.robot.controller.GameController;
 import frc.team3310.robot.controller.Playstation;
+import frc.team3310.robot.controller.Xbox;
 import frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
@@ -54,8 +55,8 @@ public class OI {
 
   private OI() {
     // Driver controller
-    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
-    m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Playstation());
+    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
+    m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Xbox());
 
     // Driver Controls
     Button ejectHatch = m_driver.getButtonA();

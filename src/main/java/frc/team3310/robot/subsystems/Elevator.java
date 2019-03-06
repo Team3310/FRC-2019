@@ -411,7 +411,7 @@ public class Elevator extends Subsystem implements Loop {
 				// controlMotionMagicWithJoystick();
 				break;
 			case JOYSTICK_POSITION_PID:
-				// controlPidWithJoystick();
+				controlPidWithJoystick();
 				break;
 			case JOYSTICK_MANUAL:
 				controlManualWithJoystick();
@@ -436,14 +436,13 @@ public class Elevator extends Subsystem implements Loop {
 	// }
 	// }
 
-	// private void controlPidWithJoystick() {
-	// double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-	// double deltaPosition = joystickPosition * joystickTicksPerMs;
-	// targetPositionTicks = targetPositionTicks + deltaPosition;
-	// motor1.set(ControlMode.Position, targetPositionTicks,
-	// DemandType.ArbitraryFeedForward,
-	// Constants.kElevatorFeedforwardNoBall);
-	// }
+	private void controlPidWithJoystick() {
+		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
+		double deltaPosition = joystickPosition * joystickTicksPerMs;
+		targetPositionTicks = targetPositionTicks + deltaPosition;
+		motor1.set(ControlMode.Position, targetPositionTicks, DemandType.ArbitraryFeedForward,
+				Constants.kElevatorFeedforwardNoBall);
+	}
 
 	private void controlManualWithJoystick() {
 		joyStickSpeed = 1.0 * -Robot.oi.getOperatorController().getLeftYAxis();

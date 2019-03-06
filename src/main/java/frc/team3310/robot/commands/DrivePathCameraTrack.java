@@ -1,34 +1,55 @@
 package frc.team3310.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
-import frc.team3310.robot.subsystems.Drive.DriveControlMode;
 import frc.team3310.robot.Robot;
+import frc.team3310.robot.subsystems.Drive.DriveControlMode;
 
-public class DrivePathCameraTrack extends Command {
+public class DrivePathCameraTrack extends ExtraTimeoutCommand {
+
+	private boolean isTracking = false;
+	private double velocityScale = 1.0;
+	private final double PIPELINE_TIMEOUT = 0.2;
+	private final double isVisonTimedOut = 1.5;
 
 	public DrivePathCameraTrack() {
 		requires(Robot.drive);
 	}
 
+	public DrivePathCameraTrack(double velocityScale) {
+		this.velocityScale = velocityScale;
+		requires(Robot.drive);
+	}
+
 	protected void initialize() {
-		System.out.println("Start camera track");
-		// Robot.drive.setLimeLED(true);
-		Robot.drive.setCameraTrack();
+		System.out.println("Switch Pipeline");
+		isTracking = false;
+		resetExtraOneTimer();
+		resetExtraTwoTimer();
+		startExtraOneTimeout(PIPELINE_TIMEOUT);
+		startExtraTwoTimeout(isVisonTimedOut);
+		Robot.drive.setPipeline(0);
+
 		// setTimeout(timeout);
 		Robot.drive.isLimeValid = true;
 	}
 
 	protected void execute() {
+		if (!isTracking && isExtraOneTimedOut()) {
+			System.out.println("Start camera track");
+			Robot.drive.setCameraTrack(velocityScale);
+			isTracking = true;
+		}
 	}
 
 	protected boolean isFinished() {
-		return Robot.drive.isLimeValid == false;
+		return Robot.drive.isLimeValid == false || isExtraTwoTimedOut();
 	}
 
 	protected void end() {
 		System.out.println("camera track finished");
 		System.out.println("Time to eject done camera track");
 		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
+		Robot.drive.overrideTrajectory(true);
+		Robot.drive.setPipeline(1);
 	}
 
 	protected void interrupted() {

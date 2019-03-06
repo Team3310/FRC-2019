@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team3310.robot.commands.AutoStartLevel1OutsideRocketFront;
+import frc.team3310.robot.commands.AutoStartLevel1SideCargoFrontSide1;
 import frc.team3310.robot.commands.AutoStartLevel1SideRocketFrontTrack;
 import frc.team3310.robot.commands.AutoTestTracking;
 import frc.team3310.robot.commands.DriveAbsoluteTurnMP;
@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
 	public static enum OperationMode {
 		TEST, PRACTICE, COMPETITION
 	};
+
 	public static OperationMode operationMode = OperationMode.COMPETITION;
 
 	public static RightLeftAutonSide rightLeftSide = RightLeftAutonSide.RIGHT;
@@ -95,11 +96,11 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 
 		autonTaskChooser = new SendableChooser<Command>();
-		autonTaskChooser.addOption("Test Motion", new AutoTestTracking());
-		autonTaskChooser.addOption("L1 Start Outside Rocket Front", new AutoStartLevel1OutsideRocketFront());
-		autonTaskChooser.setDefaultOption("L1 Start Outside Rocket Front Track",
+		autonTaskChooser.setDefaultOption("L1 Start Outside Rocket Front/Back",
 				new AutoStartLevel1SideRocketFrontTrack());
-		autonTaskChooser.addOption("Turn 90", new DriveAbsoluteTurnMP(90, 180, MPSoftwareTurnType.TANK));
+
+		autonTaskChooser.addOption("L1 Start Outside Cargo Front/Side1", new AutoStartLevel1SideCargoFrontSide1());
+
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 
 		autonRightLeftChooser = new SendableChooser<RightLeftAutonSide>();
@@ -112,8 +113,7 @@ public class Robot extends TimedRobot {
 
 		zeroAllSensors();
 		compressor.turnCompressorOff();
-
-		drive.setLimeLED(0);
+		drive.setPipeline(1);
 
 		elevator.setFrontLegState(FrontLegShiftState.LOCKED);
 		elevator.setBackLegState(BackLegShiftState.LOCKED);
@@ -145,6 +145,7 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		controlLoop.start();
 		drive.setIsRed(getAlliance().equals(Alliance.Red));
+		drive.setPipeline(1);
 
 		rightLeftSide = autonRightLeftChooser.getSelected();
 		trajectoryGenerator.setRightLeftAutonSide(rightLeftSide);
@@ -171,9 +172,10 @@ public class Robot extends TimedRobot {
 		}
 
 		operationMode = operationModeChooser.getSelected();
-		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
+		drive.setControlMode(DriveControlMode.JOYSTICK);
 
 		controlLoop.start();
+		drive.setPipeline(1);
 		drive.endGyroCalibration();
 		zeroAllSensors();
 

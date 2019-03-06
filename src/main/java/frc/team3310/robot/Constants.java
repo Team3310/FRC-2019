@@ -45,8 +45,8 @@ public class Constants {
     public static final double kRobotAngularInertia = 10.0; // kg m^2 TODO tune
     public static final double kRobotAngularDrag = 12.0; // N*m / (rad/sec) TODO tune
     public static final double kDriveVIntercept = 0.928112644250295; // V
-    public static final double kDriveKv = 0.1602500692715937; // 0.14242500692715937; // V per rad/s
-    public static final double kDriveKa = 0.011505866811140018; // V per rad/s^2
+    public static final double kDriveKv = 0.11242500692715937; // 0.14242500692715937; // V per rad/s
+    public static final double kDriveKa = 0.01; // 0.011505866811140018; // V per rad/s^2
 
     // Geometry
     // 2019 Robot Values
@@ -65,9 +65,9 @@ public class Constants {
     public static final double kPathLookaheadTime = 0.4; // seconds to look ahead along the path for steering
     public static final double kPathMinLookaheadDistance = 24.0; // inches
 
-    public static final double kDriveVelocityKp = 0.9; // 0.9;
+    public static final double kDriveVelocityKp = 0.5; // 0.9;
     public static final double kDriveVelocityKi = 0.0;
-    public static final double kDriveVelocityKd = 10.0; // 10.0;
+    public static final double kDriveVelocityKd = 3.0; // 10.0;
     public static final double kDriveVelocityKf = 0.0;
     public static final int kDriveVelocityIZone = 0;
     public static final double kDriveVoltageRampRate = 0.0;
@@ -121,12 +121,12 @@ public class Constants {
     public static final double kMiddleDrivePeakReverse = -1.0;
 
     // 2019 Elevator Levels
-    public static final double HOME_POSITION_INCHES = 7.5;//20.5; // 7.5;
+    public static final double HOME_POSITION_INCHES = 7.5;// 20.5; // 7.5;
     public static final double ZERO_POSITION_INCHES = 7.5;
     public static final double MIN_POSITION_INCHES = HOME_POSITION_INCHES;
     public static final double MAX_POSITION_INCHES = 83.5;
     public static final double AFTER_INTAKE_POSITION_INCHES = 11.5;
-    public static final double HATCH_LEVEL_1 = 20.5;
+    public static final double HATCH_LEVEL_1 = 19.5;
     public static final double HATCH_LEVEL_2 = 50.0;
     public static final double HATCH_LEVEL_3 = 78.0;
     public static final double BALL_LEVEL_1 = 29.5;

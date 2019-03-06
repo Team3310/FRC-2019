@@ -22,6 +22,7 @@ public class DriveForwardClimbMM extends Command {
   // Called just before this Command runs the first time
   protected void initialize() {
     edgeDetected = false;
+    Robot.drive.resetMiddleEncoder();
     Robot.drive.setMiddleDriveMotionMagicPosition(distance);
     Robot.drive.setVelocitySetpoint(10, 10);
 

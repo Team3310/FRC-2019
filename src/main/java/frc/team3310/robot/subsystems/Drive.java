@@ -179,7 +179,7 @@ public class Drive extends Subsystem implements Loop {
 	public boolean onTarget;
 
 	// Ultrasonic
-	public Ultrasonic ultrasonic;
+	// public Ultrasonic ultrasonic;
 
 	public double targetMiddlePositionTicks;
 
@@ -297,7 +297,8 @@ public class Drive extends Subsystem implements Loop {
 
 			middleDrive = TalonSRXFactory.createDefaultTalon(RobotMap.DRIVE_MIDDLE_CLIMB_WHEEL);
 
-			ultrasonic = new Ultrasonic(RobotMap.ULTRA_SONIC_INPUT_CHANNEL, RobotMap.ULTRA_SONIC_OUTPUT_CHANNEL);
+			// ultrasonic = new Ultrasonic(RobotMap.ULTRA_SONIC_INPUT_CHANNEL,
+			// RobotMap.ULTRA_SONIC_OUTPUT_CHANNEL);
 
 			leftDrive1.setSafetyEnabled(false);
 			leftDrive1.setSensorPhase(false);
@@ -900,6 +901,7 @@ public class Drive extends Subsystem implements Loop {
 		}
 
 		m_drive.arcadeDrive(-m_moveOutput, -m_steerOutput);
+
 	}
 
 	public boolean isBrakeMode() {
@@ -1028,7 +1030,7 @@ public class Drive extends Subsystem implements Loop {
 	public void updateLimelight() {
 		NetworkTable limeTable = getLimetable();
 		double valid = limeTable.getEntry("tv").getDouble(0);
-		if (valid == 0) {
+		if (valid == 0 || limeArea > 38) {
 			isLimeValid = false;
 		} else if (valid == 1) {
 			isLimeValid = true;
@@ -1064,12 +1066,11 @@ public class Drive extends Subsystem implements Loop {
 	 * 
 	 * @see Path
 	 */
-	public synchronized void setCameraTrack() {
+	public synchronized void setCameraTrack(double velocityScale) {
 		// double straightVelocity = (mPeriodicIO.left_velocity_ticks_per_100ms
 		// + mPeriodicIO.right_velocity_ticks_per_100ms) / 2;
-		double straightVelocity = (leftDrive1.getVelocityWorld() + rightDrive1.getVelocityWorld()) / 2;
+		double straightVelocity = velocityScale * (leftDrive1.getVelocityWorld() + rightDrive1.getVelocityWorld()) / 2;
 		setFinished(false);
-		mOverrideTrajectory = true;
 		// configureTalonsForSpeedControl();
 		driveControlMode = DriveControlMode.CAMERA_TRACK;
 		mLastValidGyroAngle = getGyroAngleDeg();
@@ -1122,7 +1123,7 @@ public class Drive extends Subsystem implements Loop {
 		middleDrive.set(ControlMode.MotionMagic, targetMiddlePositionTicks);
 	}
 
-	private void resetMiddleEncoder() {
+	public void resetMiddleEncoder() {
 		middleDrive.setSelectedSensorPosition(0, 0, 100);
 	}
 
@@ -1213,13 +1214,18 @@ public class Drive extends Subsystem implements Loop {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Vison = ", isValid());
-			SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
-			SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
+			// SmartDashboard.putNumber("x",
+			// RobotStatus.getInstance().getLatestFieldToVehicle().getValue().getTranslation().x());
+
+			// SmartDashboard.putNumber("y",
+			// RobotStatus.getInstance().getLatestFieldToVehicle().getValue().getTranslation().y());
+			// SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
+			// SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
 			SmartDashboard.putNumber("Middle Encoder", getMiddleEncoderInches());
-			SmartDashboard.putNumber("Yaw Angle Deg", getGyroAngleDeg());
-			SmartDashboard.putNumber("Pitch Angle Deg", getGyroPitchAngle());
+			// SmartDashboard.putNumber("Yaw Angle Deg", getGyroAngleDeg());
+			// SmartDashboard.putNumber("Pitch Angle Deg", getGyroPitchAngle());
 			if (getHeading() != null) {
-				SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
+				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
 			}
 		}
 	}

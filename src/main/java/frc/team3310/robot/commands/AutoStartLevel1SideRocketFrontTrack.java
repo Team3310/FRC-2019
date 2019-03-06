@@ -9,37 +9,40 @@ package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
+import frc.team3310.robot.Constants;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
-import frc.team3310.robot.Constants;
 
 public class AutoStartLevel1SideRocketFrontTrack extends CommandGroup {
-    /**
-     * Add your docs here.
-     */
-    public AutoStartLevel1SideRocketFrontTrack() {
-        addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
+        /**
+         * Add your docs here.
+         */
+        public AutoStartLevel1SideRocketFrontTrack() {
+                addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
 
-        addParallel(new AutoCameraTrackWhenCrossedBoundary(165));
-        addSequential(new DriveMotionCommand(
-                TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront, true));
-        addSequential(new EjectHatch());
-        addSequential(new WaitCommand("Eject Break", 1));
-        addParallel(new IntakeHatch());
-        addSequential(new DriveMotionCommand(
-                TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontToTurn1, false));
+                addParallel(new AutoCameraTrackWhenCrossedBoundary(165));
+                addSequential(new DriveMotionCommand(
+                                TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront, true));
+                addSequential(new EjectHatch());
+                addSequential(new WaitCommand("Eject Break", .25));
+                addParallel(new IntakeHatch());
+                addSequential(new DriveMotionCommand(
+                                TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontToTurn1A, false));
 
-        addSequential(
-                new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1ToTurn2, false));
-        addSequential(new WaitCommand("Turn Break", 1.5));
-        addParallel(new AutoCameraTrackWhenCrossXBoundaryNegative(45));
-        addParallel(new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn2ToLoading,
-                false), 4);
-        addSequential(new IntakeHatchArms(HatchArmState.IN));
-        addSequential(new DriveMotionCommand(
-                TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack, false));
-        addParallel(new AutoCameraTrackWhenCrossXBoundaryNegative(25)); // 25
-        addSequential(new DriveMotionCommand(
-                TrajectoryGenerator.getInstance().getTrajectorySet().turn3ToRocketBack, false));
-    }
+                addParallel(new AutoCameraTrackWhenCrossXBoundaryNegative(100, 0.7));
+                addSequential(new DriveMotionCommand(
+                                TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontTurn1AToLoading, false),
+                                4);
+                addSequential(new IntakeHatchArms(HatchArmState.IN));
+                addSequential(new WaitCommand("Grab Break", .25));
+
+                addSequential(new DriveMotionCommand(
+                                TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack, false));
+                addParallel(new AutoCameraTrackWhenCrossXBoundaryNegative(292));
+                addSequential(new DriveMotionCommand(
+                                TrajectoryGenerator.getInstance().getTrajectorySet().turn3ToRocketBack, false));
+                addSequential(new WaitCommand("Eject Pause", .25));
+                addSequential(new EjectHatch());
+
+        }
 }

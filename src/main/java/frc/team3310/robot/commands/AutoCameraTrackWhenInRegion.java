@@ -8,20 +8,22 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team3310.utility.lib.geometry.Translation2d;
 
-public class AutoCameraTrackWhenCrossXBoundaryNegative extends CommandGroup {
+public class AutoCameraTrackWhenInRegion extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public AutoCameraTrackWhenCrossXBoundaryNegative(double xBounday) {
-    this(xBounday, 1.0);
+  public AutoCameraTrackWhenInRegion(Translation2d bottomLeft, Translation2d topRight, boolean isOnLeft) {
+    this(bottomLeft, topRight, isOnLeft, 1.0);
   }
 
   /**
    * Add your docs here.
    */
-  public AutoCameraTrackWhenCrossXBoundaryNegative(double xBounday, double velocityScale) {
-    addSequential(new WaitUntilCrossXBoundaryNegativeCommand(xBounday));
+  public AutoCameraTrackWhenInRegion(Translation2d bottomLeft, Translation2d topRight, boolean isOnLeft,
+      double velocityScale) {
+    addSequential(new WaitUntilInsideRegion(bottomLeft, topRight, isOnLeft));
     addSequential(new DrivePathCameraTrack(velocityScale));
   }
 }
