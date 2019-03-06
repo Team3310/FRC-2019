@@ -12,7 +12,6 @@ public class WaitUntilInsideRegion extends Command {
     private Translation2d mBottomLeft;
     private Translation2d mTopRight;
 
-    // (100, 100) (200, 200)
     public WaitUntilInsideRegion(Translation2d bottomLeftForRightSideAuton, Translation2d topRightForRightSideAuton) {
         mBottomLeft = bottomLeftForRightSideAuton;
         mTopRight = topRightForRightSideAuton;
@@ -32,8 +31,8 @@ public class WaitUntilInsideRegion extends Command {
     @Override
     public boolean isFinished() {
         Translation2d position = mRobotState.getLatestFieldToVehicle().getValue().getTranslation();
-        return position.x() > mBottomLeft.x() && position.x() < mTopRight.x() && position.y() > mBottomLeft.y()
-                && position.y() < mTopRight.y();
+        return position.x() > mBottomLeft.x() && position.x() < mTopRight.x() && position.y() > mTopRight.y()
+                && position.y() < mBottomLeft.y();
     }
 
     @Override
@@ -43,6 +42,6 @@ public class WaitUntilInsideRegion extends Command {
 
     @Override
     public void end() {
-
+        System.out.println("Inside Region");
     }
 }

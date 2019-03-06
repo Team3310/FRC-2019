@@ -8,20 +8,16 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team3310.robot.commands.WaitUntilCrossXBoundary.MovingXDirection;
 
-public class AutoCameraTrackWhenCrossXBoundaryNegative extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
-  public AutoCameraTrackWhenCrossXBoundaryNegative(double xBounday) {
-    this(xBounday, 1.0);
+public class AutoCameraTrackWhenCrossXBoundary extends CommandGroup {
+ 
+  public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection) {
+    this(xBoundary, movingDirection, 1.0);
   }
 
-  /**
-   * Add your docs here.
-   */
-  public AutoCameraTrackWhenCrossXBoundaryNegative(double xBounday, double velocityScale) {
-    addSequential(new WaitUntilCrossXBoundaryNegativeCommand(xBounday));
+  public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double velocityScale) {
+    addSequential(new WaitUntilCrossXBoundary(xBoundary, movingDirection));
     addSequential(new DrivePathCameraTrack(velocityScale));
   }
 }
