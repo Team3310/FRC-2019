@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.Constants;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
+import frc.team3310.utility.lib.geometry.Translation2d;
 
 public class AutoStartLevel1SideCargoFrontSide1 extends CommandGroup {
   /**
@@ -38,7 +39,7 @@ public class AutoStartLevel1SideCargoFrontSide1 extends CommandGroup {
 
     addSequential(
         new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToTurn1CargoSide1, false));
-    addParallel(new AutoCameraTrackWhenCrossXBoundaryNegative(270));
+    addParallel(new AutoCameraTrackWhenInRegion(new Translation2d(245, -22.5), new Translation2d(276.5, -70)));
     addSequential(
         new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1ToCargoSide1, false));
     addSequential(new WaitCommand("Eject Pause", .25));
