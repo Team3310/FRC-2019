@@ -11,13 +11,14 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team3310.robot.Constants;
 import frc.team3310.robot.commands.WaitUntilCrossXBoundary.MovingXDirection;
-import frc.team3310.robot.commands.WaitUntilCrossYBoundary.MovingYDirection;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
 
-public class AutoStartLevel1SideCargoFrontSide1 extends CommandGroup {
-
-  public AutoStartLevel1SideCargoFrontSide1() {
+public class AutoStartLevel1SideCargoFront2 extends CommandGroup {
+  /**
+   * Add your docs here.
+   */
+  public AutoStartLevel1SideCargoFront2() {
     addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
 
     addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive));
@@ -37,10 +38,10 @@ public class AutoStartLevel1SideCargoFrontSide1 extends CommandGroup {
     addSequential(new WaitCommand("Grab Break", .25));
 
     addSequential(
-        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToTurn1CargoSide1, false));
-    addParallel(new AutoCameraTrackWhenCrossYBoundary(-75, MovingYDirection.OutsideToInside));
+        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().loadingTocargoFrontTrack2, false));
+    addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive));
     addSequential(
-        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1ToCargoSide1, false));
+        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().track2PoseToCargo2, false));
     addSequential(new WaitCommand("Eject Pause", .25));
     addSequential(new EjectHatch());
   }

@@ -30,6 +30,7 @@ import frc.team3310.robot.commands.SetRobotClimbBack;
 import frc.team3310.robot.commands.SetRobotClimbFront;
 import frc.team3310.robot.commands.SetRobotClimbMode;
 import frc.team3310.robot.commands.SetRobotScoreMode;
+import frc.team3310.robot.commands.SwitchCameraPipeline;
 import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.commands.TurnCompressorOn;
 import frc.team3310.robot.controller.GameController;
@@ -55,7 +56,7 @@ public class OI {
 
   private OI() {
     // Driver controller
-    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
+    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
     m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Xbox());
 
     // Driver Controls
@@ -82,6 +83,10 @@ public class OI {
     Button IntakeHatchManualD = m_driver.getLeftTrigger();
     IntakeHatchManualD.whenReleased(new IntakeHatchArms(HatchArmState.IN));
     IntakeHatchManualD.whenReleased(new ElevatorHatchLevel());
+
+    Button switchCameraPipeline = m_driver.getRightTrigger();
+    switchCameraPipeline.whenPressed(new SwitchCameraPipeline(0));
+    switchCameraPipeline.whenReleased(new SwitchCameraPipeline(1));
 
     // Operator Controls
     // Elevator

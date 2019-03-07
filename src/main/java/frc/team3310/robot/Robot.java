@@ -15,10 +15,10 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.robot.commands.AutoStartLevel1SideCargoFront2;
 import frc.team3310.robot.commands.AutoStartLevel1SideCargoFrontSide1;
-import frc.team3310.robot.commands.AutoStartLevel1SideRocketFrontTrack;
-import frc.team3310.robot.commands.AutoTestTracking;
-import frc.team3310.robot.commands.DriveAbsoluteTurnMP;
+import frc.team3310.robot.commands.AutoStartLevel1SideRocketFrontBackLow;
+import frc.team3310.robot.commands.AutoStartLevel1SideRocketFrontBackMid;
 import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
@@ -32,7 +32,6 @@ import frc.team3310.robot.subsystems.Elevator.ElevatorClimbShiftState;
 import frc.team3310.robot.subsystems.Elevator.FrontLegShiftState;
 import frc.team3310.robot.subsystems.Intake;
 import frc.team3310.robot.subsystems.RobotStateEstimator;
-import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import frc.team3310.utility.lib.control.RobotStatus;
 
 public class Robot extends TimedRobot {
@@ -96,10 +95,15 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 
 		autonTaskChooser = new SendableChooser<Command>();
-		autonTaskChooser.setDefaultOption("L1 Start Outside Rocket Front/Back",
-				new AutoStartLevel1SideRocketFrontTrack());
+		autonTaskChooser.setDefaultOption("L1 Start Outside Rocket Front/Back Low",
+				new AutoStartLevel1SideRocketFrontBackLow());
 
-		autonTaskChooser.addOption("L1 Start Outside Cargo Front/Side1", new AutoStartLevel1SideCargoFrontSide1());
+		autonTaskChooser.setDefaultOption("L1 Start Outside Rocket Front/Back Mid",
+				new AutoStartLevel1SideRocketFrontBackMid());
+
+		autonTaskChooser.addOption("L1 Start Outside Cargo Front/Side", new AutoStartLevel1SideCargoFrontSide1());
+
+		autonTaskChooser.addOption("L1 Start Outside Cargo Front/Front", new AutoStartLevel1SideCargoFront2());
 
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 

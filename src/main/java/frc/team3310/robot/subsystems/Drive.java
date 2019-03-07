@@ -170,6 +170,7 @@ public class Drive extends Subsystem implements Loop {
 
 	// Vision
 	public double limeArea;
+	public double lastValidLimeArea;
 	public double limeX;
 	public double limeY;
 	public double limeSkew;
@@ -1029,17 +1030,17 @@ public class Drive extends Subsystem implements Loop {
 
 	public void updateLimelight() {
 		NetworkTable limeTable = getLimetable();
-		double valid = limeTable.getEntry("tv").getDouble(0);
-		if (valid == 0 || limeArea > 38) {
-			isLimeValid = false;
-		} else if (valid == 1) {
-			isLimeValid = true;
-		}
-
 		limeX = limeTable.getEntry("tx").getDouble(0);
 		limeY = limeTable.getEntry("ty").getDouble(0);
 		limeArea = limeTable.getEntry("ta").getDouble(0);
 		limeSkew = limeTable.getEntry("ts").getDouble(0);
+		double valid = limeTable.getEntry("tv").getDouble(0);
+		if (valid == 0) { // || limeArea > 38
+			isLimeValid = false;
+		} else if (valid == 1) {
+			isLimeValid = true;
+			lastValidLimeArea = limeArea;
+		}
 	}
 
 	/**

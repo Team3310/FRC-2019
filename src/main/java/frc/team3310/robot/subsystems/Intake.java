@@ -70,22 +70,29 @@ public class Intake extends Subsystem {
 		if (state == BallArmState.IN) {
 			ballArms.set(false);
 			return;
-		} 
-		
-		Robot.drive.updateLimelight();
-		if (Robot.elevator.getElevatorInchesOffGround() > Constants.HATCH_LEVEL_2 && Robot.drive.lastValidLimeArea < 9) {
-			System.out.println("To far to score");
 		}
-		else if (state == BallArmState.OUT) {
+
+		Robot.drive.updateLimelight();
+		if (isOkToLaunch()) {
 			ballArms.set(true);
 		}
+		else {
+			System.out.println("To far to score");
+		}
+	}
+	
+	private boolean isOkToLaunch() {
+		return !(Robot.elevator.getElevatorInchesOffGround() > Constants.HATCH_LEVEL_2
+				&& Robot.drive.lastValidLimeArea < 9);
 	}
 
 	public void setHatchArmState(HatchArmState state) {
 		System.out.println("Hatch arm state = " + state);
 		if (state == HatchArmState.IN) {
 			hatchArms.set(false);
-		} else if (state == HatchArmState.OUT) {
+			return;
+		} 
+		if (isOkToLaunch()) {
 			hatchArms.set(true);
 		}
 	}

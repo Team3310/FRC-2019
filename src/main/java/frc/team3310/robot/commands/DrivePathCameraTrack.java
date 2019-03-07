@@ -41,7 +41,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 	}
 
 	protected boolean isFinished() {
-		return Robot.drive.isLimeValid == false || isExtraTwoTimedOut();
+		return Robot.drive.isLimeValid == false || Robot.drive.limeArea > 38 || isExtraTwoTimedOut();
 	}
 
 	protected void end() {
