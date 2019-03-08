@@ -100,7 +100,8 @@ public class Drive extends Subsystem implements Loop {
 
 	public static final double STICK_DEADBAND = 0.02;
 
-	public static final double PITCH_THRESHOLD = 25;
+	public static final double PITCH_THRESHOLD = 20
+	;
 
 	private int pitchWindowSize = 5;
 	private int windowIndex = 0;
@@ -155,8 +156,8 @@ public class Drive extends Subsystem implements Loop {
 	private double mCameraVelocity = 0;
 	private double kCamera = 0.04; // .7
 	private double kCameraDriveClose = 0.072; // .04
-	private double kCameraDriveMid = 0.04; // .04
-	private double kCameraDriveFar = 0.03; // .04
+	private double kCameraDriveMid = 0.043; // .04
+	private double kCameraDriveFar = 0.033; // .04
 	private double kCameraClose = 10;
 	private double kCameraMid = 15;
 	private double kCameraFar = 20;
@@ -868,11 +869,11 @@ public class Drive extends Subsystem implements Loop {
 		}
 
 		double pitchAngle = updatePitchWindow();
-		// if (Math.abs(pitchAngle) > PITCH_THRESHOLD) {
-		// m_moveOutput = Math.signum(pitchAngle) * -1.0;
-		// m_steerOutput = 0;
-		// System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
-		// }
+		if (Math.abs(pitchAngle) > PITCH_THRESHOLD) {
+		m_moveOutput = Math.signum(pitchAngle) * -1.0;
+		m_steerOutput = 0;
+		System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
+		}
 
 		if (cameraTrackTapeButton) {
 			setPipeline(0);
@@ -884,16 +885,16 @@ public class Drive extends Subsystem implements Loop {
 				double kCameraDrive = kCameraDriveClose;
 				if (limeX <= kCameraClose) {
 					kCameraDrive = kCameraDriveClose;
-					System.out.println(" Close Valid lime angle = " + limeX);
+					// System.out.println(" Close Valid lime angle = " + limeX);
 				} else if (limeX < kCameraMid) {
 					kCameraDrive = kCameraDriveMid;
-					System.out.println("Mid Valid lime angle = " + limeX);
+					// System.out.println("Mid Valid lime angle = " + limeX);
 				} else if (limeX < kCameraFar) {
 					kCameraDrive = kCameraDriveFar;
-					System.out.println("Far Valid lime angle = " + limeX);
+					// System.out.println("Far Valid lime angle = " + limeX);
 				}
 				cameraSteer = limeX * kCameraDrive;
-				System.out.println("Valid lime angle = " + kCameraDrive);
+				// System.out.println("Valid lime angle = " + kCameraDrive);
 			} else {
 				// System.out.println("In Valid lime angle = " + limeX);
 				cameraSteer = -m_steerOutput;
@@ -1052,10 +1053,10 @@ public class Drive extends Subsystem implements Loop {
 		mLastValidGyroAngle = getGyroAngleDeg();
 		if (isLimeValid) {
 			deltaVelocity = limeX * kCamera * mCameraVelocity;
-			System.out.println("Valid lime angle = " + limeX);
+			// System.out.println("Valid lime angle = " + limeX);
 		} else {
 			deltaVelocity = (getGyroAngleDeg() - mLastValidGyroAngle) * kCamera * mCameraVelocity;
-			System.out.println("In Valid lime angle = " + limeX);
+			// System.out.println("In Valid lime angle = " + limeX);
 		}
 		// setVelocityNativeUnits(mCameraVelocity + deltaVelocity, mCameraVelocity -
 		// deltaVelocity);

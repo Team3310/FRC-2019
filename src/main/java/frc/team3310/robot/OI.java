@@ -15,7 +15,9 @@ import frc.team3310.robot.commands.EjectBallSlow;
 import frc.team3310.robot.commands.EjectBallStop;
 import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorAutoZero;
-import frc.team3310.robot.commands.ElevatorClimbEndGame;
+import frc.team3310.robot.commands.ElevatorClimbBoost;
+import frc.team3310.robot.commands.ElevatorClimbEndGameLvl2;
+import frc.team3310.robot.commands.ElevatorClimbEndGameLvl3;
 import frc.team3310.robot.commands.ElevatorHatchLevel;
 import frc.team3310.robot.commands.ElevatorSetMode;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
@@ -56,7 +58,7 @@ public class OI {
 
   private OI() {
     // Driver controller
-    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
+    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
     m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Xbox());
 
     // Driver Controls
@@ -65,8 +67,14 @@ public class OI {
     ejectHatch.whenReleased(new IntakeBallArms(BallArmState.IN));
     ejectHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
 
-    Button climb = m_driver.getButtonY();
-    climb.whenPressed(new ElevatorClimbEndGame());
+    Button climbLvl3 = m_driver.getButtonY();
+    climbLvl3.whenPressed(new ElevatorClimbEndGameLvl3());
+
+    Button climbLvl2 = m_driver.getButtonB();
+    climbLvl2.whenPressed(new ElevatorClimbEndGameLvl2());
+
+    Button climbBoost = m_driver.getButtonX();
+    climbBoost.whenPressed(new ElevatorClimbBoost());
 
     Button climbFront = m_driver.getDPadDown();
     climbFront.whenPressed(new SetRobotClimbFront());

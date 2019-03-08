@@ -75,15 +75,14 @@ public class Intake extends Subsystem {
 		Robot.drive.updateLimelight();
 		if (isOkToLaunch()) {
 			ballArms.set(true);
-		}
-		else {
+		} else {
 			System.out.println("To far to score");
 		}
 	}
-	
+
 	private boolean isOkToLaunch() {
-		return !(Robot.elevator.getElevatorInchesOffGround() > Constants.HATCH_LEVEL_2
-				&& Robot.drive.lastValidLimeArea < 9);
+		return true;// !(Robot.elevator.getElevatorInchesOffGround() > Constants.HATCH_LEVEL_2
+		// && Robot.drive.lastValidLimeArea < 9);
 	}
 
 	public void setHatchArmState(HatchArmState state) {
@@ -91,7 +90,7 @@ public class Intake extends Subsystem {
 		if (state == HatchArmState.IN) {
 			hatchArms.set(false);
 			return;
-		} 
+		}
 		if (isOkToLaunch()) {
 			hatchArms.set(true);
 		}
@@ -135,6 +134,9 @@ public class Intake extends Subsystem {
 			try {
 				SmartDashboard.putNumber("Left Intake Amps", leftArm.getOutputCurrent());
 				SmartDashboard.putNumber("Right Intake Amps", rightArm.getOutputCurrent());
+				SmartDashboard.putBoolean("Intake Front Right IR Sensor", getFrontRightIRIntakeSensor());
+				SmartDashboard.putBoolean("Intake Front Left IR Sensor", getFrontLeftIRIntakeSensor());
+
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {

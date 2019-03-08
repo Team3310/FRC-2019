@@ -133,17 +133,29 @@ public class TrajectoryGenerator {
         public static final Pose2d kLoadingGrabPose = new Pose2d(new Translation2d(0.00, -135),
                         Rotation2d.fromDegrees(-180.0));
 
-        public static final Pose2d kLoadingToMidRocketBack = new Pose2d(new Translation2d(220, -110),
+        // public static final Pose2d kLoadingToMidRocketBack = new Pose2d(new
+        // Translation2d(220, -110),
+        // Rotation2d.fromDegrees(-180.00));
+
+        public static final Pose2d kLoadingToMidRocketBack = new Pose2d(new Translation2d(230, -110),
                         Rotation2d.fromDegrees(-180.00));
 
         // public static final Pose2d kRocketBackPoseToTurnPose = new Pose2d(new
         // Translation2d(300, -70),
         // Rotation2d.fromDegrees(-110.00));
 
-        public static final Pose2d kRocketBackPoseToTurnPose = new Pose2d(new Translation2d(310, -130),
-                        Rotation2d.fromDegrees(160.00));
+        // public static final Pose2d kRocketBackPoseToTurnPose = new Pose2d(new
+        // Translation2d(310, -130),
+        // Rotation2d.fromDegrees(160.00));
 
-        public static final Pose2d kRocketBackPose = new Pose2d(new Translation2d(270, -137),
+        public static final Pose2d kRocketBackPoseToTurnPose = new Pose2d(new Translation2d(310, -100),
+                        Rotation2d.fromDegrees(-147.00));
+
+        // public static final Pose2d kRocketBackPose = new Pose2d(new
+        // Translation2d(270, -137),
+        // Rotation2d.fromDegrees(-150.00));
+
+        public static final Pose2d kRocketBackPose = new Pose2d(new Translation2d(258, -135),
                         Rotation2d.fromDegrees(-150.00));
 
         // Cargo 2 Hatch (Middle/Side)

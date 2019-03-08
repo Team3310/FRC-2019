@@ -491,10 +491,10 @@ public class Elevator extends Subsystem implements Loop {
 	public void setElevatorClimbState(ElevatorClimbShiftState state) {
 		elevatorClimbShiftState = state;
 		if (state == ElevatorClimbShiftState.LOCKED) {
-			elevatorShift.set(false);
+			elevatorShift.set(true);
 			System.out.println("GG IN CLIMB");
 		} else if (state == ElevatorClimbShiftState.ENGAGED) {
-			elevatorShift.set(true);
+			elevatorShift.set(false);
 			System.out.println("GG OUT NOT CLIMB");
 		}
 	}
@@ -572,6 +572,8 @@ public class Elevator extends Subsystem implements Loop {
 				SmartDashboard.putBoolean("Climb Front Bot = ", getClimbFrontBot());
 				SmartDashboard.putBoolean("Climb Rear Top = ", getClimbFrontTop());
 				SmartDashboard.putBoolean("Climb Rear Bot = ", getClimbRearBot());
+				SmartDashboard.putBoolean("Elevator Max Switch = ", getMaxElevatorSensor());
+				SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
 				SmartDashboard.putBoolean("Platform Detect Front = ", getPlatformDetectFront());
 				SmartDashboard.putBoolean("Plaform Detect Bot = ", getPlatformDetectRear());
 				SmartDashboard.putNumber("Elevator Joystick", joyStickSpeed);

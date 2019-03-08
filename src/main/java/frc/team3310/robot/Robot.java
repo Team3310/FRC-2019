@@ -95,15 +95,11 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 
 		autonTaskChooser = new SendableChooser<Command>();
-		autonTaskChooser.setDefaultOption("L1 Start Outside Rocket Front/Back Low",
-				new AutoStartLevel1SideRocketFrontBackLow());
+		autonTaskChooser.setDefaultOption("L1 Rocket Front/Back Low", new AutoStartLevel1SideRocketFrontBackLow());
 
-		autonTaskChooser.setDefaultOption("L1 Start Outside Rocket Front/Back Mid",
-				new AutoStartLevel1SideRocketFrontBackMid());
+		autonTaskChooser.addOption("L1 Cargo Front/Side", new AutoStartLevel1SideCargoFrontSide1());
 
-		autonTaskChooser.addOption("L1 Start Outside Cargo Front/Side", new AutoStartLevel1SideCargoFrontSide1());
-
-		autonTaskChooser.addOption("L1 Start Outside Cargo Front/Front", new AutoStartLevel1SideCargoFront2());
+		autonTaskChooser.addOption("L1 Cargo Front/Front", new AutoStartLevel1SideCargoFront2());
 
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 
