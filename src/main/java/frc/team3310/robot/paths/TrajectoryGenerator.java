@@ -105,7 +105,7 @@ public class TrajectoryGenerator {
         public static final Pose2d kSimpleSwitchStartPose = new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0));
         public static final Pose2d kRightSwitchPose = new Pose2d(new Translation2d(100.0, 0.0),
                         Rotation2d.fromDegrees(0.0));
-        public static final Pose2d kLeftSwitchPose = new Pose2d(new Translation2d(100.0, 0.0),
+        public static final Pose2d kLeftSwitchPose = new Pose2d(new Translation2d(10.0, 0.0),
                         Rotation2d.fromDegrees(0.0));
 
         // 2 Hatch Auto (Front/Back)
@@ -124,7 +124,7 @@ public class TrajectoryGenerator {
         public static final Pose2d kTurn1ToTurn2Pose = new Pose2d(new Translation2d(215, -100),
                         Rotation2d.fromDegrees(-160.00));
 
-        public static final Pose2d kTurn1ToLoadingPose = new Pose2d(new Translation2d(30, -135),
+        public static final Pose2d kTurn1ToLoadingPose = new Pose2d(new Translation2d(30, -140),
                         Rotation2d.fromDegrees(-180.00));
 
         public static final Pose2d kLoadingPose = new Pose2d(new Translation2d(20.00, -135),
@@ -148,22 +148,23 @@ public class TrajectoryGenerator {
         // Translation2d(310, -130),
         // Rotation2d.fromDegrees(160.00));
 
-        public static final Pose2d kRocketBackPoseToTurnPose = new Pose2d(new Translation2d(310, -100),
+        public static final Pose2d kRocketBackPoseToTurnPose = new Pose2d(new Translation2d(275, -110),
                         Rotation2d.fromDegrees(-147.00));
 
-        // public static final Pose2d kRocketBackPose = new Pose2d(new
-        // Translation2d(270, -137),
-        // Rotation2d.fromDegrees(-150.00));
-
-        public static final Pose2d kRocketBackPose = new Pose2d(new Translation2d(258, -135),
+        public static final Pose2d kRocketBackPose = new Pose2d(new Translation2d(270, -140),
                         Rotation2d.fromDegrees(-150.00));
+
+        // public static final Pose2d kRocketBackPose = new Pose2d(new
+        // Translation2d(258, -140),
+        // Rotation2d.fromDegrees(-150.00));
 
         // Cargo 2 Hatch (Middle/Side)
 
         public static final Pose2d kCargoTrackPoseSideStart = new Pose2d(new Translation2d(195, -20),
                         Rotation2d.fromDegrees(0.00));
 
-        public static final Pose2d kCargoFrontPose = new Pose2d(new Translation2d(207.7, -17),
+        public static final Pose2d kCargoFrontPose = new Pose2d(new Translation2d(207.7, -13
+        ),
                         Rotation2d.fromDegrees(0.00));
 
         public static final Pose2d kCargoFrontToTurn1Pose = new Pose2d(new Translation2d(175, -90),
@@ -179,7 +180,7 @@ public class TrajectoryGenerator {
                                                                                                   // // //Far 315
                         Rotation2d.fromDegrees(90.00));
 
-        public static final Pose2d kLoadingToCargoFront2Pose = new Pose2d(new Translation2d(140, 20),
+        public static final Pose2d kLoadingToCargoFront2Pose = new Pose2d(new Translation2d(120, 20),
                         Rotation2d.fromDegrees(0.00));
 
         public static final Pose2d kCargoTurn1LoadingToTrackPose = new Pose2d(new Translation2d(200, 14),

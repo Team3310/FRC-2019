@@ -116,7 +116,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "9,6": {
+          "7,6": {
             "size": [
               2,
               1
@@ -127,9 +127,9 @@
               "_title": "Reset Sensor/pressed"
             }
           },
-          "7,6": {
+          "13,5": {
             "size": [
-              2,
+              3,
               1
             ],
             "content": {
@@ -138,9 +138,9 @@
               "_title": "Compressor Off/pressed"
             }
           },
-          "5,6": {
+          "0,5": {
             "size": [
-              2,
+              3,
               1
             ],
             "content": {
@@ -186,9 +186,9 @@
               "_title": "Auton Side"
             }
           },
-          "0,5": {
+          "4,6": {
             "size": [
-              1,
+              3,
               1
             ],
             "content": {
@@ -197,9 +197,9 @@
               "_title": "Elevator Target Position Ticks"
             }
           },
-          "1,5": {
+          "2,6": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -208,9 +208,9 @@
               "_title": "Middle Encoder"
             }
           },
-          "2,5": {
+          "0,6": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -219,9 +219,9 @@
               "_title": "Elevator Position Inches"
             }
           },
-          "13,5": {
+          "9,6": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -230,9 +230,9 @@
               "_title": "Limelight_PipelineName"
             }
           },
-          "14,5": {
+          "11,6": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -241,9 +241,9 @@
               "_title": "Limelight_Stream"
             }
           },
-          "15,5": {
+          "13,6": {
             "size": [
-              1,
+              3,
               1
             ],
             "content": {

@@ -115,9 +115,7 @@ public class Robot extends TimedRobot {
 		compressor.turnCompressorOff();
 		drive.setPipeline(1);
 
-		elevator.setFrontLegState(FrontLegShiftState.LOCKED);
-		elevator.setBackLegState(BackLegShiftState.LOCKED);
-		elevator.setElevatorClimbState(ElevatorClimbShiftState.ENGAGED);
+		Robot.elevator.setRobotLockedMode();
 	}
 
 	// Called every loop for all modes
@@ -128,16 +126,13 @@ public class Robot extends TimedRobot {
 	// Called once when is disabled
 	@Override
 	public void disabledInit() {
-		zeroAllSensors();
-
 	}
 
 	// Called constantly when the robot is disabled
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		// zeroAllSensors();
-
+		drive.setPipeline(1);
 	}
 
 	// Called once at the start of auto
@@ -146,6 +141,7 @@ public class Robot extends TimedRobot {
 		controlLoop.start();
 		drive.setIsRed(getAlliance().equals(Alliance.Red));
 		drive.setPipeline(1);
+		zeroAllSensors();
 
 		rightLeftSide = autonRightLeftChooser.getSelected();
 		trajectoryGenerator.setRightLeftAutonSide(rightLeftSide);
@@ -177,7 +173,8 @@ public class Robot extends TimedRobot {
 		controlLoop.start();
 		drive.setPipeline(1);
 		drive.endGyroCalibration();
-		zeroAllSensors();
+		Robot.elevator.setRobotScoreMode();
+		Robot.elevator.setElevatorMotionMagicPosition(Constants.HATCH_LEVEL_1);
 
 		if (operationMode != OperationMode.COMPETITION) {
 			Scheduler.getInstance().add(new ElevatorAutoZero(true));

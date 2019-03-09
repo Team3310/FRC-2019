@@ -9,6 +9,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 	private double velocityScale = 1.0;
 	private final double PIPELINE_TIMEOUT = 0.2;
 	private final double isVisonTimedOut = 1.5;
+	private boolean isTrackFinished = false;
 
 	public DrivePathCameraTrack() {
 		requires(Robot.drive);
@@ -17,6 +18,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 	public DrivePathCameraTrack(double velocityScale) {
 		this.velocityScale = velocityScale;
 		requires(Robot.drive);
+		isTrackFinished = false;
 	}
 
 	protected void initialize() {
@@ -25,7 +27,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 		resetExtraOneTimer();
 		resetExtraTwoTimer();
 		startExtraOneTimeout(PIPELINE_TIMEOUT);
-		startExtraTwoTimeout(isVisonTimedOut);
+	//	startExtraTwoTimeout(isVisonTimedOut);
 		Robot.drive.setPipeline(0);
 
 		// setTimeout(timeout);
@@ -38,10 +40,17 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 			Robot.drive.setCameraTrack(velocityScale);
 			isTracking = true;
 		}
+		else if (!isTrackFinished) {
+			isTrackFinished = Robot.drive.isLimeValid == false || Robot.drive.limeArea > 38; // || isExtraTwoTimedOut();
+			if (isTrackFinished == true) {
+				startExtraTwoTimeout(0.2);
+				Robot.drive.setSpeed(0.2);
+			}
+		}
 	}
 
 	protected boolean isFinished() {
-		return Robot.drive.isLimeValid == false || Robot.drive.limeArea > 38 || isExtraTwoTimedOut();
+		return isExtraTwoTimedOut();
 	}
 
 	protected void end() {
@@ -50,6 +59,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
 		Robot.drive.overrideTrajectory(true);
 		Robot.drive.setPipeline(1);
+		Robot.drive.setSpeed(0.0);
 	}
 
 	protected void interrupted() {

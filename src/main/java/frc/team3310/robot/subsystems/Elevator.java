@@ -40,13 +40,13 @@ public class Elevator extends Subsystem implements Loop {
 
 	public static final double INCHES_TO_ENCODER_TICKS_ELEVATOR = (50.0 / 50.0) * (34.0 / 34.0) * 4096.0
 			/ (1.2987013 * Math.PI);
-	public static final double INCHES_TO_ENCODER_TICKS_GGG = (50.0 / 50.0) * (50.0 / 18.0) * (40.0 / 24.0) * 4096.0
+	public static final double INCHES_TO_ENCODER_TICKS_GGG = (50.0 / 50.0) * (50.0 / 18.0) * (34.0 / 30.0) * 4096.0
 			/ (1.077 * Math.PI);
 
 	// Defined speeds
 	public static final double TEST_SPEED_UP = 0.3;
 	public static final double TEST_SPEED_DOWN = -0.2;
-	public static final double AUTO_ZERO_SPEED = -0.2;
+	public static final double AUTO_ZERO_SPEED = -0.25;
 	public static final double JOYSTICK_TICKS_PER_MS_ELEVATOR = 0.5 * INCHES_TO_ENCODER_TICKS_ELEVATOR;
 	public static final double JOYSTICK_TICKS_PER_MS_GGG = JOYSTICK_TICKS_PER_MS_ELEVATOR
 			/ INCHES_TO_ENCODER_TICKS_ELEVATOR * INCHES_TO_ENCODER_TICKS_GGG * 0.8;
@@ -84,10 +84,11 @@ public class Elevator extends Subsystem implements Loop {
 	private ElevatorClimbShiftState elevatorClimbShiftState = ElevatorClimbShiftState.ENGAGED; // LOCKED = Climb Mode
 
 	// Misc
-	public static final double AUTO_ZERO_MOTOR_CURRENT = 1.0;
+	public static final double AUTO_ZERO_MOTOR_CURRENT = 0.8;
 	private double joystickTicksPerMs = JOYSTICK_TICKS_PER_MS_ELEVATOR;
 	private double targetPositionTicks = 0;
 	private double joyStickSpeed;
+	private double homePosition = Constants.AUTO_HOME_POSITION_INCHES;
 	public boolean elevatorCargoMode = false;
 
 	private ElevatorControlMode elevatorControlMode = ElevatorControlMode.MOTION_MAGIC;
@@ -294,6 +295,11 @@ public class Elevator extends Subsystem implements Loop {
 		motor1.setPosition(0);
 	}
 
+	public synchronized void resetEncoders(double homePosition) {
+		motor1.setPosition(0);
+		this.homePosition = homePosition;
+	}
+
 	public boolean getMaxElevatorSensor() {
 		return !maxRevElevatorSensor.get();
 	}
@@ -372,7 +378,7 @@ public class Elevator extends Subsystem implements Loop {
 	}
 
 	private int getElevatorEncoderTicks(double positionInchesOffGround) {
-		double positionInchesFromHome = positionInchesOffGround - Constants.HOME_POSITION_INCHES;
+		double positionInchesFromHome = positionInchesOffGround - homePosition;
 		return (int) (positionInchesFromHome * INCHES_TO_ENCODER_TICKS_ELEVATOR);
 	}
 
@@ -457,12 +463,12 @@ public class Elevator extends Subsystem implements Loop {
 
 	public synchronized double getElevatorInchesOffGround() {
 		double position_ticks = motor1.getSelectedSensorPosition(0);
-		return (position_ticks / INCHES_TO_ENCODER_TICKS_ELEVATOR) + Constants.HOME_POSITION_INCHES;
+		return (position_ticks / INCHES_TO_ENCODER_TICKS_ELEVATOR) + homePosition;
 	}
 
 	public synchronized double getElevatorSetpointInches() {
 		return elevatorControlMode == ElevatorControlMode.MOTION_MAGIC
-				? targetPositionTicks / INCHES_TO_ENCODER_TICKS_ELEVATOR + Constants.HOME_POSITION_INCHES
+				? targetPositionTicks / INCHES_TO_ENCODER_TICKS_ELEVATOR + homePosition
 				: Double.NaN;
 	}
 
@@ -491,10 +497,10 @@ public class Elevator extends Subsystem implements Loop {
 	public void setElevatorClimbState(ElevatorClimbShiftState state) {
 		elevatorClimbShiftState = state;
 		if (state == ElevatorClimbShiftState.LOCKED) {
-			elevatorShift.set(true);
+			elevatorShift.set(false);
 			System.out.println("GG IN CLIMB");
 		} else if (state == ElevatorClimbShiftState.ENGAGED) {
-			elevatorShift.set(false);
+			elevatorShift.set(true);
 			System.out.println("GG OUT NOT CLIMB");
 		}
 	}
@@ -525,6 +531,13 @@ public class Elevator extends Subsystem implements Loop {
 		setFrontLegState(FrontLegShiftState.LOCKED);
 		setBackLegState(BackLegShiftState.LOCKED);
 		setElevatorClimbState(ElevatorClimbShiftState.ENGAGED);
+	}
+
+	public void setRobotLockedMode() {
+		joystickTicksPerMs = JOYSTICK_TICKS_PER_MS_ELEVATOR;
+		setFrontLegState(FrontLegShiftState.LOCKED);
+		setBackLegState(BackLegShiftState.LOCKED);
+		setElevatorClimbState(ElevatorClimbShiftState.LOCKED);
 	}
 
 	public FrontLegShiftState getFrontShiftState() {
@@ -586,6 +599,7 @@ public class Elevator extends Subsystem implements Loop {
 			SmartDashboard.putBoolean("Plaform Detect Bot = ", getPlatformDetectRear());
 			SmartDashboard.putNumber("Elevator Position Inches", getElevatorInchesOffGround());
 			SmartDashboard.putNumber("Elevator Target Position Ticks", targetPositionTicks);
+			SmartDashboard.putNumber("Climb Position Inches", getClimbPositionInches());
 
 		}
 	}

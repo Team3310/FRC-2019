@@ -109,7 +109,7 @@ public class Constants {
     public static final double kMiddleDriveMotionMagicKi = 0.002; // 0.002; // 0.0;
     public static final double kMiddleDriveMotionMagicKd = 0.08; // 0.08; // (4+4)/100;
     public static final double kMiddleDriveMotionMagicKf = 0.25; // 0.197; // 0.06;
-    public static final int kMiddleDriveCruiseVelocity = 1500; // Max Velocity 10475
+    public static final int kMiddleDriveCruiseVelocity = 2000; // Max Velocity 10475
     public static final int kMiddleDriveAcceleration = 5000;// 33000; //Max Velocity / Time to reach top .82
     public static final int kMiddleDriveMaxIntegralAccumulator = 500000; // todo: tune me
     public static final int kMiddleDriveIZone = 200;
@@ -122,11 +122,6 @@ public class Constants {
     public static final double kMiddleDrivePeakReverse = -1.0;
 
     // 2019 Elevator Levels
-    public static final double HOME_POSITION_INCHES = 7.5;// 20.5; // 7.5;
-    public static final double ZERO_POSITION_INCHES = 7.5;
-    public static final double MIN_POSITION_INCHES = HOME_POSITION_INCHES;
-    public static final double MAX_POSITION_INCHES = 83.5;
-    public static final double AFTER_INTAKE_POSITION_INCHES = 11.5;
     public static final double HATCH_LEVEL_1 = 20.5;
     public static final double HATCH_LEVEL_2 = 51.0;
     public static final double HATCH_LEVEL_3 = 78.0;
@@ -135,9 +130,14 @@ public class Constants {
     public static final double BALL_LEVEL_3 = 84.5;
     public static final double BALL_LEVEL_CARGO = 42.0;
     public static final double LOADING_STATION_HATCH = 19.5;
-    public static final double CLIMB_LVL_3 = 19.5;
-    public static final double CLIMB_LVL_2 = 6;
-    public static final double CLIMB_BOOST = 11;
+    public static final double CLIMB_LVL_3 = 19;
+    public static final double CLIMB_LVL_2 = 6.2;
+    public static final double CLIMB_BOOST = 7.5;
+    public static final double AUTO_HOME_POSITION_INCHES = HATCH_LEVEL_1;// 20.5; // 7.5;
+    public static final double LOW_HOME_POSITION_INCHES = 7.5;
+    public static final double MIN_POSITION_INCHES = AUTO_HOME_POSITION_INCHES;
+    public static final double MAX_POSITION_INCHES = 83.5;
+    public static final double AFTER_INTAKE_POSITION_INCHES = 11.5;
 
     /* I/O */
     // (Note that if multiple talons are dedicated to a mechanism, any sensors

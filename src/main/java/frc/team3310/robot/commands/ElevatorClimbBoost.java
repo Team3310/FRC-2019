@@ -18,5 +18,7 @@ public class ElevatorClimbBoost extends CommandGroup {
     addParallel(new ResetSensor());
     addSequential(new SetRobotClimbMode());
     addSequential(new ElevatorSetMMClimb(Constants.CLIMB_BOOST));
+    addSequential(new SetRobotScoreMode());
+
   }
 }
