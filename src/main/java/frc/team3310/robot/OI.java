@@ -15,6 +15,7 @@ import frc.team3310.robot.commands.EjectBallSlow;
 import frc.team3310.robot.commands.EjectBallStop;
 import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorAutoZero;
+import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.commands.ElevatorClimbBoost;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl2;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl3;
@@ -36,7 +37,6 @@ import frc.team3310.robot.commands.SwitchCameraPipeline;
 import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.commands.TurnCompressorOn;
 import frc.team3310.robot.controller.GameController;
-import frc.team3310.robot.controller.Playstation;
 import frc.team3310.robot.controller.Xbox;
 import frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
@@ -146,8 +146,11 @@ public class OI {
     Button ballLevelCargo = m_operator.getDPadLeft();
     ballLevelCargo.whenPressed(new ElevatorSetPositionMM(Constants.BALL_LEVEL_CARGO));
 
-    Button autoZero = m_operator.getRightJoystickButton();
+    Button autoZero = m_operator.getLeftJoystickButton();
     autoZero.whenPressed(new ElevatorAutoZero(true));
+
+    Button sensorZero = m_operator.getRightJoystickButton();
+    sensorZero.whenPressed(new ElevatorAutoZeroSensor());
 
     // Smartdashboard
     Button turnCompressorOff = new InternalButton();

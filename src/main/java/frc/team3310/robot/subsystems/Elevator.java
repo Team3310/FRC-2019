@@ -585,6 +585,7 @@ public class Elevator extends Subsystem implements Loop {
 				SmartDashboard.putBoolean("Climb Front Bot = ", getClimbFrontBot());
 				SmartDashboard.putBoolean("Climb Rear Top = ", getClimbFrontTop());
 				SmartDashboard.putBoolean("Climb Rear Bot = ", getClimbRearBot());
+				SmartDashboard.putNumber("Climb Position Inches", getClimbPositionInches());
 				SmartDashboard.putBoolean("Elevator Max Switch = ", getMaxElevatorSensor());
 				SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
 				SmartDashboard.putBoolean("Platform Detect Front = ", getPlatformDetectFront());
@@ -597,9 +598,7 @@ public class Elevator extends Subsystem implements Loop {
 			SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
 			SmartDashboard.putBoolean("Platform Detect Front = ", getPlatformDetectFront());
 			SmartDashboard.putBoolean("Plaform Detect Bot = ", getPlatformDetectRear());
-			SmartDashboard.putNumber("Elevator Position Inches", getElevatorInchesOffGround());
-			SmartDashboard.putNumber("Elevator Target Position Ticks", targetPositionTicks);
-			SmartDashboard.putNumber("Climb Position Inches", getClimbPositionInches());
+
 
 		}
 	}

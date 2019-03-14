@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.commands.AutoStartLevel1SideCargoFront2;
 import frc.team3310.robot.commands.AutoStartLevel1SideCargoFrontSide1;
 import frc.team3310.robot.commands.AutoStartLevel1SideRocketFrontBackLow;
-import frc.team3310.robot.commands.AutoStartLevel1SideRocketFrontBackMid;
 import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
@@ -27,9 +26,6 @@ import frc.team3310.robot.subsystems.AirCompressor;
 import frc.team3310.robot.subsystems.Drive;
 import frc.team3310.robot.subsystems.Drive.DriveControlMode;
 import frc.team3310.robot.subsystems.Elevator;
-import frc.team3310.robot.subsystems.Elevator.BackLegShiftState;
-import frc.team3310.robot.subsystems.Elevator.ElevatorClimbShiftState;
-import frc.team3310.robot.subsystems.Elevator.FrontLegShiftState;
 import frc.team3310.robot.subsystems.Intake;
 import frc.team3310.robot.subsystems.RobotStateEstimator;
 import frc.team3310.utility.lib.control.RobotStatus;
@@ -114,8 +110,7 @@ public class Robot extends TimedRobot {
 		zeroAllSensors();
 		compressor.turnCompressorOff();
 		drive.setPipeline(1);
-
-		Robot.elevator.setRobotLockedMode();
+		Robot.elevator.setRobotScoreMode();
 	}
 
 	// Called every loop for all modes
@@ -174,7 +169,6 @@ public class Robot extends TimedRobot {
 		drive.setPipeline(1);
 		drive.endGyroCalibration();
 		Robot.elevator.setRobotScoreMode();
-		Robot.elevator.setElevatorMotionMagicPosition(Constants.HATCH_LEVEL_1);
 
 		if (operationMode != OperationMode.COMPETITION) {
 			Scheduler.getInstance().add(new ElevatorAutoZero(true));

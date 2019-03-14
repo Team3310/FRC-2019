@@ -1216,16 +1216,6 @@ public class Drive extends Subsystem implements Loop {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Vison = ", isValid());
-			// SmartDashboard.putNumber("x",
-			// RobotStatus.getInstance().getLatestFieldToVehicle().getValue().getTranslation().x());
-
-			// SmartDashboard.putNumber("y",
-			// RobotStatus.getInstance().getLatestFieldToVehicle().getValue().getTranslation().y());
-			// SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
-			// SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
-			SmartDashboard.putNumber("Middle Encoder", getMiddleEncoderInches());
-			// SmartDashboard.putNumber("Yaw Angle Deg", getGyroAngleDeg());
-			// SmartDashboard.putNumber("Pitch Angle Deg", getGyroPitchAngle());
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
 			}

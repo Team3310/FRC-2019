@@ -186,40 +186,7 @@
               "_title": "Auton Side"
             }
           },
-          "4,6": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Elevator Target Position Ticks",
-              "_title": "Elevator Target Position Ticks"
-            }
-          },
-          "2,6": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Middle Encoder",
-              "_title": "Middle Encoder"
-            }
-          },
-          "0,6": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Elevator Position Inches",
-              "_title": "Elevator Position Inches"
-            }
-          },
-          "9,6": {
+          "5,7": {
             "size": [
               2,
               1
@@ -230,7 +197,7 @@
               "_title": "Limelight_PipelineName"
             }
           },
-          "11,6": {
+          "7,7": {
             "size": [
               2,
               1
@@ -241,7 +208,7 @@
               "_title": "Limelight_Stream"
             }
           },
-          "13,6": {
+          "9,7": {
             "size": [
               3,
               1

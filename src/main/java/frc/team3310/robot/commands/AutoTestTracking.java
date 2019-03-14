@@ -21,7 +21,7 @@ public class AutoTestTracking extends CommandGroup {
     addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
     // addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive));
 
-    addSequential(new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true));
+    // addSequential(new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true));
 
     // // addParallel(new AutoCameraTrackWhenCrossXBoundaryNegitive(-290)); //25
 
