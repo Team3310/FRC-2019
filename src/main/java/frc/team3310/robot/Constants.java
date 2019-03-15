@@ -122,7 +122,7 @@ public class Constants {
     public static final int kDriveMotionMagicStraightIZone = 200;
     public static final int kDriveMotionMagicStraightDeadband = 0;
 
-    public static final double kDriveMotionMagicTurnKp = 0.4;// 0.4;
+    public static final double kDriveMotionMagicTurnKp = 2.0;// 0.4;
     public static final double kDriveMotionMagicTurnKi = 0.002; // 0.002; // 0.0;
     public static final double kDriveMotionMagicTurnKd = 0.08; // 0.08; // (4+4)/100;
     public static final double kDriveMotionMagicTurnKf = 0.25; // 0.197; // 0.06;
@@ -130,8 +130,8 @@ public class Constants {
     public static final int kDriveMotionMagicTurnIZone = 200;
     public static final int kDriveMotionMagicTurnDeadband = 0;
 
-    public static final int kDriveCruiseVelocity = 2000; // Max Velocity 10475
-    public static final int kDriveAcceleration = 5000;// 33000; //Max Velocity / Time to reach top .82
+    public static final int kDriveCruiseVelocity = 10000; // Max Velocity 10475
+    public static final int kDriveAcceleration = 15000;// 33000; //Max Velocity / Time to reach top .82
 
     public static final double kDriveEpsilon = 1.0;// 33000;
     public static final int kDriveScurveStrength = 4;

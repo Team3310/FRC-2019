@@ -93,7 +93,7 @@ public class Drive extends Subsystem implements Loop {
 	private BHRDifferentialDrive m_drive;
 
 	private boolean isRed = true;
-	private boolean mIsBrakeMode;
+	private boolean mIsBrakeMode = false;
 
 	private long periodMs = (long) (Constants.kLooperDt * 1000.0);
 
@@ -340,6 +340,7 @@ public class Drive extends Subsystem implements Loop {
 			mMotionPlanner = new DriveMotionPlanner();
 
 			gyroPigeon = new PigeonIMU(rightDrive2);
+			gyroPigeon.configFactoryDefault();
 			rightDrive2.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
 
 			middleDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
@@ -418,6 +419,8 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	private void configMotionMagic() {
+		System.out.println("Start configMotionMagic");
+
 		/* Configure the left Talon's selected sensor as local QuadEncoder */
 		leftDrive1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, // Local Feedback Source
 				Constants.PID_PRIMARY, // PID Slot for Source [0, 1]
@@ -440,10 +443,7 @@ public class Drive extends Subsystem implements Loop {
 				Constants.REMOTE_1, Constants.kLongCANTimeoutMs);
 
 		/* Setup Sum signal to be used for Distance */
-		rightDrive1.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kLongCANTimeoutMs); // Feedback
-																											// Device of
-																											// Remote
-																											// Talon
+		rightDrive1.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kLongCANTimeoutMs); // Feedback Device of Remote Talon
 		rightDrive1.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kLongCANTimeoutMs); // Quadrature
 
 		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
@@ -456,38 +456,57 @@ public class Drive extends Subsystem implements Loop {
 				Constants.kLongCANTimeoutMs); // Configuration Timeout
 
 		/* Configure Remote 1 [Pigeon IMU's Yaw] to be used for Auxiliary PID Index */
-		rightDrive1.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, Constants.PID_TURN,
-				Constants.kLongCANTimeoutMs);
+		rightDrive1.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, Constants.PID_TURN, Constants.kLongCANTimeoutMs);
 
 		/* Scale the Feedback Sensor using a coefficient */
 		rightDrive1.configSelectedFeedbackCoefficient(1, Constants.PID_TURN, Constants.kLongCANTimeoutMs);
+
+		// Set status frame rates
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kLongCANTimeoutMs);
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kLongCANTimeoutMs);
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kLongCANTimeoutMs);
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kLongCANTimeoutMs);
+		leftDrive1.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
+		gyroPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5, Constants.kLongCANTimeoutMs);
+
+		/* Configure neutral deadband */
+		leftDrive1.configNeutralDeadband(0.001, Constants.kLongCANTimeoutMs);
+		rightDrive1.configNeutralDeadband(0.001, Constants.kLongCANTimeoutMs);
+
+		// Set Motion Magic accel, velocity terms
+		rightDrive1.configMotionAcceleration(Constants.kDriveAcceleration, Constants.kLongCANTimeoutMs);
+		rightDrive1.configMotionCruiseVelocity(Constants.kDriveCruiseVelocity, Constants.kLongCANTimeoutMs);
+//		rightDrive1.configMotionSCurveStrength(Constants.kDriveScurveStrength, Constants.kLongCANTimeoutMs);
+
+		/**
+		 * Max out the peak output (for all modes).  
+		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
+		 */
+		leftDrive1.configPeakOutputForward(+1.0f, TalonSRXEncoder.TIMEOUT_MS);
+		leftDrive1.configPeakOutputReverse(-1.0f, TalonSRXEncoder.TIMEOUT_MS);
+
+		rightDrive1.configPeakOutputForward(+1.0f, TalonSRXEncoder.TIMEOUT_MS);
+		rightDrive1.configPeakOutputReverse(-1.0f, TalonSRXEncoder.TIMEOUT_MS);
+
+		// Set PID gains for straight
 		rightDrive1.config_kP(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKp, Constants.kLongCANTimeoutMs);
 		rightDrive1.config_kI(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKi, Constants.kLongCANTimeoutMs);
 		rightDrive1.config_kD(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKd, Constants.kLongCANTimeoutMs);
 		rightDrive1.config_kF(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKf, Constants.kLongCANTimeoutMs);
 		rightDrive1.config_IntegralZone(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightIZone, Constants.kLongCANTimeoutMs);
-		rightDrive1.configMaxIntegralAccumulator(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightMaxIntegralAccumulator, Constants.kLongCANTimeoutMs);
-		rightDrive1.configAllowableClosedloopError(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightDeadband,
-				Constants.kLongCANTimeoutMs);
-		
+		rightDrive1.configClosedLoopPeakOutput(kMotionMagicStraightSlot, 1.0, Constants.kLongCANTimeoutMs);
+	//	rightDrive1.configMaxIntegralAccumulator(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightMaxIntegralAccumulator, Constants.kLongCANTimeoutMs);
+	//	rightDrive1.configAllowableClosedloopError(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightDeadband, Constants.kLongCANTimeoutMs);
+
+		// Set PID gains for turn
 		rightDrive1.config_kP(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKp, Constants.kLongCANTimeoutMs);
 		rightDrive1.config_kI(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKi, Constants.kLongCANTimeoutMs);
 		rightDrive1.config_kD(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKd, Constants.kLongCANTimeoutMs);
 		rightDrive1.config_kF(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKf, Constants.kLongCANTimeoutMs);
 		rightDrive1.config_IntegralZone(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnIZone, Constants.kLongCANTimeoutMs);
-		rightDrive1.configMaxIntegralAccumulator(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnMaxIntegralAccumulator, Constants.kLongCANTimeoutMs);
-		rightDrive1.configAllowableClosedloopError(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnDeadband, Constants.kLongCANTimeoutMs);
-
-		rightDrive1.configMotionAcceleration(Constants.kDriveAcceleration, Constants.kLongCANTimeoutMs);
-		rightDrive1.configMotionCruiseVelocity(Constants.kDriveCruiseVelocity, Constants.kLongCANTimeoutMs);
-		rightDrive1.configMotionSCurveStrength(Constants.kDriveScurveStrength, Constants.kLongCANTimeoutMs);
-
-		rightDrive1.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kLongCANTimeoutMs);
-		rightDrive1.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kLongCANTimeoutMs);
-		rightDrive1.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kLongCANTimeoutMs);
-		rightDrive1.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kLongCANTimeoutMs);
-		rightDrive1.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
-		gyroPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5, Constants.kLongCANTimeoutMs);
+		rightDrive1.configClosedLoopPeakOutput(kMotionMagicTurnSlot, 1.0, Constants.kLongCANTimeoutMs);
+	//	rightDrive1.configMaxIntegralAccumulator(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnMaxIntegralAccumulator, Constants.kLongCANTimeoutMs);
+	//	rightDrive1.configAllowableClosedloopError(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnDeadband, Constants.kLongCANTimeoutMs);
 
 		/**
 		 * 1ms per loop. PID loop can be slowed down if need be. For example, - if
@@ -506,6 +525,9 @@ public class Drive extends Subsystem implements Loop {
 		 */
 		rightDrive1.configAuxPIDPolarity(false, Constants.kLongCANTimeoutMs);
 
+		rightDrive1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
+
+		System.out.println("End configMotionMagic");
 	}
 
 	public static Drive getInstance() {
@@ -1224,8 +1246,16 @@ public class Drive extends Subsystem implements Loop {
 	public synchronized void setDriveMotionMagic(double positionInches, double turnDegrees) {
 		rightDrive1.selectProfileSlot(kMotionMagicStraightSlot, Constants.PID_PRIMARY);
 		rightDrive1.selectProfileSlot(kMotionMagicTurnSlot, Constants.PID_TURN);
+		
+		leftDrive1.getSensorCollection().setQuadraturePosition(0, 0);
+		rightDrive1.getSensorCollection().setQuadraturePosition(0, 0);
+		
 		targetDrivePositionTicks = getDriveEncoderTicks(positionInches);
 		System.out.println("MM Target Ticks = " + targetDrivePositionTicks);
+
+		double currentGyro = rightDrive1.getSelectedSensorPosition(1);
+		System.out.println("MM Gyro from Talon = " + currentGyro + ", Fused heading from pidgeon = " + gyroPigeon.getFusedHeading() + ", gyro angle = " + getGyroAngleDeg());
+
 		rightDrive1.set(ControlMode.MotionMagic, targetDrivePositionTicks, DemandType.AuxPID, turnDegrees);
 		leftDrive1.follow(rightDrive1, FollowerType.AuxOutput1);
 	}
