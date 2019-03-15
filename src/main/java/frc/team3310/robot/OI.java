@@ -93,7 +93,7 @@ public class OI {
     IntakeHatchManualD.whenReleased(new ElevatorHatchLevel());
 
     Button switchCameraPipeline = m_driver.getRightTrigger();
-    switchCameraPipeline.whenPressed(new SwitchCameraPipeline(0));
+    switchCameraPipeline.whenPressed(new SwitchCameraPipeline(2));
     switchCameraPipeline.whenReleased(new SwitchCameraPipeline(1));
 
     // Operator Controls

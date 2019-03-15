@@ -105,6 +105,37 @@ public class Constants {
     public static final double kElevatorPeakForward = 1.0;
     public static final double kElevatorPeakReverse = -1.0;
 
+    public final static int REMOTE_0 = 0;
+    public final static int REMOTE_1 = 1;
+    /*
+     * We allow either a 0 or 1 when selecting a PID Index, where 0 is primary and 1
+     * is auxiliary
+     */
+    public final static int PID_PRIMARY = 0;
+    public final static int PID_TURN = 1;
+
+    public static final double kDriveMotionMagicStraightKp = 0.4;// 0.4;
+    public static final double kDriveMotionMagicStraightKi = 0.002; // 0.002; // 0.0;
+    public static final double kDriveMotionMagicStraightKd = 0.08; // 0.08; // (4+4)/100;
+    public static final double kDriveMotionMagicStraightKf = 0.25; // 0.197; // 0.06;
+    public static final int kDriveMotionMagicStraightMaxIntegralAccumulator = 500000; // todo: tune me
+    public static final int kDriveMotionMagicStraightIZone = 200;
+    public static final int kDriveMotionMagicStraightDeadband = 0;
+
+    public static final double kDriveMotionMagicTurnKp = 0.4;// 0.4;
+    public static final double kDriveMotionMagicTurnKi = 0.002; // 0.002; // 0.0;
+    public static final double kDriveMotionMagicTurnKd = 0.08; // 0.08; // (4+4)/100;
+    public static final double kDriveMotionMagicTurnKf = 0.25; // 0.197; // 0.06;
+    public static final int kDriveMotionMagicTurnMaxIntegralAccumulator = 500000; // todo: tune me
+    public static final int kDriveMotionMagicTurnIZone = 200;
+    public static final int kDriveMotionMagicTurnDeadband = 0;
+
+    public static final int kDriveCruiseVelocity = 2000; // Max Velocity 10475
+    public static final int kDriveAcceleration = 5000;// 33000; //Max Velocity / Time to reach top .82
+
+    public static final double kDriveEpsilon = 1.0;// 33000;
+    public static final int kDriveScurveStrength = 4;
+
     public static final double kMiddleDriveMotionMagicKp = 0.4;// 0.4;
     public static final double kMiddleDriveMotionMagicKi = 0.002; // 0.002; // 0.0;
     public static final double kMiddleDriveMotionMagicKd = 0.08; // 0.08; // (4+4)/100;

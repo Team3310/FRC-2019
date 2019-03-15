@@ -6,19 +6,23 @@ import java.util.ArrayList;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.SensorTerm;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
+import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.Constants;
@@ -53,7 +57,7 @@ public class Drive extends Subsystem implements Loop {
 
 	public static enum DriveControlMode {
 		JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, MANUAL, VELOCITY_SETPOINT, CAMERA_TRACK, PATH_FOLLOWING,
-		OPEN_LOOP, CAMERA_TRACK_DRIVE
+		OPEN_LOOP, CAMERA_TRACK_DRIVE, MOTION_MAGIC_STRAIGHT
 	};
 
 	// One revolution of the wheel = Pi * D inches = 4096 ticks
@@ -100,8 +104,7 @@ public class Drive extends Subsystem implements Loop {
 
 	public static final double STICK_DEADBAND = 0.02;
 
-	public static final double PITCH_THRESHOLD = 20
-	;
+	public static final double PITCH_THRESHOLD = 20;
 
 	private int pitchWindowSize = 5;
 	private int windowIndex = 0;
@@ -128,6 +131,8 @@ public class Drive extends Subsystem implements Loop {
 
 	private static final int kPositionControlSlot = 0;
 	private static final int kVelocityControlSlot = 1;
+	private static final int kMotionMagicStraightSlot = 2;
+	private static final int kMotionMagicTurnSlot = 3;
 
 	private MPTalonPIDController mpStraightController;
 	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.15); // 4 colsons
@@ -183,6 +188,7 @@ public class Drive extends Subsystem implements Loop {
 	// Ultrasonic
 	// public Ultrasonic ultrasonic;
 
+	public double targetDrivePositionTicks;
 	public double targetMiddlePositionTicks;
 
 	@Override
@@ -229,6 +235,8 @@ public class Drive extends Subsystem implements Loop {
 				case CAMERA_TRACK:
 					updateCameraTrack();
 					onTarget();
+					return;
+				case MOTION_MAGIC_STRAIGHT:
 					return;
 				default:
 					System.out.println("Unknown drive control mode: " + currentControlMode);
@@ -401,9 +409,103 @@ public class Drive extends Subsystem implements Loop {
 
 			reloadGains();
 			setBrakeMode(true);
+
+			configMotionMagic();
+
 		} catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");
 		}
+	}
+
+	private void configMotionMagic() {
+		/* Configure the left Talon's selected sensor as local QuadEncoder */
+		leftDrive1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, // Local Feedback Source
+				Constants.PID_PRIMARY, // PID Slot for Source [0, 1]
+				Constants.kLongCANTimeoutMs); // Configuration Timeout
+
+		/*
+		 * Configure the Remote Talon's selected sensor as a remote sensor for the right
+		 * Talon
+		 */
+		rightDrive1.configRemoteFeedbackFilter(leftDrive1.getDeviceID(), // Device ID of Source
+				RemoteSensorSource.TalonSRX_SelectedSensor, // Remote Feedback Source
+				Constants.REMOTE_0, // Source number [0, 1]
+				Constants.kLongCANTimeoutMs); // Configuration Timeout
+
+		/*
+		 * Configure the Pigeon IMU to the other remote slot available on the right
+		 * Talon
+		 */
+		rightDrive1.configRemoteFeedbackFilter(gyroPigeon.getDeviceID(), RemoteSensorSource.Pigeon_Yaw,
+				Constants.REMOTE_1, Constants.kLongCANTimeoutMs);
+
+		/* Setup Sum signal to be used for Distance */
+		rightDrive1.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kLongCANTimeoutMs); // Feedback
+																											// Device of
+																											// Remote
+																											// Talon
+		rightDrive1.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kLongCANTimeoutMs); // Quadrature
+
+		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
+		rightDrive1.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, Constants.PID_PRIMARY,
+				Constants.kLongCANTimeoutMs);
+
+		/* Scale Feedback by 0.5 to half the sum of Distance */
+		rightDrive1.configSelectedFeedbackCoefficient(0.5, // Coefficient
+				Constants.PID_PRIMARY, // PID Slot of Source
+				Constants.kLongCANTimeoutMs); // Configuration Timeout
+
+		/* Configure Remote 1 [Pigeon IMU's Yaw] to be used for Auxiliary PID Index */
+		rightDrive1.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, Constants.PID_TURN,
+				Constants.kLongCANTimeoutMs);
+
+		/* Scale the Feedback Sensor using a coefficient */
+		rightDrive1.configSelectedFeedbackCoefficient(1, Constants.PID_TURN, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kP(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKp, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kI(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKi, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kD(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKd, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kF(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKf, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_IntegralZone(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightIZone, Constants.kLongCANTimeoutMs);
+		rightDrive1.configMaxIntegralAccumulator(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightMaxIntegralAccumulator, Constants.kLongCANTimeoutMs);
+		rightDrive1.configAllowableClosedloopError(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightDeadband,
+				Constants.kLongCANTimeoutMs);
+		
+		rightDrive1.config_kP(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKp, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kI(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKi, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kD(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKd, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kF(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKf, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_IntegralZone(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnIZone, Constants.kLongCANTimeoutMs);
+		rightDrive1.configMaxIntegralAccumulator(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnMaxIntegralAccumulator, Constants.kLongCANTimeoutMs);
+		rightDrive1.configAllowableClosedloopError(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnDeadband, Constants.kLongCANTimeoutMs);
+
+		rightDrive1.configMotionAcceleration(Constants.kDriveAcceleration, Constants.kLongCANTimeoutMs);
+		rightDrive1.configMotionCruiseVelocity(Constants.kDriveCruiseVelocity, Constants.kLongCANTimeoutMs);
+		rightDrive1.configMotionSCurveStrength(Constants.kDriveScurveStrength, Constants.kLongCANTimeoutMs);
+
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kLongCANTimeoutMs);
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kLongCANTimeoutMs);
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kLongCANTimeoutMs);
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kLongCANTimeoutMs);
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
+		gyroPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5, Constants.kLongCANTimeoutMs);
+
+		/**
+		 * 1ms per loop. PID loop can be slowed down if need be. For example, - if
+		 * sensor updates are too slow - sensor deltas are very small per update, so
+		 * derivative error never gets large enough to be useful. - sensor movement is
+		 * very slow causing the derivative error to be near zero.
+		 */
+		int closedLoopTimeMs = 1;
+		rightDrive1.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kLongCANTimeoutMs);
+		rightDrive1.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kLongCANTimeoutMs);
+
+		/**
+		 * configAuxPIDPolarity(boolean invert, int timeoutMs) false means talon's local
+		 * output is PID0 + PID1, and other side Talon is PID0 - PID1 true means talon's
+		 * local output is PID0 - PID1, and other side Talon is PID0 + PID1
+		 */
+		rightDrive1.configAuxPIDPolarity(false, Constants.kLongCANTimeoutMs);
+
 	}
 
 	public static Drive getInstance() {
@@ -870,13 +972,13 @@ public class Drive extends Subsystem implements Loop {
 
 		double pitchAngle = updatePitchWindow();
 		if (Math.abs(pitchAngle) > PITCH_THRESHOLD) {
-		m_moveOutput = Math.signum(pitchAngle) * -1.0;
-		m_steerOutput = 0;
-		System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
+			m_moveOutput = Math.signum(pitchAngle) * -1.0;
+			m_steerOutput = 0;
+			System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
 		}
 
 		if (cameraTrackTapeButton) {
-			setPipeline(0);
+			setPipeline(2);
 			setLimeLED(0);
 			updateLimelight();
 			double cameraSteer = 0;
@@ -1117,6 +1219,23 @@ public class Drive extends Subsystem implements Loop {
 			mCSVWriter.flush();
 			mCSVWriter = null;
 		}
+	}
+
+	public synchronized void setDriveMotionMagic(double positionInches, double turnDegrees) {
+		rightDrive1.selectProfileSlot(kMotionMagicStraightSlot, Constants.PID_PRIMARY);
+		rightDrive1.selectProfileSlot(kMotionMagicTurnSlot, Constants.PID_TURN);
+		targetDrivePositionTicks = getDriveEncoderTicks(positionInches);
+		System.out.println("MM Target Ticks = " + targetDrivePositionTicks);
+		rightDrive1.set(ControlMode.MotionMagic, targetDrivePositionTicks, DemandType.AuxPID, turnDegrees);
+		leftDrive1.follow(rightDrive1, FollowerType.AuxOutput1);
+	}
+
+	private int getDriveEncoderTicks(double positionInches) {
+		return (int) (positionInches * ENCODER_TICKS_TO_INCHES);
+	}
+
+	public synchronized boolean hasFinishedDriveMotionMagic() {
+		return Util.epsilonEquals(rightDrive1.getActiveTrajectoryPosition(), targetDrivePositionTicks, 5);
 	}
 
 	public synchronized void setMiddleDriveMotionMagicPosition(double positionInches) {
