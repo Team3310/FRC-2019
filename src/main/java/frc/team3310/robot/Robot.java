@@ -15,22 +15,20 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team3310.robot.commands.AutoStartLevel1OutsideRocketFront;
-import frc.team3310.robot.commands.DriveAbsoluteTurnMP;
-import frc.team3310.robot.commands.DriveMotionCommand;
+import frc.team3310.robot.commands.AutoDriveMotionMagic;
+import frc.team3310.robot.commands.AutoStartLevel1SideCargoFront2;
+import frc.team3310.robot.commands.AutoStartLevel1SideCargoFrontSide1;
+import frc.team3310.robot.commands.AutoStartLevel1SideRocketFrontBackLow;
 import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
+import frc.team3310.robot.paths.TrajectoryGenerator.RightLeftAutonSide;
 import frc.team3310.robot.subsystems.AirCompressor;
 import frc.team3310.robot.subsystems.Drive;
 import frc.team3310.robot.subsystems.Drive.DriveControlMode;
 import frc.team3310.robot.subsystems.Elevator;
-import frc.team3310.robot.subsystems.Elevator.BackLegShiftState;
-import frc.team3310.robot.subsystems.Elevator.ElevatorClimbShiftState;
-import frc.team3310.robot.subsystems.Elevator.FrontLegShiftState;
 import frc.team3310.robot.subsystems.Intake;
 import frc.team3310.robot.subsystems.RobotStateEstimator;
-import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import frc.team3310.utility.lib.control.RobotStatus;
 
 public class Robot extends TimedRobot {
@@ -42,7 +40,7 @@ public class Robot extends TimedRobot {
 	public static final Intake intake = Intake.getInstance();
 	public static final AirCompressor compressor = AirCompressor.getInstance();
 	public static final RobotStateEstimator estimator = RobotStateEstimator.getInstance();
-	private TrajectoryGenerator mTrajectoryGenerator = TrajectoryGenerator.getInstance();
+	public static final TrajectoryGenerator trajectoryGenerator = TrajectoryGenerator.getInstance();
 
 	// Control looper
 	public static final Looper controlLoop = new Looper();
@@ -50,6 +48,7 @@ public class Robot extends TimedRobot {
 	// Choosers
 	private SendableChooser<OperationMode> operationModeChooser;
 	private SendableChooser<Command> autonTaskChooser;
+	private SendableChooser<RightLeftAutonSide> autonRightLeftChooser;
 	private Command autonomousCommand;
 
 	public static enum OperationMode {
@@ -57,6 +56,8 @@ public class Robot extends TimedRobot {
 	};
 
 	public static OperationMode operationMode = OperationMode.COMPETITION;
+
+	public static RightLeftAutonSide rightLeftSide = RightLeftAutonSide.RIGHT;
 
 	// PDP
 	public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
@@ -82,7 +83,7 @@ public class Robot extends TimedRobot {
 		controlLoop.register(drive);
 		controlLoop.register(elevator);
 		RobotStateEstimator.getInstance().registerEnabledLoops(controlLoop);
-		mTrajectoryGenerator.generateTrajectories();
+		trajectoryGenerator.generateTrajectories();
 
 		operationModeChooser = new SendableChooser<OperationMode>();
 		operationModeChooser.addOption("Practice", OperationMode.PRACTICE);
@@ -91,25 +92,28 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 
 		autonTaskChooser = new SendableChooser<Command>();
-		autonTaskChooser.addOption("Test Motion", new DriveMotionCommand(
-				TrajectoryGenerator.getInstance().getTrajectorySet().simpleStartToLeftSwitch, true));
-		autonTaskChooser.addOption("L1 Start Outside Rocket Front", new AutoStartLevel1OutsideRocketFront());
+		autonTaskChooser.setDefaultOption("L1 Rocket Front/Back Low", new AutoStartLevel1SideRocketFrontBackLow());
 
-		autonTaskChooser.addOption("Turn 90", new DriveAbsoluteTurnMP(90, 180, MPSoftwareTurnType.TANK));
+		autonTaskChooser.addOption("L1 Cargo Front/Side", new AutoStartLevel1SideCargoFrontSide1());
+
+		autonTaskChooser.addOption("L1 Cargo Front/Front", new AutoStartLevel1SideCargoFront2());
+
+		autonTaskChooser.addOption("Test Drive MM", new AutoDriveMotionMagic());
+
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
+
+		autonRightLeftChooser = new SendableChooser<RightLeftAutonSide>();
+		autonRightLeftChooser.addOption("Left", RightLeftAutonSide.LEFT);
+		autonRightLeftChooser.setDefaultOption("Right", RightLeftAutonSide.RIGHT);
+		SmartDashboard.putData("Auton Side", autonRightLeftChooser);
 
 		LiveWindow.setEnabled(false);
 		LiveWindow.disableAllTelemetry();
 
 		zeroAllSensors();
 		compressor.turnCompressorOff();
-
-		drive.setLimeLED(0);
-
-		elevator.setFrontLegState(FrontLegShiftState.LOCKED);
-		elevator.setBackLegState(BackLegShiftState.LOCKED);
-		elevator.setElevatorClimbState(ElevatorClimbShiftState.ENGAGED);
-
+		drive.setPipeline(1);
+		Robot.elevator.setRobotScoreMode();
 	}
 
 	// Called every loop for all modes
@@ -120,16 +124,13 @@ public class Robot extends TimedRobot {
 	// Called once when is disabled
 	@Override
 	public void disabledInit() {
-		zeroAllSensors();
-
 	}
 
 	// Called constantly when the robot is disabled
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		// zeroAllSensors();
-
+		drive.setPipeline(1);
 	}
 
 	// Called once at the start of auto
@@ -137,6 +138,11 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		controlLoop.start();
 		drive.setIsRed(getAlliance().equals(Alliance.Red));
+		drive.setPipeline(1);
+		zeroAllSensors();
+
+		rightLeftSide = autonRightLeftChooser.getSelected();
+		trajectoryGenerator.setRightLeftAutonSide(rightLeftSide);
 
 		autonomousCommand = autonTaskChooser.getSelected();
 
@@ -160,15 +166,16 @@ public class Robot extends TimedRobot {
 		}
 
 		operationMode = operationModeChooser.getSelected();
-		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
+		drive.setControlMode(DriveControlMode.JOYSTICK);
 
 		controlLoop.start();
+		drive.setPipeline(1);
 		drive.endGyroCalibration();
-		zeroAllSensors();
+		Robot.elevator.setRobotScoreMode();
 
-		// if (operationMode != OperationMode.COMPETITION) {
-		// Scheduler.getInstance().add(new ElevatorAutoZero(true));
-		// }
+		if (operationMode != OperationMode.COMPETITION) {
+			Scheduler.getInstance().add(new ElevatorAutoZero(true));
+		}
 	}
 
 	// Called constantly through teleOp
@@ -191,5 +198,4 @@ public class Robot extends TimedRobot {
 		intake.updateStatus(operationMode);
 		robotState.updateStatus(operationMode);
 	}
-
 }

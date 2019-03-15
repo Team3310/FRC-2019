@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.robot.Constants;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.RobotMap;
 import frc.team3310.utility.lib.drivers.TalonSRXChecker;
@@ -21,9 +22,8 @@ public class Intake extends Subsystem {
 	public static final double INTAKE_LOAD_SPEED = -.99;
 	public static final double INTAKE_LOAD_SLOW_SPEED = -0.4;
 	public static final double INTAKE_EJECT_SPEED = 0.8;
-	public static final double INTAKE_EJECT_FAST_SPEED = 1.0; // Intake Eject Speed for first cube APR
+	public static final double INTAKE_EJECT_FAST_SPEED = 1.0;
 	public static final double INTAKE_EJECT_SLOW_SPEED = 0.3;
-	public static final double INTAKE_ADJUST_SPEED = 0.3;
 	public static final double INTAKE_HOLD_SPEED = -0.15;
 
 	private TalonSRX leftArm;
@@ -66,25 +66,32 @@ public class Intake extends Subsystem {
 	}
 
 	public void setBallArmState(BallArmState state) {
-		Robot.drive.updateLimelight();
 		System.out.println("Ball arm state = " + state);
 		if (state == BallArmState.IN) {
 			ballArms.set(false);
+			return;
+		}
 
-		} else if (state == BallArmState.IN && Robot.drive.isLimeValid && Robot.drive.limeArea < 9) {
+		Robot.drive.updateLimelight();
+		if (isOkToLaunch()) {
+			ballArms.set(true);
+		} else {
 			System.out.println("To far to score");
 		}
+	}
 
-		else if (state == BallArmState.OUT) {
-			ballArms.set(true);
-		}
+	private boolean isOkToLaunch() {
+		return true;// !(Robot.elevator.getElevatorInchesOffGround() > Constants.HATCH_LEVEL_2
+		// && Robot.drive.lastValidLimeArea < 9);
 	}
 
 	public void setHatchArmState(HatchArmState state) {
 		System.out.println("Hatch arm state = " + state);
 		if (state == HatchArmState.IN) {
 			hatchArms.set(false);
-		} else if (state == HatchArmState.OUT) {
+			return;
+		}
+		if (isOkToLaunch()) {
 			hatchArms.set(true);
 		}
 	}
@@ -127,6 +134,9 @@ public class Intake extends Subsystem {
 			try {
 				SmartDashboard.putNumber("Left Intake Amps", leftArm.getOutputCurrent());
 				SmartDashboard.putNumber("Right Intake Amps", rightArm.getOutputCurrent());
+				SmartDashboard.putBoolean("Intake Front Right IR Sensor", getFrontRightIRIntakeSensor());
+				SmartDashboard.putBoolean("Intake Front Left IR Sensor", getFrontLeftIRIntakeSensor());
+
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {

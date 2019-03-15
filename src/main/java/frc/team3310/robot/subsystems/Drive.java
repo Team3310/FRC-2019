@@ -6,12 +6,17 @@ import java.util.ArrayList;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.SensorTerm;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
+import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -52,7 +57,7 @@ public class Drive extends Subsystem implements Loop {
 
 	public static enum DriveControlMode {
 		JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, MANUAL, VELOCITY_SETPOINT, CAMERA_TRACK, PATH_FOLLOWING,
-		OPEN_LOOP, CAMERA_TRACK_DRIVE
+		OPEN_LOOP, CAMERA_TRACK_DRIVE, MOTION_MAGIC_STRAIGHT
 	};
 
 	// One revolution of the wheel = Pi * D inches = 4096 ticks
@@ -88,7 +93,7 @@ public class Drive extends Subsystem implements Loop {
 	private BHRDifferentialDrive m_drive;
 
 	private boolean isRed = true;
-	private boolean mIsBrakeMode;
+	private boolean mIsBrakeMode = false;
 
 	private long periodMs = (long) (Constants.kLooperDt * 1000.0);
 
@@ -99,7 +104,7 @@ public class Drive extends Subsystem implements Loop {
 
 	public static final double STICK_DEADBAND = 0.02;
 
-	public static final double PITCH_THRESHOLD = 25;
+	public static final double PITCH_THRESHOLD = 20;
 
 	private int pitchWindowSize = 5;
 	private int windowIndex = 0;
@@ -126,6 +131,8 @@ public class Drive extends Subsystem implements Loop {
 
 	private static final int kPositionControlSlot = 0;
 	private static final int kVelocityControlSlot = 1;
+	private static final int kMotionMagicStraightSlot = 2;
+	private static final int kMotionMagicTurnSlot = 3;
 
 	private MPTalonPIDController mpStraightController;
 	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.15); // 4 colsons
@@ -134,8 +141,7 @@ public class Drive extends Subsystem implements Loop {
 	private PIDParams mpHoldPIDParams = new PIDParams(1, 0, 0, 0.0, 0.0, 0.0);
 
 	private MPSoftwarePIDController mpTurnController; // p i d a v g izone
-	private PIDParams mpTurnPIDParams = new PIDParams(0.035, 0.000, 0.0, 0.00025
-	, 0.00375, 0.0, 100); // 4 colson
+	private PIDParams mpTurnPIDParams = new PIDParams(0.035, 0.000, 0.0, 0.00025, 0.00375, 0.0, 100); // 4 colson
 																										// wheels
 	// private PIDParams mpTurnPIDParams = new PIDParams(0.03, 0.00002, 0.4, 0.0004,
 	// 0.0030, 0.0, 100); // 4 omni
@@ -152,11 +158,11 @@ public class Drive extends Subsystem implements Loop {
 	private double gyroOffsetDeg = 0;
 
 	private double mLastValidGyroAngle;
-	private double mCameraVelocity;
-	private double kCamera = 0.4; // .7
-	private double kCameraDriveClose = 0.08; // .04
-	private double kCameraDriveMid = 0.04; // .04
-	private double kCameraDriveFar = 0.03; // .04
+	private double mCameraVelocity = 0;
+	private double kCamera = 0.04; // .7
+	private double kCameraDriveClose = 0.072; // .04
+	private double kCameraDriveMid = 0.043; // .04
+	private double kCameraDriveFar = 0.033; // .04
 	private double kCameraClose = 10;
 	private double kCameraMid = 15;
 	private double kCameraFar = 20;
@@ -166,17 +172,23 @@ public class Drive extends Subsystem implements Loop {
 	private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
 	private DriveMotionPlanner mMotionPlanner;
 	private Rotation2d mGyroOffset = Rotation2d.identity();
-	private boolean mOverrideTrajectory = false;
+	public boolean mOverrideTrajectory = false;
 
 	// Vision
 	public double limeArea;
+	public double lastValidLimeArea;
 	public double limeX;
 	public double limeY;
 	public double limeSkew;
 	public boolean isLimeValid;
 	public double LEDMode;
 	public double camMode;
+	public boolean onTarget;
 
+	// Ultrasonic
+	// public Ultrasonic ultrasonic;
+
+	public double targetDrivePositionTicks;
 	public double targetMiddlePositionTicks;
 
 	@Override
@@ -222,6 +234,9 @@ public class Drive extends Subsystem implements Loop {
 					break;
 				case CAMERA_TRACK:
 					updateCameraTrack();
+					onTarget();
+					return;
+				case MOTION_MAGIC_STRAIGHT:
 					return;
 				default:
 					System.out.println("Unknown drive control mode: " + currentControlMode);
@@ -292,6 +307,9 @@ public class Drive extends Subsystem implements Loop {
 
 			middleDrive = TalonSRXFactory.createDefaultTalon(RobotMap.DRIVE_MIDDLE_CLIMB_WHEEL);
 
+			// ultrasonic = new Ultrasonic(RobotMap.ULTRA_SONIC_INPUT_CHANNEL,
+			// RobotMap.ULTRA_SONIC_OUTPUT_CHANNEL);
+
 			leftDrive1.setSafetyEnabled(false);
 			leftDrive1.setSensorPhase(false);
 
@@ -322,6 +340,7 @@ public class Drive extends Subsystem implements Loop {
 			mMotionPlanner = new DriveMotionPlanner();
 
 			gyroPigeon = new PigeonIMU(rightDrive2);
+			gyroPigeon.configFactoryDefault();
 			rightDrive2.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
 
 			middleDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
@@ -391,9 +410,124 @@ public class Drive extends Subsystem implements Loop {
 
 			reloadGains();
 			setBrakeMode(true);
+
+			configMotionMagic();
+
 		} catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");
 		}
+	}
+
+	private void configMotionMagic() {
+		System.out.println("Start configMotionMagic");
+
+		/* Configure the left Talon's selected sensor as local QuadEncoder */
+		leftDrive1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, // Local Feedback Source
+				Constants.PID_PRIMARY, // PID Slot for Source [0, 1]
+				Constants.kLongCANTimeoutMs); // Configuration Timeout
+
+		/*
+		 * Configure the Remote Talon's selected sensor as a remote sensor for the right
+		 * Talon
+		 */
+		rightDrive1.configRemoteFeedbackFilter(leftDrive1.getDeviceID(), // Device ID of Source
+				RemoteSensorSource.TalonSRX_SelectedSensor, // Remote Feedback Source
+				Constants.REMOTE_0, // Source number [0, 1]
+				Constants.kLongCANTimeoutMs); // Configuration Timeout
+
+		/*
+		 * Configure the Pigeon IMU to the other remote slot available on the right
+		 * Talon
+		 */
+		rightDrive1.configRemoteFeedbackFilter(gyroPigeon.getDeviceID(), RemoteSensorSource.Pigeon_Yaw,
+				Constants.REMOTE_1, Constants.kLongCANTimeoutMs);
+
+		/* Setup Sum signal to be used for Distance */
+		rightDrive1.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kLongCANTimeoutMs); // Feedback Device of Remote Talon
+		rightDrive1.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kLongCANTimeoutMs); // Quadrature
+
+		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
+		rightDrive1.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, Constants.PID_PRIMARY,
+				Constants.kLongCANTimeoutMs);
+
+		/* Scale Feedback by 0.5 to half the sum of Distance */
+		rightDrive1.configSelectedFeedbackCoefficient(0.5, // Coefficient
+				Constants.PID_PRIMARY, // PID Slot of Source
+				Constants.kLongCANTimeoutMs); // Configuration Timeout
+
+		/* Configure Remote 1 [Pigeon IMU's Yaw] to be used for Auxiliary PID Index */
+		rightDrive1.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1, Constants.PID_TURN, Constants.kLongCANTimeoutMs);
+
+		/* Scale the Feedback Sensor using a coefficient */
+		rightDrive1.configSelectedFeedbackCoefficient(1, Constants.PID_TURN, Constants.kLongCANTimeoutMs);
+
+		// Set status frame rates
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kLongCANTimeoutMs);
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kLongCANTimeoutMs);
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kLongCANTimeoutMs);
+		rightDrive1.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kLongCANTimeoutMs);
+		leftDrive1.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
+		gyroPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5, Constants.kLongCANTimeoutMs);
+
+		/* Configure neutral deadband */
+		leftDrive1.configNeutralDeadband(0.001, Constants.kLongCANTimeoutMs);
+		rightDrive1.configNeutralDeadband(0.001, Constants.kLongCANTimeoutMs);
+
+		// Set Motion Magic accel, velocity terms
+		rightDrive1.configMotionAcceleration(Constants.kDriveAcceleration, Constants.kLongCANTimeoutMs);
+		rightDrive1.configMotionCruiseVelocity(Constants.kDriveCruiseVelocity, Constants.kLongCANTimeoutMs);
+//		rightDrive1.configMotionSCurveStrength(Constants.kDriveScurveStrength, Constants.kLongCANTimeoutMs);
+
+		/**
+		 * Max out the peak output (for all modes).  
+		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
+		 */
+		leftDrive1.configPeakOutputForward(+1.0f, TalonSRXEncoder.TIMEOUT_MS);
+		leftDrive1.configPeakOutputReverse(-1.0f, TalonSRXEncoder.TIMEOUT_MS);
+
+		rightDrive1.configPeakOutputForward(+1.0f, TalonSRXEncoder.TIMEOUT_MS);
+		rightDrive1.configPeakOutputReverse(-1.0f, TalonSRXEncoder.TIMEOUT_MS);
+
+		// Set PID gains for straight
+		rightDrive1.config_kP(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKp, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kI(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKi, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kD(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKd, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kF(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKf, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_IntegralZone(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightIZone, Constants.kLongCANTimeoutMs);
+		rightDrive1.configClosedLoopPeakOutput(kMotionMagicStraightSlot, 1.0, Constants.kLongCANTimeoutMs);
+	//	rightDrive1.configMaxIntegralAccumulator(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightMaxIntegralAccumulator, Constants.kLongCANTimeoutMs);
+	//	rightDrive1.configAllowableClosedloopError(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightDeadband, Constants.kLongCANTimeoutMs);
+
+		// Set PID gains for turn
+		rightDrive1.config_kP(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKp, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kI(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKi, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kD(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKd, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kF(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKf, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_IntegralZone(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnIZone, Constants.kLongCANTimeoutMs);
+		rightDrive1.configClosedLoopPeakOutput(kMotionMagicTurnSlot, 1.0, Constants.kLongCANTimeoutMs);
+	//	rightDrive1.configMaxIntegralAccumulator(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnMaxIntegralAccumulator, Constants.kLongCANTimeoutMs);
+	//	rightDrive1.configAllowableClosedloopError(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnDeadband, Constants.kLongCANTimeoutMs);
+
+		/**
+		 * 1ms per loop. PID loop can be slowed down if need be. For example, - if
+		 * sensor updates are too slow - sensor deltas are very small per update, so
+		 * derivative error never gets large enough to be useful. - sensor movement is
+		 * very slow causing the derivative error to be near zero.
+		 */
+		int closedLoopTimeMs = 1;
+		rightDrive1.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kLongCANTimeoutMs);
+		rightDrive1.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kLongCANTimeoutMs);
+
+		/**
+		 * configAuxPIDPolarity(boolean invert, int timeoutMs) false means talon's local
+		 * output is PID0 + PID1, and other side Talon is PID0 - PID1 true means talon's
+		 * local output is PID0 - PID1, and other side Talon is PID0 + PID1
+		 */
+		rightDrive1.configAuxPIDPolarity(false, Constants.kLongCANTimeoutMs);
+
+		rightDrive1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
+
+		System.out.println("End configMotionMagic");
 	}
 
 	public static Drive getInstance() {
@@ -621,6 +755,14 @@ public class Drive extends Subsystem implements Loop {
 		updateVelocitySetpoint(left_inches_per_sec, right_inches_per_sec);
 	}
 
+	public synchronized void setVelocityNativeUnits(double left_velocity_ticks_per_100ms,
+			double right_velocity_ticks_per_100ms) {
+		leftDrive1.set(ControlMode.Velocity, mPeriodicIO.left_demand, DemandType.ArbitraryFeedForward,
+				mPeriodicIO.left_feedforward + Constants.kDriveVelocityKd * mPeriodicIO.left_accel / 1023.0);
+		rightDrive1.set(ControlMode.Velocity, mPeriodicIO.right_demand, DemandType.ArbitraryFeedForward,
+				mPeriodicIO.right_feedforward + Constants.kDriveVelocityKd * mPeriodicIO.right_accel / 1023.0);
+	}
+
 	/**
 	 * Adjust Velocity setpoint (if already in velocity mode)
 	 * 
@@ -687,10 +829,10 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	public boolean isDoneWithTrajectory() {
-		if (mMotionPlanner == null || driveControlMode != DriveControlMode.PATH_FOLLOWING) {
+		if (mMotionPlanner == null) {
 			return false;
 		}
-		return mMotionPlanner.isDone() || mOverrideTrajectory;
+		return mMotionPlanner.isDone() || mOverrideTrajectory == true;
 	}
 
 	public void overrideTrajectory(boolean value) {
@@ -851,14 +993,14 @@ public class Drive extends Subsystem implements Loop {
 		}
 
 		double pitchAngle = updatePitchWindow();
-		// if (Math.abs(pitchAngle) > PITCH_THRESHOLD) {
-		// m_moveOutput = Math.signum(pitchAngle) * -1.0;
-		// m_steerOutput = 0;
-		// System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
-		// }
+		if (Math.abs(pitchAngle) > PITCH_THRESHOLD) {
+			m_moveOutput = Math.signum(pitchAngle) * -1.0;
+			m_steerOutput = 0;
+			System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
+		}
 
 		if (cameraTrackTapeButton) {
-			setPipeline(0);
+			setPipeline(2);
 			setLimeLED(0);
 			updateLimelight();
 			double cameraSteer = 0;
@@ -867,16 +1009,16 @@ public class Drive extends Subsystem implements Loop {
 				double kCameraDrive = kCameraDriveClose;
 				if (limeX <= kCameraClose) {
 					kCameraDrive = kCameraDriveClose;
-					System.out.println(" Close Valid lime angle = " + limeX);
+					// System.out.println(" Close Valid lime angle = " + limeX);
 				} else if (limeX < kCameraMid) {
 					kCameraDrive = kCameraDriveMid;
-					System.out.println("Mid Valid lime angle = " + limeX);
+					// System.out.println("Mid Valid lime angle = " + limeX);
 				} else if (limeX < kCameraFar) {
 					kCameraDrive = kCameraDriveFar;
-					System.out.println("Far Valid lime angle = " + limeX);
+					// System.out.println("Far Valid lime angle = " + limeX);
 				}
 				cameraSteer = limeX * kCameraDrive;
-				System.out.println("Valid lime angle = " + kCameraDrive);
+				// System.out.println("Valid lime angle = " + kCameraDrive);
 			} else {
 				// System.out.println("In Valid lime angle = " + limeX);
 				cameraSteer = -m_steerOutput;
@@ -885,6 +1027,7 @@ public class Drive extends Subsystem implements Loop {
 		}
 
 		m_drive.arcadeDrive(-m_moveOutput, -m_steerOutput);
+
 	}
 
 	public boolean isBrakeMode() {
@@ -1006,23 +1149,23 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	// Checks if vison targets are found
-	public boolean onTarget() {
+	public boolean isValid() {
 		return isLimeValid;
 	}
 
 	public void updateLimelight() {
 		NetworkTable limeTable = getLimetable();
-		double valid = limeTable.getEntry("tv").getDouble(0);
-		if (valid == 0) {
-			isLimeValid = false;
-		} else if (valid == 1) {
-			isLimeValid = true;
-		}
-
 		limeX = limeTable.getEntry("tx").getDouble(0);
 		limeY = limeTable.getEntry("ty").getDouble(0);
 		limeArea = limeTable.getEntry("ta").getDouble(0);
 		limeSkew = limeTable.getEntry("ts").getDouble(0);
+		double valid = limeTable.getEntry("tv").getDouble(0);
+		if (valid == 0) { // || limeArea > 38
+			isLimeValid = false;
+		} else if (valid == 1) {
+			isLimeValid = true;
+			lastValidLimeArea = limeArea;
+		}
 	}
 
 	/**
@@ -1033,12 +1176,14 @@ public class Drive extends Subsystem implements Loop {
 		double deltaVelocity = 0;
 		mLastValidGyroAngle = getGyroAngleDeg();
 		if (isLimeValid) {
-			deltaVelocity = limeX * kCamera;
-			System.out.println("Valid lime angle = " + limeX);
+			deltaVelocity = limeX * kCamera * mCameraVelocity;
+			// System.out.println("Valid lime angle = " + limeX);
 		} else {
-			deltaVelocity = (getGyroAngleDeg() - mLastValidGyroAngle) * kCamera;
-			System.out.println("In Valid lime angle = " + limeX);
+			deltaVelocity = (getGyroAngleDeg() - mLastValidGyroAngle) * kCamera * mCameraVelocity;
+			// System.out.println("In Valid lime angle = " + limeX);
 		}
+		// setVelocityNativeUnits(mCameraVelocity + deltaVelocity, mCameraVelocity -
+		// deltaVelocity);
 		updateVelocitySetpoint(mCameraVelocity + deltaVelocity, mCameraVelocity - deltaVelocity);
 	}
 
@@ -1047,17 +1192,24 @@ public class Drive extends Subsystem implements Loop {
 	 * 
 	 * @see Path
 	 */
-	public synchronized void setCameraTrack(double straightVelocity) {
-		if (driveControlMode != DriveControlMode.CAMERA_TRACK) {
-			setFinished(false);
-			configureTalonsForSpeedControl(); // Our Equivalent to Poofs SetVelocity?
-			driveControlMode = DriveControlMode.CAMERA_TRACK;
-			mLastValidGyroAngle = getGyroAngleDeg();
-			mCameraVelocity = straightVelocity;
+	public synchronized void setCameraTrack(double velocityScale) {
+		// double straightVelocity = (mPeriodicIO.left_velocity_ticks_per_100ms
+		// + mPeriodicIO.right_velocity_ticks_per_100ms) / 2;
+		double straightVelocity = velocityScale * (leftDrive1.getVelocityWorld() + rightDrive1.getVelocityWorld()) / 2;
+		setFinished(false);
+		// configureTalonsForSpeedControl();
+		driveControlMode = DriveControlMode.CAMERA_TRACK;
+		mLastValidGyroAngle = getGyroAngleDeg();
+		mCameraVelocity = straightVelocity;
+	}
+
+	public boolean onTarget() {
+		if (limeX < 5) {
+			onTarget = true;
 		} else {
-			setVelocitySetpoint(0, 0);
-			System.out.println("Oh NOOOO in velocity set point for camera track");
+			onTarget = false;
 		}
+		return onTarget;
 	}
 
 	// End
@@ -1091,13 +1243,38 @@ public class Drive extends Subsystem implements Loop {
 		}
 	}
 
+	public synchronized void setDriveMotionMagic(double positionInches, double turnDegrees) {
+		rightDrive1.selectProfileSlot(kMotionMagicStraightSlot, Constants.PID_PRIMARY);
+		rightDrive1.selectProfileSlot(kMotionMagicTurnSlot, Constants.PID_TURN);
+		
+		leftDrive1.getSensorCollection().setQuadraturePosition(0, 0);
+		rightDrive1.getSensorCollection().setQuadraturePosition(0, 0);
+		
+		targetDrivePositionTicks = getDriveEncoderTicks(positionInches);
+		System.out.println("MM Target Ticks = " + targetDrivePositionTicks);
+
+		double currentGyro = rightDrive1.getSelectedSensorPosition(1);
+		System.out.println("MM Gyro from Talon = " + currentGyro + ", Fused heading from pidgeon = " + gyroPigeon.getFusedHeading() + ", gyro angle = " + getGyroAngleDeg());
+
+		rightDrive1.set(ControlMode.MotionMagic, targetDrivePositionTicks, DemandType.AuxPID, turnDegrees);
+		leftDrive1.follow(rightDrive1, FollowerType.AuxOutput1);
+	}
+
+	private int getDriveEncoderTicks(double positionInches) {
+		return (int) (positionInches * ENCODER_TICKS_TO_INCHES);
+	}
+
+	public synchronized boolean hasFinishedDriveMotionMagic() {
+		return Util.epsilonEquals(rightDrive1.getActiveTrajectoryPosition(), targetDrivePositionTicks, 5);
+	}
+
 	public synchronized void setMiddleDriveMotionMagicPosition(double positionInches) {
 		middleDrive.selectProfileSlot(kMiddleDriveMotionMagicSlot, 0);
 		targetMiddlePositionTicks = getMiddleEncoderTicks(positionInches);
 		middleDrive.set(ControlMode.MotionMagic, targetMiddlePositionTicks);
 	}
 
-	private void resetMiddleEncoder() {
+	public void resetMiddleEncoder() {
 		middleDrive.setSelectedSensorPosition(0, 0, 100);
 	}
 
@@ -1113,6 +1290,16 @@ public class Drive extends Subsystem implements Loop {
 	public synchronized boolean hasFinishedTrajectory() {
 		return Util.epsilonEquals(middleDrive.getActiveTrajectoryPosition(), targetMiddlePositionTicks, 5);
 	}
+
+	// Ultrasonic
+	// public void setAutomatic() {
+	// ultrasonic.setAutomaticMode(true); // turns on automatic mode
+	// }
+
+	// public double ultrasonicDistance() {
+	// return ultrasonic.getRangeInches(); // reads the range on the ultrasonic
+	// sensor
+	// }
 
 	public static class PeriodicIO {
 		// INPUTS
@@ -1177,14 +1364,7 @@ public class Drive extends Subsystem implements Loop {
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
-			SmartDashboard.putBoolean("Vison = ", onTarget());
-			// SmartDashboard.putNumber("Right Drive Ticks",
-			// mPeriodicIO.right_position_ticks);
-			// SmartDashboard.putNumber("Left Drive Ticks",
-			// mPeriodicIO.left_position_ticks);
-			SmartDashboard.putNumber("Middle Encoder", middleDrive.getSelectedSensorPosition());
-			SmartDashboard.putNumber("Middle Encoder Inches", getMiddleEncoderInches());
-
+			SmartDashboard.putBoolean("Vison = ", isValid());
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
 			}

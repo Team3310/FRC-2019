@@ -10,18 +10,18 @@ package frc.team3310.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.Robot;
 
-public class ResetSensor extends Command {
-  public ResetSensor() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+public class SwitchCameraPipeline extends Command {
+  private int cameraPipeline;
+
+  public SwitchCameraPipeline(int cameraPipeline) {
+    this.cameraPipeline = cameraPipeline;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    System.out.println("Reset All");
-    Robot.elevator.resetEncoders();
-    Robot.drive.zeroSensors();
+    Robot.drive.setPipeline(cameraPipeline);
+    System.out.println("Switch Camera Pipeline = " + cameraPipeline);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -38,11 +38,13 @@ public class ResetSensor extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+
   }
 }

@@ -10,8 +10,8 @@ package frc.team3310.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.Robot;
 
-public class ResetSensor extends Command {
-  public ResetSensor() {
+public class SetRobotLockedMode extends Command {
+  public SetRobotLockedMode() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -19,9 +19,7 @@ public class ResetSensor extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    System.out.println("Reset All");
-    Robot.elevator.resetEncoders();
-    Robot.drive.zeroSensors();
+    Robot.elevator.setRobotLockedMode();
   }
 
   // Called repeatedly when this Command is scheduled to run

@@ -51,8 +51,8 @@ public class ElevatorAutoZero extends Command {
 	@Override
 	protected void end() {
 		Robot.elevator.setSpeed(0);
-		Robot.elevator.resetEncoders();
-		Robot.elevator.setElevatorMotionMagicPosition(Constants.HOME_POSITION_INCHES);
+		Robot.elevator.resetEncoders(Constants.LOW_HOME_POSITION_INCHES);
+		Robot.elevator.setElevatorMotionMagicPosition(Constants.LOW_HOME_POSITION_INCHES);
 		System.out.println("Elevator Zeroed");
 	}
 
