@@ -57,7 +57,7 @@ public class Drive extends Subsystem implements Loop {
 
 	public static enum DriveControlMode {
 		JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, MANUAL, VELOCITY_SETPOINT, CAMERA_TRACK, PATH_FOLLOWING,
-		OPEN_LOOP, CAMERA_TRACK_DRIVE, MOTION_MAGIC_STRAIGHT
+		OPEN_LOOP, CAMERA_TRACK_DRIVE, MOTION_MAGIC_STRAIGHT, SPIN_MOVE
 	};
 
 	// One revolution of the wheel = Pi * D inches = 4096 ticks
@@ -192,6 +192,9 @@ public class Drive extends Subsystem implements Loop {
 
 	public double targetDrivePositionTicks;
 	public double targetMiddlePositionTicks;
+	public double targetSpinAngle;
+	public double spinMoveStartAngle;
+	public double spinMoveStartVelocity;
 
 	@Override
 	public void onStart(double timestamp) {
@@ -243,6 +246,8 @@ public class Drive extends Subsystem implements Loop {
 						updateDriveMotionMagic();
 					}
 					return;
+				case SPIN_MOVE:
+					updateDriveSpinMove();
 				default:
 					System.out.println("Unknown drive control mode: " + currentControlMode);
 					break;
@@ -444,7 +449,7 @@ public class Drive extends Subsystem implements Loop {
 		 * Configure the Pigeon IMU to the other remote slot available on the right
 		 * Talon
 		 */
-		rightDrive1.configRemoteFeedbackFilter(gyroPigeon.getDeviceID(), RemoteSensorSource.Pigeon_Yaw,
+		rightDrive1.configRemoteFeedbackFilter(gyroPigeon.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw,
 				Constants.REMOTE_1, Constants.kLongCANTimeoutMs);
 
 		System.out.println("Pigeon ID " + gyroPigeon.getDeviceID());
@@ -1298,6 +1303,28 @@ public class Drive extends Subsystem implements Loop {
 		// rightDrive1.set(ControlMode.MotionMagic, targetDrivePositionTicks);
 		// rightDrive1.set(ControlMode.Velocity, 5000, DemandType.AuxPID, 0);
 		leftDrive1.follow(rightDrive1, FollowerType.AuxOutput1);
+	}
+
+	public synchronized void setDriveSpinMove(double turnDegrees) {
+		targetSpinAngle = turnDegrees;
+		spinMoveStartAngle = getGyroAngleDeg();
+		spinMoveStartVelocity = (rightDrive1.getSelectedSensorVelocity() + leftDrive1.getSelectedSensorVelocity()) / 2;
+		driveControlMode = DriveControlMode.SPIN_MOVE;
+		rightDrive1.selectProfileSlot(kVelocityControlSlot, Constants.PID_PRIMARY);
+		leftDrive1.selectProfileSlot(kVelocityControlSlot, Constants.PID_PRIMARY);
+	}
+
+	public synchronized void updateDriveSpinMove() {
+		double deltaAngle = getGyroAngleDeg() - spinMoveStartAngle;
+
+		double cosA = Math.cos(Math.toRadians(deltaAngle));
+		double sinA = Math.sin(Math.toRadians(deltaAngle));
+		
+		double rightVelocity = spinMoveStartVelocity * (cosA + sinA); 
+		double leftVelocity = spinMoveStartVelocity * (cosA - sinA); 
+		
+		rightDrive1.set(ControlMode.Velocity, rightVelocity);
+		leftDrive1.set(ControlMode.Velocity, leftVelocity);
 	}
 
 	private int getDriveEncoderTicks(double positionInches) {
