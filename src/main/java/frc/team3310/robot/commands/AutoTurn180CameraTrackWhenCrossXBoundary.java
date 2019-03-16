@@ -9,15 +9,17 @@ package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team3310.robot.commands.WaitUntilCrossXBoundary.MovingXDirection;
+import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
-public class AutoCameraTrackWhenCrossXBoundary extends CommandGroup {
- 
-  public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection) {
+public class AutoTurn180CameraTrackWhenCrossXBoundary extends CommandGroup {
+
+  public AutoTurn180CameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection) {
     this(xBoundary, movingDirection, 1.0);
   }
 
-  public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double velocityScale) {
+  public AutoTurn180CameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double velocityScale) {
     addSequential(new WaitUntilCrossXBoundary(xBoundary, movingDirection));
+    addSequential(new DriveAbsoluteTurnMP(180, 300, MPSoftwareTurnType.TANK));
     addSequential(new DrivePathCameraTrack(velocityScale));
   }
 }

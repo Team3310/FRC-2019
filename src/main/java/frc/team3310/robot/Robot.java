@@ -19,6 +19,8 @@ import frc.team3310.robot.commands.AutoDriveMotionMagic;
 import frc.team3310.robot.commands.AutoStartLevel1SideCargoFront2;
 import frc.team3310.robot.commands.AutoStartLevel1SideCargoFrontSide1;
 import frc.team3310.robot.commands.AutoStartLevel1SideRocketFrontBackLow;
+import frc.team3310.robot.commands.AutoStartLevel2SideCargoFront2;
+import frc.team3310.robot.commands.AutoStartLevel2SideRocketFrontBack;
 import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
@@ -97,6 +99,10 @@ public class Robot extends TimedRobot {
 		autonTaskChooser.addOption("L1 Cargo Front/Side", new AutoStartLevel1SideCargoFrontSide1());
 
 		autonTaskChooser.addOption("L1 Cargo Front/Front", new AutoStartLevel1SideCargoFront2());
+
+		autonTaskChooser.addOption("L2 Rocket Front/Back Low", new AutoStartLevel2SideRocketFrontBack());
+
+		autonTaskChooser.addOption("L2 Cargo Front/Front", new AutoStartLevel2SideCargoFront2());
 
 		autonTaskChooser.addOption("Test Drive MM", new AutoDriveMotionMagic());
 
