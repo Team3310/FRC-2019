@@ -21,17 +21,18 @@ public class AutoStartLevel2SideCargoFront2 extends CommandGroup {
   public AutoStartLevel2SideCargoFront2() {
     addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
 
-    addParallel(new AutoTurn180CameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive));
+    addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive));
     addSequential(
         new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().level2StartToCargoFront, true));
     addSequential(new EjectHatch());
-    addSequential(new WaitCommand("Eject Break", .5));
-    addParallel(new IntakeHatch());
-    addParallel(new AutoTurn180CameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.7));
+    addSequential(new WaitCommand("Eject Break", .25));
+    addParallel(new ElevatorAutoZeroSensor());
+    addParallel(new AutoTurn180CameraTrackWhenCrossXBoundary(95, MovingXDirection.Negative, 0.7));
     addSequential(new DriveMotionCommand(
         TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontToLoadingReversed, false));
-    // addSequential(new IntakeHatchArms(HatchArmState.IN));
-    // addSequential(new WaitCommand("Grab Break", .25));
+    addSequential(new WaitCommand("Turn Break", 2));
+    addSequential(new IntakeHatch());
+    addSequential(new DrivePathCameraTrack(1));
 
   }
 }

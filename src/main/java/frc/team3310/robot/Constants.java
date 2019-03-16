@@ -153,13 +153,14 @@ public class Constants {
     public static final double kMiddleDrivePeakReverse = -1.0;
 
     // 2019 Elevator Levels
-    public static final double HATCH_LEVEL_1 = 19.5;
-    public static final double HATCH_LEVEL_2 = 50.0;
-    public static final double HATCH_LEVEL_3 = 77.0;
-    public static final double BALL_LEVEL_1 = 29.5;
+    public static final double HATCH_LEVEL_1 = 19.5; // 19.5
+    public static final double HATCH_LEVEL_2 = 50.5;
+    public static final double HATCH_LEVEL_3 = 77.5;
+    public static final double BALL_LEVEL_1 = 30.5; // 29.5
     public static final double BALL_LEVEL_2 = 57.5;
     public static final double BALL_LEVEL_3 = 84.5;
     public static final double BALL_LEVEL_CARGO = 42.0;
+    public static final double BALL_OFFSET = 7;
     public static final double LOADING_STATION_HATCH = 19.5;
     public static final double CLIMB_LVL_3 = 19;
     public static final double CLIMB_LVL_2 = 7.5;

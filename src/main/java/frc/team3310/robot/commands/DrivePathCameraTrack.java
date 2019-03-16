@@ -37,10 +37,11 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 	protected void execute() {
 		if (!isTracking && isExtraOneTimedOut()) {
 			System.out.println("Start camera track");
+			System.out.println("Velocity Scale " + velocityScale);
 			Robot.drive.setCameraTrack(velocityScale);
 			isTracking = true;
 		} else if (!isTrackFinished) {
-			isTrackFinished = Robot.drive.isLimeValid == false || Robot.drive.limeY < -5; // || isExtraTwoTimedOut();
+			isTrackFinished = Robot.drive.isLimeValid == false || Robot.drive.limeY < -10; // || isExtraTwoTimedOut();
 			if (isTrackFinished == true) {
 				startExtraTwoTimeout(0.2);
 				Robot.drive.setSpeed(0.2);

@@ -8,13 +8,12 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team3310.robot.Constants;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.subsystems.Elevator;
 
 public class ElevatorSetPositionMM extends Command {
   private double targetPositionInches;
-  private boolean isAtTarget;
-  private static final double MIN_DELTA_TARGET = 0.3;
 
   public ElevatorSetPositionMM(double targetPositionInches) {
     this.targetPositionInches = targetPositionInches;
@@ -24,13 +23,16 @@ public class ElevatorSetPositionMM extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    // if (Math.abs(targetPositionInches -
-    // Robot.elevator.getElevatorPositionInches()) < MIN_DELTA_TARGET) {
-    // isAtTarget = true;
-    // } else {
-    // isAtTarget = false;
+
+    if (Robot.elevator.elevatorCargoMode == true) {
+      Robot.elevator.setElevatorMotionMagicPosition(targetPositionInches + Constants.BALL_OFFSET);
+
+    } else {
+      Robot.elevator.setElevatorMotionMagicPosition(targetPositionInches);
+
+    }
     Robot.elevator.setElevatorMotionMagicPosition(targetPositionInches);
-    // }
+
     System.out.println("Elevator set MM initialized, target = " + targetPositionInches);
   }
 

@@ -105,8 +105,8 @@ public class TrajectoryGenerator {
         public static final Pose2d kSideStartLevel1 = new Pose2d(63.7, -48.4, Rotation2d.fromDegrees(0.0));
 
         public static final Pose2d kSideStartLevel2 = new Pose2d(15.75, -48.4, Rotation2d.fromDegrees(0.0));
-      
-        public static final Pose2d kSideStartHangingLevel2 = new Pose2d(45.2, -48.4, Rotation2d.fromDegrees(0.0));
+
+        public static final Pose2d kSideStartHangingLevel2 = new Pose2d(53.25, -48.4, Rotation2d.fromDegrees(0.0));
 
         public static final Pose2d kCenterToIntake = new Pose2d(new Translation2d(-18.0, 0.0), Rotation2d.identity());
 
@@ -138,19 +138,21 @@ public class TrajectoryGenerator {
 
         public static final Pose2d kCargoFrontTrackPoseSideStart = new Pose2d(new Translation2d(195, -20),
                         Rotation2d.fromDegrees(0.00));
-
         public static final Pose2d kCargoFrontPose = new Pose2d(new Translation2d(207.7, -10),
                         Rotation2d.fromDegrees(0.00));
 
-        public static final Pose2d kCargoFrontToLoadingTrackPose = new Pose2d(new Translation2d(30, -130),
+        public static final Pose2d kCargoFrontToLoadingMidPose = new Pose2d(new Translation2d(115, -135),
+                        Rotation2d.fromDegrees(0.00));
+
+        public static final Pose2d kCargoFrontToLoadingTrackPose = new Pose2d(new Translation2d(30, -135),
                         Rotation2d.fromDegrees(0.00));
 
         public static final Pose2d kCargoSide1Pose = new Pose2d(new Translation2d(315.75, -60.5), // Near 275 //Mid 295
                                                                                                   // Far 315
                         Rotation2d.fromDegrees(90.00));
 
-        public static final Pose2d kLoadingToCargoFront2Pose = new Pose2d(new Translation2d(175, 20),
-                        Rotation2d.fromDegrees(0.00));
+        public static final Pose2d kLoadingToCargoFront2Pose = new Pose2d(new Translation2d(185, 20),
+                        Rotation2d.fromDegrees(-90.00));
 
         public static final Pose2d kCargoTurn1LoadingToTrackPose = new Pose2d(new Translation2d(200, 14),
                         Rotation2d.fromDegrees(0.00));
@@ -278,6 +280,7 @@ public class TrajectoryGenerator {
                 private Trajectory<TimedState<Pose2dWithCurvature>> getCargoFrontToLoadingReversed() {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kCargoFrontPose);
+                        waypoints.add(kCargoFrontToLoadingMidPose);
                         waypoints.add(kCargoFrontToLoadingTrackPose);
 
                         return generateTrajectory(true, waypoints,
