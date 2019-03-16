@@ -37,7 +37,7 @@ public class DriveMotionMagic extends Command {
   @Override
   protected boolean isFinished() {
     if (Drive.getInstance().hasFinishedDriveMotionMagic()) {
-      System.out.println("Trajectory finished");
+      System.out.println("Trajectory finished " + Drive.getInstance().getDriveMotionMagicPosition());
       return true;
     }
     // System.out.println("Motion magic driving...");

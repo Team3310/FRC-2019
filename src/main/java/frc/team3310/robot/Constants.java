@@ -114,15 +114,15 @@ public class Constants {
     public final static int PID_PRIMARY = 0;
     public final static int PID_TURN = 1;
 
-    public static final double kDriveMotionMagicStraightKp = 0.4;// 0.4;
-    public static final double kDriveMotionMagicStraightKi = 0.002; // 0.002; // 0.0;
-    public static final double kDriveMotionMagicStraightKd = 0.08; // 0.08; // (4+4)/100;
-    public static final double kDriveMotionMagicStraightKf = 0.25; // 0.197; // 0.06;
+    public static final double kDriveMotionMagicStraightKp = 0.05;// 0.4;
+    public static final double kDriveMotionMagicStraightKi = 0.00; // 0.002; // 0.0;
+    public static final double kDriveMotionMagicStraightKd = 4.0; // 0.08; // (4+4)/100;
+    public static final double kDriveMotionMagicStraightKf = 0.15; // 0.197; // 0.06;
     public static final int kDriveMotionMagicStraightMaxIntegralAccumulator = 500000; // todo: tune me
     public static final int kDriveMotionMagicStraightIZone = 200;
     public static final int kDriveMotionMagicStraightDeadband = 0;
 
-    public static final double kDriveMotionMagicTurnKp = 2.0;// 0.4;
+    public static final double kDriveMotionMagicTurnKp = 0.1;// 0.4;
     public static final double kDriveMotionMagicTurnKi = 0.002; // 0.002; // 0.0;
     public static final double kDriveMotionMagicTurnKd = 0.08; // 0.08; // (4+4)/100;
     public static final double kDriveMotionMagicTurnKf = 0.25; // 0.197; // 0.06;
@@ -130,8 +130,8 @@ public class Constants {
     public static final int kDriveMotionMagicTurnIZone = 200;
     public static final int kDriveMotionMagicTurnDeadband = 0;
 
-    public static final int kDriveCruiseVelocity = 10000; // Max Velocity 10475
-    public static final int kDriveAcceleration = 15000;// 33000; //Max Velocity / Time to reach top .82
+    public static final int kDriveCruiseVelocity = 5000; // Max Velocity 10475
+    public static final int kDriveAcceleration = 6500;// 33000; //Max Velocity / Time to reach top .82
 
     public static final double kDriveEpsilon = 1.0;// 33000;
     public static final int kDriveScurveStrength = 4;

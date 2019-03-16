@@ -15,6 +15,6 @@ public class AutoDriveMotionMagic extends CommandGroup {
    */
   public AutoDriveMotionMagic() {
     addSequential(new ResetSensor());
-    addSequential(new DriveMotionMagic(100, 0));
+    addSequential(new DriveMotionMagic(30, 0));
   }
 }

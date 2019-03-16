@@ -7,6 +7,8 @@
 
 package frc.team3310.robot;
 
+import javax.swing.text.PlainDocument;
+
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,6 +39,7 @@ import frc.team3310.robot.commands.SwitchCameraPipeline;
 import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.commands.TurnCompressorOn;
 import frc.team3310.robot.controller.GameController;
+import frc.team3310.robot.controller.Playstation;
 import frc.team3310.robot.controller.Xbox;
 import frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
@@ -58,7 +61,7 @@ public class OI {
 
   private OI() {
     // Driver controller
-    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
+    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
     m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Xbox());
 
     // Driver Controls
