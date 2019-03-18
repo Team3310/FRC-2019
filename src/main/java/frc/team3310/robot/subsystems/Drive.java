@@ -37,6 +37,8 @@ import frc.team3310.utility.DriveSignal;
 import frc.team3310.utility.MPSoftwarePIDController;
 import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import frc.team3310.utility.MPTalonPIDController;
+import frc.team3310.utility.MotionProfileSpinMove;
+import frc.team3310.utility.MotionProfileTurnPoint;
 import frc.team3310.utility.PIDParams;
 import frc.team3310.utility.ReflectingCSVWriter;
 import frc.team3310.utility.SoftwarePIDController;
@@ -135,6 +137,9 @@ public class Drive extends Subsystem implements Loop {
 	private static final int kMotionMagicTurnSlot = 3;
 
 	private boolean isRunningMotionMagic = false;
+	private MotionProfileSpinMove mpSpin;
+	private MotionProfileTurnPoint turnPoint;
+	private boolean isSpinMoveFinished;
 
 	private MPTalonPIDController mpStraightController;
 	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.15); // 4 colsons
@@ -1036,7 +1041,7 @@ public class Drive extends Subsystem implements Loop {
 		}
 
 		if (cameraTrackTapeButton) {
-			setPipeline(2);
+			setPipeline(0);
 			setLimeLED(0);
 			updateLimelight();
 			double cameraSteer = 0;
@@ -1309,22 +1314,28 @@ public class Drive extends Subsystem implements Loop {
 		targetSpinAngle = turnDegrees;
 		spinMoveStartAngle = getGyroAngleDeg();
 		spinMoveStartVelocity = (rightDrive1.getSelectedSensorVelocity() + leftDrive1.getSelectedSensorVelocity()) / 2;
+		isSpinMoveFinished = false;
+		mpSpin = new MotionProfileSpinMove(spinMoveStartVelocity, 0, targetSpinAngle, 360, 0.01, 200, 100, false);
 		driveControlMode = DriveControlMode.SPIN_MOVE;
+
 		rightDrive1.selectProfileSlot(kVelocityControlSlot, Constants.PID_PRIMARY);
 		leftDrive1.selectProfileSlot(kVelocityControlSlot, Constants.PID_PRIMARY);
 	}
 
 	public synchronized void updateDriveSpinMove() {
-		double deltaAngle = getGyroAngleDeg() - spinMoveStartAngle;
+		turnPoint = mpSpin.getNextPoint(turnPoint);
+		double angleError = (getGyroAngleDeg() - spinMoveStartAngle) - turnPoint.position;
 
-		double cosA = Math.cos(Math.toRadians(deltaAngle));
-		double sinA = Math.sin(Math.toRadians(deltaAngle));
-		
-		double rightVelocity = spinMoveStartVelocity * (cosA + sinA); 
-		double leftVelocity = spinMoveStartVelocity * (cosA - sinA); 
-		
-		rightDrive1.set(ControlMode.Velocity, rightVelocity);
-		leftDrive1.set(ControlMode.Velocity, leftVelocity);
+		if (turnPoint != null) {
+			double kTurn = 0.00;
+			double deltaVelocity = angleError * kTurn * spinMoveStartVelocity;
+			rightDrive1.set(ControlMode.Velocity, turnPoint.rightVelocity - deltaVelocity);
+			leftDrive1.set(ControlMode.Velocity, turnPoint.leftVelocity + deltaVelocity);
+		}
+		else 
+		{
+			isSpinMoveFinished = true;
+		}
 	}
 
 	private int getDriveEncoderTicks(double positionInches) {
@@ -1333,6 +1344,10 @@ public class Drive extends Subsystem implements Loop {
 
 	public synchronized boolean hasFinishedDriveMotionMagic() {
 		return Util.epsilonEquals(rightDrive1.getActiveTrajectoryPosition(), targetDrivePositionTicks, 5);
+	}
+
+	public synchronized boolean hasFinishedDSpinMove() {
+		return isSpinMoveFinished;
 	}
 
 	public synchronized double getDriveMotionMagicPosition() {

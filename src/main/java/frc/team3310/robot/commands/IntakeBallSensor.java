@@ -47,7 +47,8 @@ public class IntakeBallSensor extends ExtraTimeoutCommand {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-        if (ballDetected == false && Robot.intake.getFrontRightIRIntakeSensor()&& Robot.intake.getFrontLeftIRIntakeSensor() && isExtraTwoTimedOut()) {
+        if (ballDetected == false && Robot.intake.getFrontRightIRIntakeSensor()
+                && Robot.intake.getFrontLeftIRIntakeSensor() && isExtraTwoTimedOut()) {
             startExtraOneTimeout(EXTRA_INTAKE_TIME);
             ballDetected = true;
             System.out.println("BALL DETECTED!!!!!");
@@ -64,6 +65,7 @@ public class IntakeBallSensor extends ExtraTimeoutCommand {
         Robot.intake.setBallArmState(BallArmState.IN);
         Robot.intake.setSpeed(Intake.INTAKE_HOLD_SPEED);
         System.out.println("Intake sensor off end!!!!");
+        Robot.elevator.elevatorCargoMode = true;
     }
 
     // Called when another command which requires one or more of the same

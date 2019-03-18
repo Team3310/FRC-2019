@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team3310.robot.commands.WaitUntilCrossXBoundary.MovingXDirection;
 
 public class AutoCameraTrackWhenCrossXBoundary extends CommandGroup {
- 
+
   public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection) {
     this(xBoundary, movingDirection, 1.0);
   }

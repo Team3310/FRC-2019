@@ -8,21 +8,21 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team3310.robot.commands.WaitUntilCrossXBoundary.MovingXDirection;
-import frc.team3310.robot.paths.TrajectoryGenerator;
+import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
-public class AutoStartLevel1RocketBack2 extends CommandGroup {
+public class AutoTurn90CameraTrackWhenCrossXBoundary extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public AutoStartLevel1RocketBack2() {
-    addSequential(
-        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack, false));
-    addParallel(new AutoTurn180CameraTrackWhenCrossXBoundary(305, MovingXDirection.Negative));
-    addSequential(
-        new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn3ToRocketBack, false));
-    addSequential(new WaitCommand("Eject Pause", .25));
-    addSequential(new EjectHatch());
+  public AutoTurn90CameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection) {
+    this(xBoundary, movingDirection, 1.0);
+  }
+
+  public AutoTurn90CameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection,
+      double velocityScale) {
+    addSequential(new WaitUntilCrossXBoundary(xBoundary, movingDirection));
+    addSequential(new DriveAbsoluteTurnMP(90, 300, MPSoftwareTurnType.TANK));
+    addSequential(new DrivePathCameraTrack(velocityScale));
   }
 }
