@@ -6,9 +6,9 @@ import frc.team3310.robot.subsystems.Intake.HatchArmState;
 
 public class IntakeHatchArms extends Command {
 	private HatchArmState state;
-	
+
 	public IntakeHatchArms(HatchArmState state) {
-//		requires(Robot.drive);
+		// requires(Robot.drive);
 		this.state = state;
 	}
 
@@ -20,7 +20,7 @@ public class IntakeHatchArms extends Command {
 
 	@Override
 	protected void execute() {
-		
+
 	}
 
 	@Override
@@ -30,11 +30,11 @@ public class IntakeHatchArms extends Command {
 
 	@Override
 	protected void end() {
-		
+
 	}
 
 	@Override
 	protected void interrupted() {
-			
+
 	}
 }
