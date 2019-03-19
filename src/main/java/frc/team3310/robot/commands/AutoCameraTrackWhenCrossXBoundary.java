@@ -12,12 +12,12 @@ import frc.team3310.robot.commands.WaitUntilCrossXBoundary.MovingXDirection;
 
 public class AutoCameraTrackWhenCrossXBoundary extends CommandGroup {
 
-  public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection) {
-    this(xBoundary, movingDirection, 1.0);
+  public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double finishedAtLimeY, boolean test) {
+    this(xBoundary, movingDirection, 1.0, finishedAtLimeY);
   }
 
-  public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double velocityScale) {
+  public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double velocityScale, double finishedAtLimeY) {
     addSequential(new WaitUntilCrossXBoundary(xBoundary, movingDirection));
-    addSequential(new DrivePathCameraTrack(velocityScale));
+    addSequential(new DrivePathCameraTrack(velocityScale, finishedAtLimeY));
   }
 }

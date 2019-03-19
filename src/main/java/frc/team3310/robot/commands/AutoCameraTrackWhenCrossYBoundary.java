@@ -13,14 +13,14 @@ import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
 public class AutoCameraTrackWhenCrossYBoundary extends CommandGroup {
 
-  public AutoCameraTrackWhenCrossYBoundary(double yBoundaryForRightSideAuton, MovingYDirection movingDirection) {
-    this(yBoundaryForRightSideAuton, movingDirection, 1.0);
+  public AutoCameraTrackWhenCrossYBoundary(double yBoundaryForRightSideAuton, MovingYDirection movingDirection, double finishedAtLimeY, boolean test) {
+    this(yBoundaryForRightSideAuton, movingDirection, 1.0, finishedAtLimeY);
   }
 
   public AutoCameraTrackWhenCrossYBoundary(double yBoundaryForRightSideAuton, MovingYDirection movingDirection,
-      double velocityScale) {
+      double velocityScale, double finishedAtLimeY) {
     addSequential(new WaitUntilCrossYBoundary(yBoundaryForRightSideAuton, movingDirection));
     addSequential(new DriveAbsoluteTurnMP(180, 300, MPSoftwareTurnType.TANK));
-    addSequential(new DrivePathCameraTrack(velocityScale));
+    addSequential(new DrivePathCameraTrack(velocityScale, finishedAtLimeY));
   }
 }

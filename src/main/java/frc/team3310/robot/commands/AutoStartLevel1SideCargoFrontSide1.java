@@ -20,7 +20,7 @@ public class AutoStartLevel1SideCargoFrontSide1 extends CommandGroup {
     public AutoStartLevel1SideCargoFrontSide1() {
         addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
 
-        addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive));
+        addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive, Constants.finishedAtCargoLimeY, true));
         addSequential(new DriveMotionCommand(
                 TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoFront, true));
         addSequential(new EjectHatch());
@@ -29,7 +29,7 @@ public class AutoStartLevel1SideCargoFrontSide1 extends CommandGroup {
         addSequential(
                 new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontToTurn1, false));
 
-        addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.7));
+        addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.7, Constants.finishedAtCargoLimeY));
         addSequential(new DriveMotionCommand(
                 TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontTurn1ToLoading, false), 4);
         addSequential(new IntakeHatchArms(HatchArmState.IN));
@@ -37,7 +37,7 @@ public class AutoStartLevel1SideCargoFrontSide1 extends CommandGroup {
 
         addSequential(new DriveMotionCommand(
                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToTurn1CargoSide1, false));
-        addParallel(new AutoCameraTrackWhenCrossYBoundary(-75, MovingYDirection.OutsideToInside));
+        addParallel(new AutoCameraTrackWhenCrossYBoundary(-75, MovingYDirection.OutsideToInside, Constants.finishedAtCargoLimeY, true));
         addSequential(
                 new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1ToCargoSide1, false));
         // addSequential(new WaitCommand("Eject Pause", .25));

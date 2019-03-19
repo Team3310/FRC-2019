@@ -1,5 +1,6 @@
 package frc.team3310.robot.commands;
 
+import frc.team3310.robot.Constants;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.subsystems.Drive.DriveControlMode;
 
@@ -10,13 +11,15 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 	private final double PIPELINE_TIMEOUT = 0.2;
 	private final double isVisonTimedOut = 1.5;
 	private boolean isTrackFinished = false;
+	private double finishAtLimeY = Constants.finishedAtCargoLimeY;
 
 	public DrivePathCameraTrack() {
 		requires(Robot.drive);
 	}
 
-	public DrivePathCameraTrack(double velocityScale) {
+	public DrivePathCameraTrack(double velocityScale, double finishAtLimeY) {
 		this.velocityScale = velocityScale;
+		this.finishAtLimeY = finishAtLimeY;
 		requires(Robot.drive);
 		isTrackFinished = false;
 	}
@@ -41,7 +44,8 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 			Robot.drive.setCameraTrack(velocityScale);
 			isTracking = true;
 		} else if (!isTrackFinished) {
-			isTrackFinished = Robot.drive.isLimeValid == false || Robot.drive.limeY < -10; // || isExtraTwoTimedOut();
+			isTrackFinished = Robot.drive.isLimeValid == false || Robot.drive.limeY < finishAtLimeY; // || isExtraTwoTimedOut();
+			System.out.println("limeY=" + Robot.drive.limeY);
 			if (isTrackFinished == true) {
 				startExtraTwoTimeout(0.2);
 				Robot.drive.setSpeed(0.2);

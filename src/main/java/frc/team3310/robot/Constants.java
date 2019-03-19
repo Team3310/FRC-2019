@@ -49,6 +49,9 @@ public class Constants {
     public static final double kDriveKv = 0.11242500692715937; // 0.14242500692715937; // V per rad/s
     public static final double kDriveKa = 0.01; // 0.011505866811140018; // V per rad/s^2
 
+    public static final double finishedAtRocketLimeY = -10;
+    public static final double finishedAtCargoLimeY = -12;
+
     // Geometry
     // 2019 Robot Values
     public static final double kCenterToFrontBumperDistance = 15.832; // 31.664/2

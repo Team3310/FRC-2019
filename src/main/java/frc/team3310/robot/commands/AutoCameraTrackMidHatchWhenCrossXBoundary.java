@@ -8,21 +8,18 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team3310.robot.Constants;
 import frc.team3310.robot.commands.WaitUntilCrossXBoundary.MovingXDirection;
-import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
-public class AutoTurn90CameraTrackWhenCrossXBoundary extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
-  public AutoTurn90CameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection) {
-    this(xBoundary, movingDirection, 1.0);
+public class AutoCameraTrackMidHatchWhenCrossXBoundary extends CommandGroup {
+
+  public AutoCameraTrackMidHatchWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double finishedAtLimeY, boolean test) {
+    this(xBoundary, movingDirection, 1.0, finishedAtLimeY);
   }
 
-  public AutoTurn90CameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection,
-      double velocityScale) {
+  public AutoCameraTrackMidHatchWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double velocityScale, double finishedAtLimeY) {
     addSequential(new WaitUntilCrossXBoundary(xBoundary, movingDirection));
-    addSequential(new DriveAbsoluteTurnMP(90, 300, MPSoftwareTurnType.TANK));
-    addSequential(new DrivePathCameraTrack(velocityScale));
+    addSequential(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_2));
+    addSequential(new DrivePathCameraTrack(velocityScale, finishedAtLimeY));
   }
 }

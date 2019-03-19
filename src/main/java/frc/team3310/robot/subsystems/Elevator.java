@@ -40,6 +40,8 @@ public class Elevator extends Subsystem implements Loop {
 
 	public static final double INCHES_TO_ENCODER_TICKS_ELEVATOR = (50.0 / 50.0) * (34.0 / 34.0) * 4096.0
 			/ (1.2987013 * Math.PI);
+
+																							// 24.0 / 40.0
 	public static final double INCHES_TO_ENCODER_TICKS_GGG = (50.0 / 50.0) * (50.0 / 18.0) * (34.0 / 30.0) * 4096.0
 			/ (1.077 * Math.PI);
 
