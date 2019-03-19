@@ -20,28 +20,24 @@ public class AutoStartLevel1SideCargoFrontSide1 extends CommandGroup {
     public AutoStartLevel1SideCargoFrontSide1() {
         addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
 
-        addParallel(new AutoTurn180CameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive));
+        addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive));
         addSequential(new DriveMotionCommand(
                 TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoFront, true));
         addSequential(new EjectHatch());
         addSequential(new WaitCommand("Eject Break", .25));
-                addParallel(new IntakeHatch());
-        
-        //Turn
-        // addSequential(
-        //         new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontToTurn1, false));
+        addParallel(new IntakeHatch());
+        addSequential(
+                new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontToTurn1, false));
 
-        // addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.7));
-        // addSequential(new DriveMotionCommand(
-        //         TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontTurn1ToLoading, false), 4);
-        //         addSequential(new IntakeHatchArms(HatchArmState.IN));
-        
-
+        addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.7));
+        addSequential(new DriveMotionCommand(
+                TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontTurn1ToLoading, false), 4);
+        addSequential(new IntakeHatchArms(HatchArmState.IN));
         addSequential(new WaitCommand("Grab Break", .15));
 
         addSequential(new DriveMotionCommand(
                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToTurn1CargoSide1, false));
-        addParallel(new AutoTurn180CameraTrackWhenCrossYBoundary(-75, MovingYDirection.OutsideToInside));
+        addParallel(new AutoCameraTrackWhenCrossYBoundary(-75, MovingYDirection.OutsideToInside));
         addSequential(
                 new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1ToCargoSide1, false));
         // addSequential(new WaitCommand("Eject Pause", .25));
