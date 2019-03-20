@@ -12,6 +12,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 	private final double isVisonTimedOut = 1.5;
 	private boolean isTrackFinished = false;
 	private double finishAtLimeY = Constants.finishedAtCargoLimeY;
+	private int invalidCounter = 0;
 
 	public DrivePathCameraTrack() {
 		requires(Robot.drive);
@@ -22,6 +23,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 		this.finishAtLimeY = finishAtLimeY;
 		requires(Robot.drive);
 		isTrackFinished = false;
+		invalidCounter = 0;
 	}
 
 	protected void initialize() {
@@ -43,9 +45,18 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 			System.out.println("Velocity Scale " + velocityScale);
 			Robot.drive.setCameraTrack(velocityScale);
 			isTracking = true;
-		} else if (!isTrackFinished) {
-			isTrackFinished = Robot.drive.isLimeValid == false || Robot.drive.limeY < finishAtLimeY; // || isExtraTwoTimedOut();
-			System.out.println("limeY=" + Robot.drive.limeY);
+		} 
+		else if (isTracking && !isTrackFinished) {
+			if (Robot.drive.isLimeValid == false) {
+				invalidCounter++;
+			}
+			else {
+				invalidCounter = 0;
+			}
+
+			isTrackFinished = (Robot.drive.isLimeValid == false && invalidCounter > 10) || (Robot.drive.limeY < finishAtLimeY); // || isExtraTwoTimedOut();
+			
+			System.out.println("valid = " + Robot.drive.isLimeValid + ", lime Y =" + Robot.drive.limeY);
 			if (isTrackFinished == true) {
 				startExtraTwoTimeout(0.2);
 				Robot.drive.setSpeed(0.2);

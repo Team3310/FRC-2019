@@ -46,11 +46,11 @@ public class Constants {
     public static final double kRobotAngularInertia = 10.0; // kg m^2 TODO tune
     public static final double kRobotAngularDrag = 12.0; // N*m / (rad/sec) TODO tune
     public static final double kDriveVIntercept = 0.928112644250295; // V
-    public static final double kDriveKv = 0.11242500692715937; // 0.14242500692715937; // V per rad/s
+    public static final double kDriveKv = 0.10305; // 0.14242500692715937; // V per rad/s
     public static final double kDriveKa = 0.01; // 0.011505866811140018; // V per rad/s^2
 
     public static final double finishedAtRocketLimeY = -10;
-    public static final double finishedAtCargoLimeY = -12;
+    public static final double finishedAtCargoLimeY = -14;
 
     // Geometry
     // 2019 Robot Values
@@ -69,7 +69,7 @@ public class Constants {
     public static final double kPathLookaheadTime = 0.4; // seconds to look ahead along the path for steering
     public static final double kPathMinLookaheadDistance = 24.0; // inches
 
-    public static final double kDriveVelocityKp = 0.5; // 0.9;
+    public static final double kDriveVelocityKp = 0.7; // 0.9;
     public static final double kDriveVelocityKi = 0.0;
     public static final double kDriveVelocityKd = 3.0; // 10.0;
     public static final double kDriveVelocityKf = 0.0;
@@ -143,7 +143,7 @@ public class Constants {
     public static final double kMiddleDriveMotionMagicKi = 0.002; // 0.002; // 0.0;
     public static final double kMiddleDriveMotionMagicKd = 0.08; // 0.08; // (4+4)/100;
     public static final double kMiddleDriveMotionMagicKf = 0.25; // 0.197; // 0.06;
-    public static final int kMiddleDriveCruiseVelocity = 2000; // Max Velocity 10475
+    public static final int kMiddleDriveCruiseVelocity = 4000; // Max Velocity 10475
     public static final int kMiddleDriveAcceleration = 5000;// 33000; //Max Velocity / Time to reach top .82
     public static final int kMiddleDriveMaxIntegralAccumulator = 500000; // todo: tune me
     public static final int kMiddleDriveIZone = 200;
@@ -155,7 +155,13 @@ public class Constants {
     public static final double kMiddleDrivePeakForward = 1.0;
     public static final double kMiddleDrivePeakReverse = -1.0;
 
+    public static final int kClimbCruiseVelocity = 20000; // 12500; //Max Velocity 10475
+    public static final int kClimbAcceleration = 30000;// 33000; //Max Velocity / Time to reach top .82
+    public static final int kClimbScurveStrength = 0;
+
+
     // 2019 Elevator Levels
+    public static final double AUTO_HATCH_LEVEL_1 = 16.5; // 19.5
     public static final double HATCH_LEVEL_1 = 19.5; // 19.5
     public static final double HATCH_LEVEL_2 = 50.5;
     public static final double HATCH_LEVEL_3 = 77.5;
@@ -165,7 +171,7 @@ public class Constants {
     public static final double BALL_LEVEL_CARGO = 42.0;
     public static final double BALL_OFFSET = 7;
     public static final double LOADING_STATION_HATCH = 19.5;
-    public static final double CLIMB_LVL_3 = 19;
+    public static final double CLIMB_LVL_3 = 19.75;
     public static final double CLIMB_LVL_2 = 7.5;
     public static final double CLIMB_BOOST = 7.5;
     public static final double AUTO_HOME_POSITION_INCHES = 7.5;// 20.5; // 7.5;

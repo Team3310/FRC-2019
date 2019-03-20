@@ -253,6 +253,9 @@ public class Drive extends Subsystem implements Loop {
 					return;
 				case SPIN_MOVE:
 					updateDriveSpinMove();
+					break;
+				case MANUAL:
+					break;
 				default:
 					System.out.println("Unknown drive control mode: " + currentControlMode);
 					break;
@@ -426,7 +429,7 @@ public class Drive extends Subsystem implements Loop {
 			reloadGains();
 			setBrakeMode(true);
 
-			configMotionMagic();
+			// configMotionMagic();
 
 		} catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");

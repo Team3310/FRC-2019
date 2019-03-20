@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.commands.AutoDriveMotionMagic;
+import frc.team3310.robot.commands.AutoStartLevel1SideCargo2;
 import frc.team3310.robot.commands.AutoStartLevel1SideCargoFront2;
+import frc.team3310.robot.commands.AutoStartLevel1SideCargoFront2v2;
 import frc.team3310.robot.commands.AutoStartLevel1SideCargoFrontSide1;
 import frc.team3310.robot.commands.AutoStartLevel1SideRocketFrontBackLow;
 import frc.team3310.robot.commands.ElevatorAutoZero;
@@ -97,8 +99,10 @@ public class Robot extends TimedRobot {
 		autonTaskChooser.addOption("L1 Cargo Front/Side", new AutoStartLevel1SideCargoFrontSide1());
 
 		autonTaskChooser.addOption("L1 Cargo Front/Front", new AutoStartLevel1SideCargoFront2());
+		
+		autonTaskChooser.addOption("L1 Cargo Front/Front v2", new AutoStartLevel1SideCargoFront2v2());
 
-		autonTaskChooser.addOption("Test Drive MM", new AutoDriveMotionMagic());
+		autonTaskChooser.addOption("L1 Cargo Side/Side", new AutoStartLevel1SideCargo2());
 
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 

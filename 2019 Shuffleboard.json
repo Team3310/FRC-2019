@@ -2,44 +2,14 @@
   "tabPane": [
     {
       "title": "SmartDashboard",
-      "autoPopulate": true,
+      "autoPopulate": false,
       "autoPopulatePrefix": "SmartDashboard/",
       "widgetPane": {
-        "gridSize": 80.0,
+        "gridSize": 82.0,
         "showGrid": true,
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "0,0": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "ComboBox Chooser",
-              "_source0": "network_table:///SmartDashboard/Operation Mode",
-              "_title": "Operation Mode"
-            }
-          },
-          "3,0": {
-            "size": [
-              10,
-              6
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://limelight",
-              "_title": "limelight",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": 0.0,
-              "fps": -1,
-              "imageWidth": -1,
-              "imageHeight": -1
-            }
-          },
           "0,1": {
             "size": [
               3,
@@ -51,20 +21,7 @@
               "_title": "Autonomous"
             }
           },
-          "13,0": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Vison \u003d ",
-              "_title": "Vison \u003d ",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "13,4": {
+          "12,4": {
             "size": [
               3,
               1
@@ -77,20 +34,88 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "13,3": {
+          "0,0": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Operation Mode",
+              "_title": "Operation Mode"
+            }
+          },
+          "0,2": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auton Side",
+              "_title": "Auton Side"
+            }
+          },
+          "3,6": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Button",
+              "_source0": "network_table:///SmartDashboard/Compressor On/pressed",
+              "_title": "Compressor On/pressed"
+            }
+          },
+          "6,6": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Button",
+              "_source0": "network_table:///SmartDashboard/Reset Sensor/pressed",
+              "_title": "Reset Sensor/pressed"
+            }
+          },
+          "12,2": {
             "size": [
               3,
               1
             ],
             "content": {
               "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Intake Front Left IR Sensor",
-              "_title": "Intake Front Left IR Sensor",
+              "_source0": "network_table:///SmartDashboard/Vison \u003d ",
+              "_title": "Vison \u003d ",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "13,1": {
+          "0,3": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Platform Detect Front \u003d ",
+              "_title": "Platform Detect Front \u003d ",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "9,6": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Button",
+              "_source0": "network_table:///SmartDashboard/Compressor Off/pressed",
+              "_title": "Compressor Off/pressed"
+            }
+          },
+          "12,0": {
             "size": [
               3,
               1
@@ -103,7 +128,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "13,2": {
+          "12,1": {
             "size": [
               3,
               1
@@ -116,48 +141,15 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "7,6": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Toggle Button",
-              "_source0": "network_table:///SmartDashboard/Reset Sensor/pressed",
-              "_title": "Reset Sensor/pressed"
-            }
-          },
-          "13,5": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Toggle Button",
-              "_source0": "network_table:///SmartDashboard/Compressor Off/pressed",
-              "_title": "Compressor Off/pressed"
-            }
-          },
-          "0,5": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Toggle Button",
-              "_source0": "network_table:///SmartDashboard/Compressor On/pressed",
-              "_title": "Compressor On/pressed"
-            }
-          },
-          "0,3": {
+          "12,3": {
             "size": [
               3,
               1
             ],
             "content": {
               "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Platform Detect Front \u003d ",
-              "_title": "Platform Detect Front \u003d ",
+              "_source0": "network_table:///SmartDashboard/Intake Front Left IR Sensor",
+              "_title": "Intake Front Left IR Sensor",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
@@ -175,48 +167,23 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "0,2": {
+          "3,0": {
             "size": [
-              3,
-              1
+              9,
+              6
             ],
             "content": {
-              "_type": "ComboBox Chooser",
-              "_source0": "network_table:///SmartDashboard/Auton Side",
-              "_title": "Auton Side"
-            }
-          },
-          "5,7": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Limelight_PipelineName",
-              "_title": "Limelight_PipelineName"
-            }
-          },
-          "7,7": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Limelight_Stream",
-              "_title": "Limelight_Stream"
-            }
-          },
-          "9,7": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Limelight_Interface",
-              "_title": "Limelight_Interface"
+              "_type": "Camera Stream",
+              "_source0": "camera_server://limelight",
+              "_title": "limelight",
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": 0.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
             }
           }
         }
@@ -227,90 +194,18 @@
       "autoPopulate": true,
       "autoPopulatePrefix": "LiveWindow/",
       "widgetPane": {
-        "gridSize": 128.0,
+        "gridSize": 82.0,
         "showGrid": true,
         "hgap": 16.0,
         "vgap": 16.0,
-        "tiles": {
-          "0,0": {
-            "size": [
-              2,
-              4
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_source0": "network_table:///LiveWindow/ExampleSubsystem",
-              "_title": "ExampleSubsystem",
-              "Layout/Label position": "BOTTOM",
-              "_children": []
-            }
-          },
-          "2,0": {
-            "size": [
-              2,
-              4
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_source0": "network_table:///LiveWindow/Ungrouped",
-              "_title": "Ungrouped",
-              "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///LiveWindow/Ungrouped/Talon SRX [3]/Value",
-                  "_title": "Talon SRX [3]/Value"
-                }
-              ]
-            }
-          },
-          "4,0": {
-            "size": [
-              2,
-              4
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_source0": "network_table:///LiveWindow/TestSubsystem",
-              "_title": "TestSubsystem",
-              "Layout/Label position": "BOTTOM",
-              "_children": []
-            }
-          },
-          "6,0": {
-            "size": [
-              2,
-              4
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_source0": "network_table:///LiveWindow/ClimbSubsystem",
-              "_title": "ClimbSubsystem",
-              "Layout/Label position": "BOTTOM",
-              "_children": []
-            }
-          },
-          "8,0": {
-            "size": [
-              2,
-              4
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_source0": "network_table:///LiveWindow/MotorSubsystem",
-              "_title": "MotorSubsystem",
-              "Layout/Label position": "BOTTOM",
-              "_children": []
-            }
-          }
-        }
+        "tiles": {}
       }
     }
   ],
   "windowGeometry": {
-    "x": -7.199999809265137,
-    "y": -7.199999809265137,
-    "width": 1550.4000244140625,
-    "height": 878.4000244140625
+    "x": -5.599999904632568,
+    "y": 0.800000011920929,
+    "width": 1547.199951171875,
+    "height": 868.7999877929688
   }
 }

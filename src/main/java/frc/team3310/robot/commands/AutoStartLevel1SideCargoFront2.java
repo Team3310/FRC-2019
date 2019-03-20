@@ -22,7 +22,7 @@ public class AutoStartLevel1SideCargoFront2 extends CommandGroup {
     public AutoStartLevel1SideCargoFront2() {
         addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
 
-        addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive, Constants.finishedAtCargoLimeY, true));
+        addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive, 1.0, Constants.finishedAtCargoLimeY));
         addSequential(new DriveMotionCommand(
                 TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoFront, true));
         addSequential(new WaitForChildren());
@@ -41,7 +41,7 @@ public class AutoStartLevel1SideCargoFront2 extends CommandGroup {
 
         addSequential(new DriveMotionCommand(
                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingTocargoFrontTrack2, false));
-        addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive, Constants.finishedAtCargoLimeY, true));
+        addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive, 1.0, Constants.finishedAtCargoLimeY));
         addSequential(
                 new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().track2PoseToCargo2, false));
         // addSequential(new WaitForChildren());

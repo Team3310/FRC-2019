@@ -20,7 +20,7 @@ public class AutoStartLevel1RocketBack2 extends CommandGroup {
   public AutoStartLevel1RocketBack2() {
     addSequential(
         new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack, false));
-    addParallel(new AutoCameraTrackWhenCrossXBoundary(305, MovingXDirection.Negative, Constants.finishedAtRocketLimeY, true));
+    addParallel(new AutoCameraTrackWhenCrossXBoundary(305, MovingXDirection.Negative, 1.0 , Constants.finishedAtRocketLimeY));
     addSequential(
         new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn3ToRocketBack, false));
     addSequential(new WaitCommand("Eject Pause", .25));

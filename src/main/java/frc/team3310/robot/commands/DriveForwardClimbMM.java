@@ -24,7 +24,7 @@ public class DriveForwardClimbMM extends Command {
     edgeDetected = false;
     Robot.drive.resetMiddleEncoder();
     Robot.drive.setMiddleDriveMotionMagicPosition(distance);
-    Robot.drive.setVelocitySetpoint(10, 10);
+    Robot.drive.setVelocitySetpoint(20, 20);
 
     System.out.println("Start drive");
   }

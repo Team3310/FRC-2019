@@ -42,7 +42,7 @@ public class Elevator extends Subsystem implements Loop {
 			/ (1.2987013 * Math.PI);
 
 																							// 24.0 / 40.0
-	public static final double INCHES_TO_ENCODER_TICKS_GGG = (50.0 / 50.0) * (50.0 / 18.0) * (34.0 / 30.0) * 4096.0
+	public static final double INCHES_TO_ENCODER_TICKS_GGG = (50.0 / 50.0) * (50.0 / 18.0) * (24.0 / 40.0) * 4096.0
 			/ (1.077 * Math.PI);
 
 	// Defined speeds
@@ -373,6 +373,11 @@ public class Elevator extends Subsystem implements Loop {
 		if (getElevatorControlMode() != ElevatorControlMode.MOTION_MAGIC) {
 			setElevatorControlMode(ElevatorControlMode.MOTION_MAGIC);
 		}
+				motor1.configMotionAcceleration(Constants.kClimbAcceleration, 0);
+
+				motor1.configMotionSCurveStrength(Constants.kClimbScurveStrength, 0);
+	
+				motor1.configMotionCruiseVelocity(Constants.kClimbCruiseVelocity, 0);
 		motor1.selectProfileSlot(kClimbMotionMagicSlot, 0);
 		targetPositionTicks = getClimbEncoderTicks(positionInches);
 		motor1.set(ControlMode.MotionMagic, targetPositionTicks, DemandType.ArbitraryFeedForward,
@@ -600,6 +605,8 @@ public class Elevator extends Subsystem implements Loop {
 			SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
 			SmartDashboard.putBoolean("Platform Detect Front = ", getPlatformDetectFront());
 			SmartDashboard.putBoolean("Plaform Detect Bot = ", getPlatformDetectRear());
+			SmartDashboard.putNumber("Climb Position Inches", getClimbPositionInches());
+
 
 
 		}
