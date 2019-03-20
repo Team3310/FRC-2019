@@ -2,17 +2,17 @@ package frc.team3310.utility;
 
 import java.io.PrintWriter;
 
+import frc.team3310.robot.Constants;
+
 public class MotionProfileSpinMove {
 
     private MotionProfileBoxCar mp;
     private double initialLinearVelocity;
     private double spinAngleScaleFactor;
-    private boolean flip = false;
 
-	public MotionProfileSpinMove(double initialLinearVelocity, double startAngle, double endAngle, double maxTurnVelocity, double itp, double t1, double t2, boolean flip) {
+	public MotionProfileSpinMove(double initialLinearVelocity, double startAngle, double endAngle, double maxTurnVelocity, double itp, double t1, double t2) {
         this.initialLinearVelocity = initialLinearVelocity;
         this.spinAngleScaleFactor = 180.0 / (endAngle - startAngle);
-        this.flip = flip;
         mp = new MotionProfileBoxCar(startAngle, endAngle, maxTurnVelocity, itp, t1, t2);
 	} 
 	
@@ -20,15 +20,12 @@ public class MotionProfileSpinMove {
 		
         point = (MotionProfileTurnPoint)mp.getNextPoint(point);
         
+        // Arbitrarily set linear velocity to Vi * Cos(theta) then calculate Vl and Vr.
         if (point != null) {
-            double angleRadians = Math.toRadians(point.position * spinAngleScaleFactor);
-            double cosA = Math.cos(angleRadians);
-            double sinA = Math.sin(angleRadians);
-            if (flip) {
-                sinA = -sinA;
-            }
-            point.rightVelocity = initialLinearVelocity * (cosA + sinA);
-            point.leftVelocity = initialLinearVelocity * (cosA - sinA);
+            double linearVelocity = initialLinearVelocity * Math.cos(Math.toRadians(point.position * spinAngleScaleFactor));
+            double angularVelocity = Constants.kDriveWheelTrackWidthInches * Constants.kTrackScrubFactor  * Math.toRadians(point.velocity);
+            point.rightVelocity = linearVelocity + angularVelocity;
+            point.leftVelocity = linearVelocity - angularVelocity;
         }
 		
 		return point;
@@ -40,8 +37,9 @@ public class MotionProfileSpinMove {
             out = new PrintWriter("C:/Users/Brian Selle/turn180.csv");
             long startTime = System.nanoTime();
 
-            MotionProfileSpinMove mp = new MotionProfileSpinMove(1, 0, 180, 360, 10, 200, 100, false);
-            out.println("Time, Position, Velocity, LeftVelocity, RightVelocity");
+            MotionProfileSpinMove mp = new MotionProfileSpinMove(-48, 0, 90, 180, 1, 200, 100);
+            System.out.println("Time Constructor = " +  (System.nanoTime() - startTime) * 1E-6 + " ms");
+            out.println("Time, Theta, ThetaDot, LeftVelocity, RightVelocity");
             MotionProfileTurnPoint point = new MotionProfileTurnPoint();
             while (mp.getNextPoint(point) != null) {
                 out.println(point.time + ", " + point.position + ", " + point.velocity + ", " + point.leftVelocity + ", " + point.rightVelocity);

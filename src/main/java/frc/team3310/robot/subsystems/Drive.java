@@ -598,6 +598,10 @@ public class Drive extends Subsystem implements Loop {
 		return rad_s / (Math.PI * 2.0) * 4096.0 / 10.0;
 	}
 
+	private static double degreesPerSecondToTicksPer100ms(double deg_s) {
+		return deg_s / (360.0) * 4096.0 / 10.0;
+	}
+
 	public double getLeftEncoderRotations() {
 		return mPeriodicIO.left_position_ticks / DRIVE_ENCODER_PPR;
 	}
@@ -1318,7 +1322,7 @@ public class Drive extends Subsystem implements Loop {
 		spinMoveStartAngle = getGyroAngleDeg();
 		spinMoveStartVelocity = (rightDrive1.getSelectedSensorVelocity() + leftDrive1.getSelectedSensorVelocity()) / 2;
 		isSpinMoveFinished = false;
-		mpSpin = new MotionProfileSpinMove(spinMoveStartVelocity, 0, targetSpinAngle, 360, 0.01, 200, 100, false);
+		mpSpin = new MotionProfileSpinMove(spinMoveStartVelocity, 0, targetSpinAngle, 180, 100, 400, 200);
 		driveControlMode = DriveControlMode.SPIN_MOVE;
 
 		rightDrive1.selectProfileSlot(kVelocityControlSlot, Constants.PID_PRIMARY);
@@ -1327,18 +1331,20 @@ public class Drive extends Subsystem implements Loop {
 
 	public synchronized void updateDriveSpinMove() {
 		turnPoint = mpSpin.getNextPoint(turnPoint);
-		double angleError = (getGyroAngleDeg() - spinMoveStartAngle) - turnPoint.position;
-
-		if (turnPoint != null) {
-			double kTurn = 0.00;
-			double deltaVelocity = angleError * kTurn * spinMoveStartVelocity;
-			rightDrive1.set(ControlMode.Velocity, turnPoint.rightVelocity - deltaVelocity);
-			leftDrive1.set(ControlMode.Velocity, turnPoint.leftVelocity + deltaVelocity);
-		}
-		else 
-		{
+		if (turnPoint == null) {
 			isSpinMoveFinished = true;
+			rightDrive1.set(ControlMode.Velocity, spinMoveStartVelocity);
+			leftDrive1.set(ControlMode.Velocity, spinMoveStartVelocity);
+			return;
 		}
+		
+		// Calculate a little gyro correction to help the MP wheel velocities arrive at the proper angle
+		double angleError = (getGyroAngleDeg() - spinMoveStartAngle) - turnPoint.position;
+		double kTurn = 0.00;
+		double deltaVelocity = angleError * kTurn * spinMoveStartVelocity;
+
+		rightDrive1.set(ControlMode.Velocity, degreesPerSecondToTicksPer100ms(turnPoint.rightVelocity) - deltaVelocity);
+		leftDrive1.set(ControlMode.Velocity, degreesPerSecondToTicksPer100ms(turnPoint.leftVelocity) + deltaVelocity);
 	}
 
 	private int getDriveEncoderTicks(double positionInches) {
