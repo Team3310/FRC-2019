@@ -5,13 +5,21 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team3310.robot.commands;
+package frc.team3310.auto.routes;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
+import frc.team3310.auto.commands.AutoCameraTrackWhenCrossXBoundary;
+import frc.team3310.auto.commands.AutoCameraTrackWhenCrossYBoundary;
+import frc.team3310.auto.commands.DriveAbsoluteTurnMP;
+import frc.team3310.auto.commands.DriveMotionCommand;
+import frc.team3310.auto.commands.WaitUntilCrossXBoundary.MovingXDirection;
+import frc.team3310.auto.commands.WaitUntilCrossYBoundary.MovingYDirection;
 import frc.team3310.robot.Constants;
-import frc.team3310.robot.commands.WaitUntilCrossXBoundary.MovingXDirection;
-import frc.team3310.robot.commands.WaitUntilCrossYBoundary.MovingYDirection;
+import frc.team3310.robot.commands.DriveSetSpeed;
+import frc.team3310.robot.commands.EjectHatch;
+import frc.team3310.robot.commands.ElevatorSetPositionMM;
+import frc.team3310.robot.commands.IntakeHatchArms;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
 import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;

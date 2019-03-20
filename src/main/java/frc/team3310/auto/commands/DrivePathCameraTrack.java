@@ -1,7 +1,8 @@
-package frc.team3310.robot.commands;
+package frc.team3310.auto.commands;
 
 import frc.team3310.robot.Constants;
 import frc.team3310.robot.Robot;
+import frc.team3310.robot.commands.ExtraTimeoutCommand;
 import frc.team3310.robot.subsystems.Drive.DriveControlMode;
 
 public class DrivePathCameraTrack extends ExtraTimeoutCommand {
@@ -9,7 +10,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 	private boolean isTracking = false;
 	private double velocityScale = 1.0;
 	private final double PIPELINE_TIMEOUT = 0.2;
-	private final double isVisonTimedOut = 1.5;
+	//private final double isVisonTimedOut = 1.5;
 	private boolean isTrackFinished = false;
 	private double finishAtLimeY = Constants.finishedAtCargoLimeY;
 	private int invalidCounter = 0;

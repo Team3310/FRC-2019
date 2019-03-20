@@ -5,27 +5,24 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team3310.robot.commands;
+package frc.team3310.auto.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team3310.robot.subsystems.Drive.DriveControlMode;
 import frc.team3310.robot.Robot;
-import frc.team3310.robot.subsystems.Drive;
 
-public class DriveMotionMagic extends Command {
-  private double targetPositionInches;
-  private double targetPositionAngle;
-
-  public DriveMotionMagic(double targetPositionInches, double targetPositionAngle) {
-    this.targetPositionInches = targetPositionInches;
-    this.targetPositionAngle = targetPositionAngle;
-
+public class DrivePathCameraTrackStop extends Command {
+  public DrivePathCameraTrackStop() {
+    // Use requires() here to declare subsystem dependencies
+    // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    System.out.println("Set motion magic drive");
-    Robot.drive.setDriveMotionMagic(targetPositionInches, targetPositionAngle);
+    System.out.println("camera track finished");
+		//Robot.drive.setLimeLED(false);
+		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -36,23 +33,17 @@ public class DriveMotionMagic extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (Drive.getInstance().hasFinishedDriveMotionMagic()) {
-      System.out.println("Trajectory finished " + Drive.getInstance().getDriveMotionMagicPosition());
-      return true;
-    }
-    // System.out.println("Motion magic driving...");
     return false;
   }
 
   // Called once after isFinished returns true
+  @Override
   protected void end() {
-    System.out.println("Drive set MM end");
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
+  @Override
   protected void interrupted() {
-    System.out.println("Drive set MM end");
-
   }
 }

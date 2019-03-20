@@ -5,16 +5,16 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team3310.robot.commands;
+package frc.team3310.auto.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team3310.auto.commands.WaitUntilCrossXBoundary.MovingXDirection;
+import frc.team3310.auto.commands.DrivePathCameraTrack;
 
-public class AutoDriveMotionMagic extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
-  public AutoDriveMotionMagic() {
-    addSequential(new ResetSensor());
-    addSequential(new DriveMotionMagic(30, 0));
+public class AutoCameraTrackWhenCrossXBoundary extends CommandGroup {
+
+  public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double velocityScale, double finishedAtLimeY) {
+    addSequential(new WaitUntilCrossXBoundary(xBoundary, movingDirection));
+    addSequential(new DrivePathCameraTrack(velocityScale, finishedAtLimeY));
   }
 }

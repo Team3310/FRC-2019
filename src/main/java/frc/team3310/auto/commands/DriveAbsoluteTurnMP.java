@@ -1,23 +1,27 @@
-package frc.team3310.robot.commands;
+package frc.team3310.auto.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.subsystems.Drive.DriveControlMode;
 import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 import frc.team3310.robot.Robot;
 
-public class DriveRelativeTurnMP extends Command {
-	private double relativeTurnAngleDeg, maxTurnRateDegPerSec;
+public class DriveAbsoluteTurnMP extends Command {
+	private double absoluteTurnAngleDeg, maxTurnRateDegPerSec;
 	private MPSoftwareTurnType turnType;
 
-	public DriveRelativeTurnMP(double relativeTurnAngleDeg, double maxTurnRateDegPerSec, MPSoftwareTurnType turnType) {
+	public DriveAbsoluteTurnMP(double absoluteTurnAngleDeg, double maxTurnRateDegPerSec, MPSoftwareTurnType turnType) {
 		requires(Robot.drive);
-		this.relativeTurnAngleDeg = relativeTurnAngleDeg;
+		this.absoluteTurnAngleDeg = absoluteTurnAngleDeg;
 		this.maxTurnRateDegPerSec = maxTurnRateDegPerSec;
 		this.turnType = turnType;
 	}
 
 	protected void initialize() {
-		Robot.drive.setRelativeTurnMP(relativeTurnAngleDeg, maxTurnRateDegPerSec, turnType);
+		//		if (Robot.drive.isRed() == false) {
+		//			absoluteTurnAngleDeg = absoluteTurnAngleDeg * -1;
+		//		}
+		Robot.drive.overrideTrajectory(true);
+		Robot.drive.setAbsoluteTurnMP(absoluteTurnAngleDeg, maxTurnRateDegPerSec, turnType);
 	}
 
 	protected void execute() {

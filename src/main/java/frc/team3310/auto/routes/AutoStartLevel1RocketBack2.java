@@ -5,12 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team3310.robot.commands;
+package frc.team3310.auto.routes;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
+import frc.team3310.auto.commands.AutoCameraTrackWhenCrossXBoundary;
+import frc.team3310.auto.commands.DriveMotionCommand;
+import frc.team3310.auto.commands.WaitUntilCrossXBoundary.MovingXDirection;
 import frc.team3310.robot.Constants;
-import frc.team3310.robot.commands.WaitUntilCrossXBoundary.MovingXDirection;
+import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 
 public class AutoStartLevel1RocketBack2 extends CommandGroup {

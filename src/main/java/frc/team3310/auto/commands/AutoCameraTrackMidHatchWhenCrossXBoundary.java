@@ -5,11 +5,13 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team3310.robot.commands;
+package frc.team3310.auto.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team3310.auto.commands.WaitUntilCrossXBoundary.MovingXDirection;
 import frc.team3310.robot.Constants;
-import frc.team3310.robot.commands.WaitUntilCrossXBoundary.MovingXDirection;
+import frc.team3310.auto.commands.DrivePathCameraTrack;
+import frc.team3310.robot.commands.ElevatorSetPositionMM;
 
 public class AutoCameraTrackMidHatchWhenCrossXBoundary extends CommandGroup {
 
