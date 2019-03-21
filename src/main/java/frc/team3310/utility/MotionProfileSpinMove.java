@@ -9,6 +9,7 @@ public class MotionProfileSpinMove {
     private MotionProfileBoxCar mp;
     private double initialLinearVelocity;
     private double spinAngleScaleFactor;
+    private MotionProfilePoint mpPoint = new MotionProfilePoint();
 
 	public MotionProfileSpinMove(double initialLinearVelocity, double startAngle, double endAngle, double maxTurnVelocity, double itp, double t1, double t2) {
         this.initialLinearVelocity = initialLinearVelocity;
@@ -16,9 +17,12 @@ public class MotionProfileSpinMove {
         mp = new MotionProfileBoxCar(startAngle, endAngle, maxTurnVelocity, itp, t1, t2);
 	} 
 	
-	public MotionProfileTurnPoint getNextPoint(MotionProfileTurnPoint point) {
-		
-        point = (MotionProfileTurnPoint)mp.getNextPoint(point);
+	public MotionProfileTurnPoint getNextPoint(MotionProfileTurnPoint point) {       
+        mpPoint = mp.getNextPoint(mpPoint);
+        point.time = mpPoint.time;
+        point.position = mpPoint.position;
+        point.velocity = mpPoint.velocity;
+        point.acceleration = mpPoint.acceleration;
         
         // Arbitrarily set linear velocity to Vi * Cos(theta) then calculate Vl and Vr.
         if (point != null) {

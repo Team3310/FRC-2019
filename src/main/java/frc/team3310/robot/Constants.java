@@ -161,7 +161,7 @@ public class Constants {
 
 
     // 2019 Elevator Levels
-    public static final double AUTO_HATCH_LEVEL_1 = 16.5; // 19.5
+    public static final double AUTO_HATCH_LEVEL_1 = 17.5; // 19.5
     public static final double HATCH_LEVEL_1 = 19.5; // 19.5
     public static final double HATCH_LEVEL_2 = 50.5;
     public static final double HATCH_LEVEL_3 = 77.5;

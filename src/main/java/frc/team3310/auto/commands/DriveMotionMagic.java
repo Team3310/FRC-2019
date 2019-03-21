@@ -25,7 +25,8 @@ public class DriveMotionMagic extends Command {
   @Override
   protected void initialize() {
     System.out.println("Set motion magic drive");
-    Robot.drive.setDriveMotionMagic(targetPositionInches, targetPositionAngle);
+//    Robot.drive.setDriveMotionMagic(targetPositionInches, targetPositionAngle);
+    Robot.drive.setDriveSpinMove(targetPositionAngle);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -36,8 +37,9 @@ public class DriveMotionMagic extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (Drive.getInstance().hasFinishedDriveMotionMagic()) {
-      System.out.println("Trajectory finished " + Drive.getInstance().getDriveMotionMagicPosition());
+ //   if (Drive.getInstance().hasFinishedDriveMotionMagic()) {
+    if (Drive.getInstance().hasFinishedDSpinMove()) {
+        System.out.println("Trajectory finished " + Drive.getInstance().getDriveMotionMagicPosition());
       return true;
     }
     // System.out.println("Motion magic driving...");

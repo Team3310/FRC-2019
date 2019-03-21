@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.auto.commands.DriveMotionMagic;
 import frc.team3310.auto.routes.AutoStartLevel1SideCargo2;
 import frc.team3310.auto.routes.AutoStartLevel1SideCargoFront2;
 import frc.team3310.auto.routes.AutoStartLevel1SideCargoFront2v2;
@@ -102,7 +103,7 @@ public class Robot extends TimedRobot {
 		autonTaskChooser.addOption("L1 Cargo Front/Front", new AutoStartLevel1SideCargoFront2());
 		
 		autonTaskChooser.addOption("L1 Cargo Front/Front v2", new AutoStartLevel1SideCargoFront2v2());
-
+		autonTaskChooser.addOption("MM Spin Move", new DriveMotionMagic(30, 180));
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 
 		autonRightLeftChooser = new SendableChooser<RightLeftAutonSide>();
@@ -140,7 +141,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		controlLoop.start();
-		drive.setIsRed(getAlliance().equals(Alliance.Red));
+		//drive.setIsRed(getAlliance().equals(Alliance.Red));
 		drive.setPipeline(1);
 		zeroAllSensors();
 
@@ -175,6 +176,7 @@ public class Robot extends TimedRobot {
 		drive.setPipeline(1);
 		drive.endGyroCalibration();
 		Robot.elevator.setRobotScoreMode();
+		Robot.elevator.setElevatorMotionMagicPosition(Constants.HATCH_LEVEL_1);
 
 		if (operationMode != OperationMode.COMPETITION) {
 			Scheduler.getInstance().add(new ElevatorAutoZero(true));

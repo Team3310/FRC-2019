@@ -26,7 +26,7 @@ public class AutoStartLevel1SideCargoFront2v2 extends CommandGroup {
    * Add your docs here.
    */
   public AutoStartLevel1SideCargoFront2v2() {
-    addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
+    addParallel(new ElevatorSetPositionMM(Constants.AUTO_HATCH_LEVEL_1));
 
     addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive, 1.0, Constants.finishedAtCargoLimeY));
     addSequential(new DriveMotionCommand(
@@ -38,7 +38,7 @@ public class AutoStartLevel1SideCargoFront2v2 extends CommandGroup {
     addSequential(
             new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontToTurn1, false));
 
-    addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.7, Constants.finishedAtCargoLimeY));
+    addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.6, Constants.finishedAtCargoLimeY));
     addSequential(new DriveMotionCommand(
             TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontTurn1ToLoading, false), 4);
     addSequential(new WaitForChildren());
@@ -49,7 +49,7 @@ public class AutoStartLevel1SideCargoFront2v2 extends CommandGroup {
             TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoFrontTrack2v2, false));
     addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive, 1.0, Constants.finishedAtCargoLimeY));
     addSequential(
-            new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().track2PoseToCargo2, false));
+            new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().track2v2PoseToCargo2, false));
     // addSequential(new WaitForChildren());
     // addSequential(new WaitCommand("Eject Pause", .25));
     // addSequential(new EjectHatch());

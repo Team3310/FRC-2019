@@ -44,5 +44,13 @@ public class AutoStartLevel1SideCargo2 extends CommandGroup {
                 TrajectoryGenerator.getInstance().getTrajectorySet().cargoSideScoreToLoading, false));
         addSequential(new IntakeHatchArms(HatchArmState.IN));
         addSequential(new WaitCommand("Grab Break", .25));
+        addSequential(new DriveMotionCommand(
+                TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoFrontTrack2v2, false));
+        addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive, 1.0, Constants.finishedAtCargoLimeY));
+        addSequential(
+                new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().track2v2PoseToCargo2, false));
+        // addSequential(new WaitForChildren());
+        // addSequential(new WaitCommand("Eject Pause", .25));
+        // addSequential(new EjectHatch());
   }
 }
