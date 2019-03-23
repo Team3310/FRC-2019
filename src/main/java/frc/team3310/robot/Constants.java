@@ -50,7 +50,7 @@ public class Constants {
     public static final double kDriveKa = 0.01; // 0.011505866811140018; // V per rad/s^2
 
     public static final double finishedAtRocketLimeY = -10;
-    public static final double finishedAtCargoLimeY = -14;
+    public static final double finishedAtCargoLimeY = -12.5;
 
     // Geometry
     // 2019 Robot Values
@@ -172,8 +172,10 @@ public class Constants {
     public static final double BALL_OFFSET = 7;
     public static final double LOADING_STATION_HATCH = 19.5;
     public static final double CLIMB_LVL_3 = 19.75;
-    public static final double CLIMB_LVL_2 = 7.5;
-    public static final double CLIMB_BOOST = 7.5;
+    public static final double CLIMB_LVL2_TO_LVL3 = 14;
+    public static final double CLIMB_LEG_LIFT = 2;
+    public static final double CLIMB_LVL_2 = 7;
+    public static final double CLIMB_BOOST = 7.25;
     public static final double AUTO_HOME_POSITION_INCHES = 7.5;// 20.5; // 7.5;
     public static final double LOW_HOME_POSITION_INCHES = 7.5;
     public static final double MIN_POSITION_INCHES = LOW_HOME_POSITION_INCHES;

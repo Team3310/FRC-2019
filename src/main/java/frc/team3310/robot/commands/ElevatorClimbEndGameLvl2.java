@@ -23,7 +23,7 @@ public class ElevatorClimbEndGameLvl2 extends CommandGroup {
     addSequential(new ElevatorSetMMClimb(0.0));
     addSequential(new DriveForwardClimbMM(12, true));
     addSequential(new SetRobotClimbBack());
-    addSequential(new ElevatorSetMMClimb(-(Constants.CLIMB_LVL_2 - 0.5)));
+    addSequential(new ElevatorSetMMClimb(-Constants.CLIMB_LVL_2 ));
     addSequential(new SetRobotScoreMode());
     addSequential(new DriveSetSpeed(0.3, 0.3));
   }

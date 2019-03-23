@@ -81,8 +81,8 @@ public class Intake extends Subsystem {
 	}
 
 	private boolean isOkToLaunch() {
-		return true;// !(Robot.elevator.getElevatorInchesOffGround() > Constants.HATCH_LEVEL_2
-		// && Robot.drive.lastValidLimeArea < 9);
+		return true; 
+		// return !(Robot.elevator.getElevatorInchesOffGround() > Constants.HATCH_LEVEL_2 && Robot.drive.lastValidLimeArea < 9);
 	}
 
 	public void setHatchArmState(HatchArmState state) {
@@ -97,6 +97,7 @@ public class Intake extends Subsystem {
 	}
 
 	@Override
+
 	public void initDefaultCommand() {
 	}
 

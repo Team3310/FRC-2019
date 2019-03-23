@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.Constants;
 import frc.team3310.robot.Robot;
@@ -451,10 +452,12 @@ public class Elevator extends Subsystem implements Loop {
 
 	private void controlPidWithJoystick() {
 		double joystickPosition = -Robot.oi.getOperatorController().getLeftYAxis();
-		double deltaPosition = joystickPosition * joystickTicksPerMs;
-		targetPositionTicks = targetPositionTicks + deltaPosition;
-		motor1.set(ControlMode.Position, targetPositionTicks, DemandType.ArbitraryFeedForward,
-				Constants.kElevatorFeedforwardNoBall);
+		if (joystickPosition > 0.04 || joystickPosition < -0.04) {
+			double deltaPosition = joystickPosition * joystickTicksPerMs;
+			targetPositionTicks = targetPositionTicks + deltaPosition;
+			motor1.set(ControlMode.Position, targetPositionTicks, DemandType.ArbitraryFeedForward,
+					Constants.kElevatorFeedforwardNoBall);
+		}
 	}
 
 	private void controlManualWithJoystick() {
@@ -605,7 +608,8 @@ public class Elevator extends Subsystem implements Loop {
 			SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
 			SmartDashboard.putBoolean("Platform Detect Front = ", getPlatformDetectFront());
 			SmartDashboard.putBoolean("Plaform Detect Bot = ", getPlatformDetectRear());
-			SmartDashboard.putNumber("Climb Position Inches", getClimbPositionInches());
+			// SmartDashboard.putNumber("Climb Position Inches", getClimbPositionInches());
+			
 
 
 

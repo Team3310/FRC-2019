@@ -12,7 +12,7 @@ public class IntakeBallSensor extends ExtraTimeoutCommand {
     private double speed;
     private boolean ballDetected;
     private double EXTRA_INTAKE_TIME = 0.01;
-    private double EXTRA_INTAKE_DEPLOY_TIME = .7;
+    private double EXTRA_INTAKE_DEPLOY_TIME = .85;
     private static final double TIMEOUT = 10.0;
 
     public IntakeBallSensor(double speed) {

@@ -185,6 +185,17 @@
               "imageWidth": -1,
               "imageHeight": -1
             }
+          },
+          "12,5": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Lime Y",
+              "_title": "Lime Y"
+            }
           }
         }
       }
@@ -200,12 +211,24 @@
         "vgap": 16.0,
         "tiles": {}
       }
+    },
+    {
+      "title": "Tab 3",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 92.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "tiles": {}
+      }
     }
   ],
   "windowGeometry": {
-    "x": -5.599999904632568,
-    "y": 0.800000011920929,
-    "width": 1547.199951171875,
-    "height": 868.7999877929688
+    "x": -7.199999809265137,
+    "y": -7.199999809265137,
+    "width": 1550.4000244140625,
+    "height": 878.4000244140625
   }
 }

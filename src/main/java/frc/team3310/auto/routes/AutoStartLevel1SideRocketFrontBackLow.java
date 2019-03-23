@@ -34,7 +34,7 @@ public class AutoStartLevel1SideRocketFrontBackLow extends CommandGroup {
                 addSequential(new DriveMotionCommand(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontToTurn1A, false));
 
-                 addParallel(new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.5, Constants.finishedAtCargoLimeY)); // 100
+                 addParallel(new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.5, Constants.finishedAtCargoLimeY), 5); // 100
                 addSequential(new DriveMotionCommand(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontTurn1AToLoading, false));
                 addSequential(new IntakeHatchArms(HatchArmState.IN));
