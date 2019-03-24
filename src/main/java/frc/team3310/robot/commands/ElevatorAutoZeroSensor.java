@@ -8,9 +8,11 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team3310.robot.Constants;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.subsystems.Elevator;
-import frc.team3310.robot.Constants;
+import frc.team3310.robot.subsystems.Intake.BallArmState;
+import frc.team3310.robot.subsystems.Intake.HatchArmState;
 
 public class ElevatorAutoZeroSensor extends Command {
 
@@ -24,6 +26,8 @@ public class ElevatorAutoZeroSensor extends Command {
   protected void initialize() {
     Robot.elevator.setSpeed(Elevator.AUTO_ZERO_SPEED);
     System.out.println("Auto zero initialize");
+    Robot.intake.setBallArmState(BallArmState.IN);
+    Robot.intake.setHatchArmState(HatchArmState.IN);
   }
 
   // Called repeatedly when this Command is scheduled to run

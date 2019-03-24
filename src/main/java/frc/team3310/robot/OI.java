@@ -17,6 +17,7 @@ import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.commands.ElevatorClimbBoost;
+import frc.team3310.robot.commands.ElevatorClimbEndGameExtra;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl2;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl3;
 import frc.team3310.robot.commands.ElevatorHatchLevel;
@@ -97,6 +98,12 @@ public class OI {
     switchCameraPipeline.whenPressed(new SwitchCameraPipeline(2));
     switchCameraPipeline.whenReleased(new SwitchCameraPipeline(1));
 
+    Button climbLvl2ToLvl3 = m_driver.getShareButton();
+    climbLvl2ToLvl3.whenPressed(new ElevatorClimbEndGameExtra());
+
+    Button climbLvl2ToLvl3_2 = m_driver.getOptionsButton();
+    climbLvl2ToLvl3_2.whenPressed(new ElevatorClimbEndGameExtra());
+    
     // Operator Controls
     // Elevator
     Button intakeBallAndLift = m_operator.getButtonX();

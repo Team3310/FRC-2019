@@ -222,7 +222,6 @@ public class Drive extends Subsystem implements Loop {
 	public void onLoop(double timestamp) {
 		synchronized (Drive.this) {
 			DriveControlMode currentControlMode = getControlMode();
-			readPeriodicInputs();
 
 			if (currentControlMode == DriveControlMode.JOYSTICK) {
 				driveWithJoystick();
@@ -238,6 +237,7 @@ public class Drive extends Subsystem implements Loop {
 					setFinished(pidTurnController.controlLoopUpdate(getGyroAngleDeg()));
 					break;
 				case PATH_FOLLOWING:
+					readPeriodicInputs();
 					updatePathFollower();
 					writePeriodicOutputs();
 					break;
@@ -1483,6 +1483,7 @@ public class Drive extends Subsystem implements Loop {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Vison = ", isValid());
+			SmartDashboard.putNumber("Lime Y", limeY);
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
 			}
