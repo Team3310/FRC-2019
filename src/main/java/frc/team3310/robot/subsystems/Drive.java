@@ -200,6 +200,8 @@ public class Drive extends Subsystem implements Loop {
 	public double targetSpinAngle;
 	public double spinMoveStartAngle;
 	public double spinMoveStartVelocity;
+	private long lastTime = 0;
+	private long totalTime = 0;
 
 	@Override
 	public void onStart(double timestamp) {
@@ -788,7 +790,7 @@ public class Drive extends Subsystem implements Loop {
 	 */
 	protected static boolean usesTalonVelocityControl(DriveControlMode state) {
 		if (state == DriveControlMode.VELOCITY_SETPOINT || state == DriveControlMode.PATH_FOLLOWING
-				|| state == DriveControlMode.CAMERA_TRACK) {
+				|| state == DriveControlMode.CAMERA_TRACK || state == DriveControlMode.SPIN_MOVE) {
 			return true;
 		}
 		return false;
@@ -1326,16 +1328,19 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	public synchronized void setDriveSpinMove(double turnDegrees) {
+		rightDrive1.selectProfileSlot(kVelocityControlSlot, Constants.PID_PRIMARY);
+		leftDrive1.selectProfileSlot(kVelocityControlSlot, Constants.PID_PRIMARY);
+
 		targetSpinAngle = turnDegrees;
-		spinMoveStartAngle = getGyroAngleDeg();
+		spinMoveStartAngle = -getGyroAngleDeg();
 //		spinMoveStartVelocity = (rightDrive1.getSelectedSensorVelocity() + leftDrive1.getSelectedSensorVelocity()) / 2;
 		spinMoveStartVelocity = -48;
 		isSpinMoveFinished = false;
-		mpSpin = new MotionProfileSpinMove(spinMoveStartVelocity, 0, targetSpinAngle, 180, 1, 400, 200);
+		mpSpin = new MotionProfileSpinMove(spinMoveStartVelocity, 0, targetSpinAngle, 180, periodMs, 200, 100);
 		driveControlMode = DriveControlMode.SPIN_MOVE;
 
-		rightDrive1.selectProfileSlot(kVelocityControlSlot, Constants.PID_PRIMARY);
-		leftDrive1.selectProfileSlot(kVelocityControlSlot, Constants.PID_PRIMARY);
+		lastTime = System.currentTimeMillis();
+		totalTime = 0;
 	}
 
 	public synchronized void updateDriveSpinMove() {
@@ -1349,15 +1354,20 @@ public class Drive extends Subsystem implements Loop {
 		}
 		
 		// Calculate a little gyro correction to help the MP wheel velocities arrive at the proper angle
-		double angleError = (getGyroAngleDeg() - spinMoveStartAngle) - turnPoint.position;
+		double angleError = (-getGyroAngleDeg() - spinMoveStartAngle) - turnPoint.position;
 		double kTurn = 0.00;
 		double deltaVelocity = angleError * kTurn * inchesPerSecondToTicksPer100ms(spinMoveStartVelocity);
+		long currentTime = System.currentTimeMillis();
+		double deltaTime = currentTime - lastTime;
+		totalTime += deltaTime;
+		lastTime = currentTime;
 
-		System.out.println("Target right = " + inchesPerSecondToTicksPer100ms(turnPoint.rightVelocity) + ", actual = " + rightDrive1.getSelectedSensorVelocity());
-		System.out.println("Target left = " + inchesPerSecondToTicksPer100ms(turnPoint.leftVelocity) + ", actual = " + leftDrive1.getSelectedSensorVelocity());
+		System.out.println("RealT = " + totalTime + ", delta=" + deltaTime + ", MPT=" + turnPoint.time*1000 + ", Theta=" + turnPoint.position + ", Gyro=" + (-getGyroAngleDeg() - spinMoveStartAngle) + ", TargetR= " + inchesPerSecondToTicksPer100ms(turnPoint.rightVelocity) + ", Actual= " + rightDrive1.getSelectedSensorVelocity() + "TargetL= " + inchesPerSecondToTicksPer100ms(turnPoint.leftVelocity) + ", Actual= " + leftDrive1.getSelectedSensorVelocity());
+		System.out.println();
 
-		rightDrive1.set(ControlMode.Velocity, inchesPerSecondToTicksPer100ms(turnPoint.rightVelocity) - deltaVelocity);
-		leftDrive1.set(ControlMode.Velocity, inchesPerSecondToTicksPer100ms(turnPoint.leftVelocity) + deltaVelocity);
+		updateVelocitySetpoint(turnPoint.leftVelocity, turnPoint.rightVelocity);
+//		rightDrive1.set(ControlMode.Velocity, inchesPerSecondToTicksPer100ms(turnPoint.rightVelocity) - deltaVelocity);
+//		leftDrive1.set(ControlMode.Velocity, inchesPerSecondToTicksPer100ms(turnPoint.leftVelocity) + deltaVelocity);
 	}
 
 	private int getDriveEncoderTicks(double positionInches) {

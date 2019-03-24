@@ -19,6 +19,10 @@ public class MotionProfileSpinMove {
 	
 	public MotionProfileTurnPoint getNextPoint(MotionProfileTurnPoint point) {       
         mpPoint = mp.getNextPoint(mpPoint);
+        if (mpPoint == null) {
+            return null;
+        }
+        
         point.time = mpPoint.time;
         point.position = mpPoint.position;
         point.velocity = mpPoint.velocity;
@@ -33,6 +37,14 @@ public class MotionProfileSpinMove {
         }
 		
 		return point;
+    }
+    
+    private static double inchesPerSecondToTicksPer100ms(double inches_s) {
+		return inchesToRotations(inches_s) * 4096.0 / 10.0;
+	}
+
+    public static double inchesToRotations(double inches) {
+		return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
 	}
 
 	public static void main(String[] args) {
@@ -41,12 +53,12 @@ public class MotionProfileSpinMove {
             out = new PrintWriter("C:/Users/Brian Selle/turn180.csv");
             long startTime = System.nanoTime();
 
-            MotionProfileSpinMove mp = new MotionProfileSpinMove(-48, 0, 90, 180, 1, 200, 100);
+            MotionProfileSpinMove mp = new MotionProfileSpinMove(-48, 0, 180, 180, 1, 200, 100);
             System.out.println("Time Constructor = " +  (System.nanoTime() - startTime) * 1E-6 + " ms");
             out.println("Time, Theta, ThetaDot, LeftVelocity, RightVelocity");
             MotionProfileTurnPoint point = new MotionProfileTurnPoint();
             while (mp.getNextPoint(point) != null) {
-                out.println(point.time + ", " + point.position + ", " + point.velocity + ", " + point.leftVelocity + ", " + point.rightVelocity);
+                out.println(point.time + ", " + point.position + ", " + point.velocity + ", " + inchesPerSecondToTicksPer100ms(point.leftVelocity) + ", " + inchesPerSecondToTicksPer100ms(point.rightVelocity));
             }
 
             long deltaTime = System.nanoTime() - startTime;
