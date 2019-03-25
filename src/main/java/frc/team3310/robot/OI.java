@@ -29,6 +29,7 @@ import frc.team3310.robot.commands.IntakeBallHold;
 import frc.team3310.robot.commands.IntakeBallManual;
 import frc.team3310.robot.commands.IntakeHatch;
 import frc.team3310.robot.commands.IntakeHatchArms;
+import frc.team3310.robot.commands.OverrideClimb;
 import frc.team3310.robot.commands.ResetSensor;
 import frc.team3310.robot.commands.SetRobotClimbBack;
 import frc.team3310.robot.commands.SetRobotClimbFront;
@@ -98,11 +99,11 @@ public class OI {
     switchCameraPipeline.whenPressed(new SwitchCameraPipeline(2));
     switchCameraPipeline.whenReleased(new SwitchCameraPipeline(1));
 
-    Button climbLvl2ToLvl3 = m_driver.getShareButton();
-    climbLvl2ToLvl3.whenPressed(new ElevatorClimbEndGameExtra());
+    Button overrideClimb = m_driver.getShareButton();
+    overrideClimb.whenPressed(new OverrideClimb());
 
-    Button climbLvl2ToLvl3_2 = m_driver.getOptionsButton();
-    climbLvl2ToLvl3_2.whenPressed(new ElevatorClimbEndGameExtra());
+    Button climbLvl2ToLvl3 = m_driver.getOptionsButton();
+    climbLvl2ToLvl3.whenPressed(new ElevatorClimbEndGameExtra());
     
     // Operator Controls
     // Elevator

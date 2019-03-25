@@ -44,7 +44,7 @@ public class AutoStartLevel1SideCargoFrontSide1 extends CommandGroup {
 
         addSequential(new DriveMotionCommand(
                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToTurn1CargoSide1, false));
-        addParallel(new AutoCameraTrackWhenCrossYBoundary(-75, MovingYDirection.OutsideToInside, 1.0, Constants.finishedAtCargoLimeY));
+        addParallel(new AutoCameraTrackWhenCrossYBoundary(-75, MovingYDirection.OutsideToInside, 0.6, Constants.finishedAtCargoLimeY));
         addSequential(
                 new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turn1ToCargoSide1, false));
         // addSequential(new WaitCommand("Eject Pause", .25));

@@ -30,10 +30,10 @@ public class WaitUntilCrossYBoundary extends Command {
     @Override
     public boolean isFinished() {
         if (mMovingDirection == MovingYDirection.OutsideToInside) {
-            return mFlip * RobotStatus.getInstance().getFieldToVehicle(Timer.getFPGATimestamp()).getTranslation().y() > mYBoundary;
+            return mFlip * RobotStatus.getInstance().getFieldToVehicle().getTranslation().y() > mYBoundary;
         }
         else {
-            return mFlip * RobotStatus.getInstance().getFieldToVehicle(Timer.getFPGATimestamp()).getTranslation().y() < mYBoundary;
+            return mFlip * RobotStatus.getInstance().getFieldToVehicle().getTranslation().y() < mYBoundary;
         }
     }
 

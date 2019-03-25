@@ -900,7 +900,7 @@ public class Drive extends Subsystem implements Loop {
 			final double now = Timer.getFPGATimestamp();
 
 			DriveMotionPlanner.Output output = mMotionPlanner.update(now,
-					RobotStatus.getInstance().getFieldToVehicle(now));
+					RobotStatus.getInstance().getFieldToVehicle());
 
 			// DriveSignal signal = new DriveSignal(demand.left_feedforward_voltage / 12.0,
 			// demand.right_feedforward_voltage / 12.0);
