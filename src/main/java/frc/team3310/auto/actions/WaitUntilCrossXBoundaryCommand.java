@@ -13,7 +13,7 @@ public class WaitUntilCrossXBoundaryCommand implements Action {
 
     @Override
     public boolean isFinished() {
-        return RobotStatus.getInstance().getFieldToVehicle(Timer.getFPGATimestamp()).getTranslation().x() > mXBoundary;
+        return RobotStatus.getInstance().getFieldToVehicle().getTranslation().x() > mXBoundary;
     }
 
     @Override

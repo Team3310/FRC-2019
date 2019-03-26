@@ -93,6 +93,7 @@ public class Elevator extends Subsystem implements Loop {
 	private double joyStickSpeed;
 	private double homePosition = Constants.AUTO_HOME_POSITION_INCHES;
 	public boolean elevatorCargoMode = false;
+	public boolean overrideClimb = false;
 
 	private ElevatorControlMode elevatorControlMode = ElevatorControlMode.MOTION_MAGIC;
 
@@ -301,6 +302,10 @@ public class Elevator extends Subsystem implements Loop {
 	public synchronized void resetEncoders(double homePosition) {
 		motor1.setPosition(0);
 		this.homePosition = homePosition;
+	}
+
+	public boolean isClimbOverrided() {
+		return overrideClimb;
 	}
 
 	public boolean getMaxElevatorSensor() {

@@ -42,7 +42,7 @@ public class ElevatorSetMMClimb extends Command {
       System.out.println("Trajectory finished end");
       return true;
     }
-    if (Robot.elevator.getClimbFrontTop() || Elevator.getInstance().getClimbRearTop()) {
+    if (Robot.elevator.getClimbFrontTop() || Elevator.getInstance().getClimbRearTop() || Robot.elevator.isClimbOverrided()) {
       System.out.println("Trajectory finished limit switch");
       return true;
     }

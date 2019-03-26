@@ -186,7 +186,7 @@ public class TrajectoryGenerator {
         public static final Pose2d kTurn1CargoFrontToLoadingPose = new Pose2d(new Translation2d(30, -130),
                         Rotation2d.fromDegrees(-180.00));
 
-        public static final Pose2d kCargoSide1Pose = new Pose2d(new Translation2d(290.75, -20.5), // Near 275 Mid 295 Far 320 50 Front of Cargo
+        public static final Pose2d kCargoSide1Pose = new Pose2d(new Translation2d(295.75, -20.5), // Near 275 Mid 295 Far 320 50 Front of Cargo
                         Rotation2d.fromDegrees(90.00));
 
         public static final Pose2d kCargoSideTurnPose = new Pose2d(new Translation2d(290.75, -60.5), 
@@ -201,16 +201,16 @@ public class TrajectoryGenerator {
         public static final Pose2d kLoadingToCargoFrontMidPose= new Pose2d(new Translation2d(185, 0), //200
                         Rotation2d.fromDegrees(-90.00));
 
-        public static final Pose2d kMidPoseToCargoFront2v2Pose = new Pose2d(new Translation2d(155, 14), //170
+        public static final Pose2d kMidPoseToCargoFront2v2Pose = new Pose2d(new Translation2d(155, 10), //170
                         Rotation2d.fromDegrees(0.00));
 
 
 
-        public static final Pose2d kCargoTurn1LoadingToTrackPose = new Pose2d(new Translation2d(230, 14), //207
+        public static final Pose2d kCargoTurn1LoadingToTrackPose = new Pose2d(new Translation2d(230, 10), //207
                         Rotation2d.fromDegrees(0.00));
 
         public static final Pose2d kTurn1CargoSide1Pose = new Pose2d(new Translation2d(295, -115),
-                        Rotation2d.fromDegrees(135.00));
+                        Rotation2d.fromDegrees(90.00));
 
         public static final Pose2d kCargoFrontTurnPose = new Pose2d(new Translation2d(200, -13),
                         Rotation2d.fromDegrees(-90.00));
@@ -271,38 +271,38 @@ public class TrajectoryGenerator {
                 
                 private TrajectorySet() {
                         level1StartToRocketFront = new MirroredTrajectory(getLevel1StartToRocketFront());
-                        level1StartToRocketBack = new MirroredTrajectory(getLevel1SideStartToRocketBack());
-                        level1StartToCargoSideTurn = new MirroredTrajectory(getLevel1StartToCargoSideTurn());
+                        level1StartToRocketBack = null;//new MirroredTrajectory(getLevel1SideStartToRocketBack());
+                        level1StartToCargoSideTurn = null; //new MirroredTrajectory(getLevel1StartToCargoSideTurn());
                         level1StartToCargoFront = new MirroredTrajectory(getLevel1StartToCargoFront());
-                        rocketFrontToTurn1 = new MirroredTrajectory(getRocketFrontToTurn1());
+                        rocketFrontToTurn1 = null; //new MirroredTrajectory(getRocketFrontToTurn1());
                         rocketFrontToTurn1A = new MirroredTrajectory(getRocketFrontToTurn1A());
                         turn1ToTurn2 = new MirroredTrajectory(getTurn1ToTurn2());
                         turn2ToLoading = new MirroredTrajectory(getTurn2ToLoading());
                         turn3ToRocketBack = new MirroredTrajectory(getTurn3ToRocketBack());
-                        turn3ToRocketBackRight = new MirroredTrajectory(getTurn3ToRocketBackRight());
+                        turn3ToRocketBackRight = null;// new MirroredTrajectory(getTurn3ToRocketBackRight());
                         loadingToRocketBack = new MirroredTrajectory(getLoadingToRocketBack());
-                        loadingToRocketBackRight = new MirroredTrajectory(getLoadingToRocketBackRight());
+                        loadingToRocketBackRight = null;// new MirroredTrajectory(getLoadingToRocketBackRight());
                         cargoFrontToTurn1 = new MirroredTrajectory(getCargoFrontToTurn1());
-                        cargoFrontToTurn1A = new MirroredTrajectory(getCargoFrontToTurn1A());
-                        cargoFrontToTurn1v2 = new MirroredTrajectory(getCargoFrontToTurn1v2());
-                        cargoFrontToLoading = new MirroredTrajectory(getCargoFrontToLoading());
+                        cargoFrontToTurn1A = null;//new MirroredTrajectory(getCargoFrontToTurn1A());
+                        cargoFrontToTurn1v2 = null; //new MirroredTrajectory(getCargoFrontToTurn1v2());
+                        cargoFrontToLoading = null; //new MirroredTrajectory(getCargoFrontToLoading());
                         cargoFrontTurn1ToLoading = new MirroredTrajectory(getCargoFrontTurn1ToLoading());
-                        cargoFrontTurn1v2ToLoading = new MirroredTrajectory(getCargoFrontTurn1v2ToLoading());
-                        cargoFrontTurn1AToLoading = new MirroredTrajectory(getCargoFrontTurn1AToLoading());
-                        cargoSideScoreToLoading = new MirroredTrajectory(getCargoSideScoreToLoading());
+                        cargoFrontTurn1v2ToLoading = null; //new MirroredTrajectory(getCargoFrontTurn1v2ToLoading());
+                        cargoFrontTurn1AToLoading = null; //new MirroredTrajectory(getCargoFrontTurn1AToLoading());
+                        cargoSideScoreToLoading = null; // new MirroredTrajectory(getCargoSideScoreToLoading());
                         rocketFrontTurn1AToLoading = new MirroredTrajectory(getRocketFrontTurn1AToLoading());
                         loadingToTurn1CargoSide1 = new MirroredTrajectory(getLoadingToTurn1CargoSide1());
                         turn1ToCargoSide1 = new MirroredTrajectory(getTurn1ToCargoSide1());
-                        turnSideCargoToSideCargoScore = new MirroredTrajectory(getCargoSideTurnToSideCargoScore());
-                        loadingTocargoFrontTrack2 = new MirroredTrajectory(getLoadingToCargoFrontTrack2());
+                        turnSideCargoToSideCargoScore = null; //new MirroredTrajectory(getCargoSideTurnToSideCargoScore());
+                        loadingTocargoFrontTrack2 = null; //new MirroredTrajectory(getLoadingToCargoFrontTrack2());
                         loadingToCargoFrontTrack2v2 = new MirroredTrajectory(getLoadingToCargoFrontTrack2v2());
-                        track2PoseToCargo2 = new MirroredTrajectory(getCargoTrack2ToCargocScorePose());
+                        track2PoseToCargo2 = null; //new MirroredTrajectory(getCargoTrack2ToCargocScorePose());
                         track2v2PoseToCargo2 = new MirroredTrajectory(getCargoTrack2v2ToCargoScorePose());
 
-                        centerStartToLeftSwitch = new MirroredTrajectory(getCenterStartToLeftSwitch());
-                        centerStartToRightSwitch = new MirroredTrajectory(getCenterStartToRightSwitch());
-                        simpleStartToLeftSwitch = new MirroredTrajectory(getSimpleStartToLeftSwitch());
-                        simpleStartToRightSwitch = new MirroredTrajectory(getSimpleStartToRightSwitch());
+                        centerStartToLeftSwitch = null; //new MirroredTrajectory(getCenterStartToLeftSwitch());
+                        centerStartToRightSwitch = null; //new MirroredTrajectory(getCenterStartToRightSwitch());
+                        simpleStartToLeftSwitch = null; //new MirroredTrajectory(getSimpleStartToLeftSwitch());
+                        simpleStartToRightSwitch = null; // new MirroredTrajectory(getSimpleStartToRightSwitch());
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getCenterStartToLeftSwitch() {
@@ -455,9 +455,8 @@ public class TrajectoryGenerator {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kSideStartLevel1);
                         waypoints.add(new Pose2d(100.7, -48.4, Rotation2d.fromDegrees(0.0)));
-                        waypoints.add(kCargoTrackPoseSideStart
-                                        .transformBy(Pose2d.fromTranslation(new Translation2d(0.0, 4.0))));
-
+                        waypoints.add(kCargoTrackPoseSideStart);
+                                       
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kSimpleSwitchMaxCentripetalAccel)),
