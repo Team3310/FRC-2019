@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team3310.auto.routes.AutoStartLevel1RightSideRocketFrontBack;
+import frc.team3310.auto.commands.DriveSpinMove;
 import frc.team3310.auto.routes.AutoStartLevel1SideCargoFront2v2;
 import frc.team3310.auto.routes.AutoStartLevel1SideCargoFrontSide1;
 import frc.team3310.auto.routes.AutoStartLevel1SideRocketFrontBackLow;
@@ -99,6 +99,7 @@ public class Robot extends TimedRobot {
 		autonTaskChooser.addOption("L1 Cargo Front/Side", new AutoStartLevel1SideCargoFrontSide1());
 
 		autonTaskChooser.addOption("L1 Cargo Front/Front v2", new AutoStartLevel1SideCargoFront2v2());
+		autonTaskChooser.addOption("Spin Move", new DriveSpinMove(180));
 		
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 

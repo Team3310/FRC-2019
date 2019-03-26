@@ -9,11 +9,15 @@ public class MotionProfileSpinMove {
     private MotionProfileBoxCar mp;
     private double initialLinearVelocity;
     private double spinAngleScaleFactor;
+    private double previousRightVelocity;
+    private double previousLeftVelocity;
     private MotionProfilePoint mpPoint = new MotionProfilePoint();
 
 	public MotionProfileSpinMove(double initialLinearVelocity, double startAngle, double endAngle, double maxTurnVelocity, double itp, double t1, double t2) {
         this.initialLinearVelocity = initialLinearVelocity;
         this.spinAngleScaleFactor = 180.0 / (endAngle - startAngle);
+        previousRightVelocity = initialLinearVelocity;
+        previousLeftVelocity = initialLinearVelocity;
         mp = new MotionProfileBoxCar(startAngle, endAngle, maxTurnVelocity, itp, t1, t2);
 	} 
 	
@@ -34,6 +38,10 @@ public class MotionProfileSpinMove {
             double angularVelocity = Constants.kDriveWheelTrackWidthInches * Constants.kTrackScrubFactor  * Math.toRadians(point.velocity);
             point.rightVelocity = linearVelocity + angularVelocity;
             point.leftVelocity = linearVelocity - angularVelocity;
+            point.rightAcceleration = (point.rightVelocity - previousRightVelocity) / mp.getItp() * 1000;
+            point.leftAcceleration = (point.leftVelocity - previousLeftVelocity) / mp.getItp() * 1000;
+            previousRightVelocity = point.rightVelocity;
+            previousLeftVelocity = point.leftVelocity;
         }
 		
 		return point;

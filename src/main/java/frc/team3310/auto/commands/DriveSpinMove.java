@@ -22,9 +22,8 @@ public class DriveSpinMove extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    System.out.println("Set motion magic drive");
-//    Robot.drive.setDriveMotionMagic(targetPositionInches, targetPositionAngle);
-    Robot.drive.setVelocitySetpoint(-48, -48);
+    System.out.println("Set drive spin move");
+    Robot.drive.setVelocitySetpoint(-96, -96);
     setTimeout(0.3);
     startedSpinMove = false;
   }
@@ -41,24 +40,22 @@ public class DriveSpinMove extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
- //   if (Drive.getInstance().hasFinishedDriveMotionMagic()) {
     if (startedSpinMove && Drive.getInstance().hasFinishedDSpinMove()) {
         System.out.println("Trajectory finished " + Drive.getInstance().getDriveMotionMagicPosition());
       return true;
     }
-    // System.out.println("Motion magic driving...");
     return false;
   }
 
   // Called once after isFinished returns true
   protected void end() {
-    System.out.println("Drive set MM end");
+    System.out.println("Drive set SM end");
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   protected void interrupted() {
-    System.out.println("Drive set MM end");
+    System.out.println("Drive set SM end");
 
   }
 }

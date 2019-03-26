@@ -59,7 +59,7 @@ public class Drive extends Subsystem implements Loop {
 
 	public static enum DriveControlMode {
 		JOYSTICK, MP_STRAIGHT, MP_TURN, PID_TURN, HOLD, MANUAL, VELOCITY_SETPOINT, CAMERA_TRACK, PATH_FOLLOWING,
-		OPEN_LOOP, CAMERA_TRACK_DRIVE, MOTION_MAGIC_STRAIGHT, SPIN_MOVE
+		OPEN_LOOP, CAMERA_TRACK_DRIVE, SPIN_MOVE
 	};
 
 	// One revolution of the wheel = Pi * D inches = 4096 ticks
@@ -133,8 +133,7 @@ public class Drive extends Subsystem implements Loop {
 
 	private static final int kPositionControlSlot = 0;
 	private static final int kVelocityControlSlot = 1;
-	private static final int kMotionMagicStraightSlot = 2;
-	private static final int kMotionMagicTurnSlot = 3;
+	private static final int kSpinMoveControlSlot = 2;
 
 	private boolean isRunningMotionMagic = false;
 	private MotionProfileSpinMove mpSpin;
@@ -202,7 +201,6 @@ public class Drive extends Subsystem implements Loop {
 	public double spinMoveStartAngle;
 	public double spinMoveStartVelocity;
 	private double lastTime = 0;
-	private double totalTime = 0;
 
 	@Override
 	public void onStart(double timestamp) {
@@ -248,11 +246,6 @@ public class Drive extends Subsystem implements Loop {
 				case CAMERA_TRACK:
 					updateCameraTrack();
 					onTarget();
-					return;
-				case MOTION_MAGIC_STRAIGHT:
-					if (isRunningMotionMagic == false) {
-						updateDriveMotionMagic();
-					}
 					return;
 				case SPIN_MOVE:
 					updateDriveSpinMove();
@@ -367,217 +360,95 @@ public class Drive extends Subsystem implements Loop {
 			gyroPigeon.configFactoryDefault();
 			rightDrive2.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
 
-			middleDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
-					Constants.kLongCANTimeoutMs);
-
-			TalonSRXUtil.checkError(middleDrive.config_kP(kMiddleDriveMotionMagicSlot,
-					Constants.kMiddleDriveMotionMagicKp, Constants.kLongCANTimeoutMs),
-					"Could not set middle drive motion magic kp: ");
-
-			TalonSRXUtil.checkError(middleDrive.config_kI(kMiddleDriveMotionMagicSlot,
-					Constants.kMiddleDriveMotionMagicKi, Constants.kLongCANTimeoutMs),
-					"Could not set middle drive motion magic ki: ");
-
-			TalonSRXUtil.checkError(middleDrive.config_kD(kMiddleDriveMotionMagicSlot,
-					Constants.kMiddleDriveMotionMagicKd, Constants.kLongCANTimeoutMs),
-					"Could not set middle drive motion magic kd: ");
-
-			TalonSRXUtil.checkError(middleDrive.config_kF(kMiddleDriveMotionMagicSlot,
-					Constants.kMiddleDriveMotionMagicKf, Constants.kLongCANTimeoutMs),
-					"Could not set middle drive motion magic kf: ");
-
-			TalonSRXUtil.checkError(middleDrive.config_IntegralZone(kMiddleDriveMotionMagicSlot,
-					Constants.kMiddleDriveIZone, Constants.kLongCANTimeoutMs),
-					"Could not set middle drive motion magic i zone: ");
-
-			TalonSRXUtil.checkError(
-					middleDrive.configMaxIntegralAccumulator(kMiddleDriveMotionMagicSlot,
-							Constants.kMiddleDriveMaxIntegralAccumulator, Constants.kLongCANTimeoutMs),
-					"Could not set middle drive motion magic max integral: ");
-
-			TalonSRXUtil.checkError(
-					middleDrive.configAllowableClosedloopError(kMiddleDriveMotionMagicSlot,
-							Constants.kMiddleDriveDeadband, Constants.kLongCANTimeoutMs),
-					"Could not set middle drive motion magic deadband: ");
-
-			TalonSRXUtil.checkError(middleDrive.configMotionAcceleration(Constants.kMiddleDriveAcceleration,
-					Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic acceleration: ");
-
-			TalonSRXUtil.checkError(middleDrive.configMotionSCurveStrength(Constants.kMiddleDriveScurveStrength,
-					Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic smoothing: ");
-
-			TalonSRXUtil.checkError(middleDrive.configMotionCruiseVelocity(Constants.kMiddleDriveCruiseVelocity,
-					Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic cruise velocity: ");
-
-			TalonSRXUtil.checkError(middleDrive.configNominalOutputForward(Constants.kMiddleDriveNominalForward,
-					Constants.kLongCANTimeoutMs), "Could not set nominal output forward: ");
-
-			TalonSRXUtil.checkError(middleDrive.configNominalOutputReverse(Constants.kMiddleDriveNominalReverse,
-					Constants.kLongCANTimeoutMs), "Could not set nominal output reverse: ");
-
-			TalonSRXUtil.checkError(
-					middleDrive.configPeakOutputForward(Constants.kMiddleDrivePeakForward, Constants.kLongCANTimeoutMs),
-					"Could not set peak output forward: ");
-
-			TalonSRXUtil.checkError(
-					middleDrive.configPeakOutputReverse(Constants.kMiddleDrivePeakReverse, Constants.kLongCANTimeoutMs),
-					"Could not set peak output reverse: ");
-
-			TalonSRXUtil.checkError(middleDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10,
-					Constants.kLongCANTimeoutMs), "Could not set peak output reverse: ");
-
-			TalonSRXUtil.checkError(middleDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10,
-					Constants.kLongCANTimeoutMs), "Could not set peak output reverse: ");
-
-			TalonSRXUtil.checkError(middleDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10,
-					Constants.kLongCANTimeoutMs), "Could not set peak output reverse: ");
-
 			reloadGains();
+
+			configMiddleDrive();
+			configSpinMove();
+
 			setBrakeMode(true);
-
-			// configMotionMagic();
-
 		} catch (Exception e) {
 			System.err.println("An error occurred in the DriveTrain constructor");
 		}
 	}
 
-	private void configMotionMagic() {
-		System.out.println("Start configMotionMagic");
-
-		/* Configure the left Talon's selected sensor as local QuadEncoder */
-		leftDrive1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, // Local Feedback Source
-				Constants.PID_PRIMARY, // PID Slot for Source [0, 1]
-				Constants.kLongCANTimeoutMs); // Configuration Timeout
-
-		/*
-		 * Configure the Remote Talon's selected sensor as a remote sensor for the right
-		 * Talon
-		 */
-		rightDrive1.configRemoteFeedbackFilter(leftDrive1.getDeviceID(), // Device ID of Source
-				RemoteSensorSource.TalonSRX_SelectedSensor, // Remote Feedback Source
-				Constants.REMOTE_0, // Source number [0, 1]
-				Constants.kLongCANTimeoutMs); // Configuration Timeout
-
-		/*
-		 * Configure the Pigeon IMU to the other remote slot available on the right
-		 * Talon
-		 */
-		rightDrive1.configRemoteFeedbackFilter(gyroPigeon.getDeviceID(), RemoteSensorSource.GadgeteerPigeon_Yaw,
-				Constants.REMOTE_1, Constants.kLongCANTimeoutMs);
-
-		System.out.println("Pigeon ID " + gyroPigeon.getDeviceID());
-
-		/* Setup Sum signal to be used for Distance */
-		rightDrive1.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, Constants.kLongCANTimeoutMs);
-		rightDrive1.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative,
-				Constants.kLongCANTimeoutMs); // Quadrature
-
-		rightDrive1.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, Constants.kLongCANTimeoutMs);
-		rightDrive1.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.CTRE_MagEncoder_Relative,
-				Constants.kLongCANTimeoutMs); // Quadrature
-
-		/* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
-		rightDrive1.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, Constants.PID_PRIMARY,
+	private void configMiddleDrive() {
+		middleDrive.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
 				Constants.kLongCANTimeoutMs);
 
-		/* Scale Feedback by 0.5 to half the sum of Distance */
-		rightDrive1.configSelectedFeedbackCoefficient(0.5, // Coefficient
-				Constants.PID_PRIMARY, // PID Slot of Source
-				Constants.kLongCANTimeoutMs); // Configuration Timeout
+		TalonSRXUtil.checkError(middleDrive.config_kP(kMiddleDriveMotionMagicSlot, Constants.kMiddleDriveMotionMagicKp,
+				Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic kp: ");
 
-		/* Configure Remote 1 [Pigeon IMU's Yaw] to be used for Auxiliary PID Index */
-		// rightDrive1.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor1,
-		// Constants.PID_TURN,
-		// Constants.kLongCANTimeoutMs);
+		TalonSRXUtil.checkError(middleDrive.config_kI(kMiddleDriveMotionMagicSlot, Constants.kMiddleDriveMotionMagicKi,
+				Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic ki: ");
 
-		/* Configure Dif [Dif of both QuadEncoders] to be used for Primary PID Index */
-		rightDrive1.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, Constants.PID_TURN,
-				Constants.kLongCANTimeoutMs);
+		TalonSRXUtil.checkError(middleDrive.config_kD(kMiddleDriveMotionMagicSlot, Constants.kMiddleDriveMotionMagicKd,
+				Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic kd: ");
 
-		/* Scale the Feedback Sensor using a coefficient */
-		rightDrive1.configSelectedFeedbackCoefficient(1, Constants.PID_TURN, Constants.kLongCANTimeoutMs);
+		TalonSRXUtil.checkError(middleDrive.config_kF(kMiddleDriveMotionMagicSlot, Constants.kMiddleDriveMotionMagicKf,
+				Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic kf: ");
 
-		// Set status frame rates
-		rightDrive1.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, Constants.kLongCANTimeoutMs);
-		rightDrive1.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, Constants.kLongCANTimeoutMs);
-		rightDrive1.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, Constants.kLongCANTimeoutMs);
-		rightDrive1.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, Constants.kLongCANTimeoutMs);
-		leftDrive1.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, Constants.kLongCANTimeoutMs);
-		gyroPigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_9_SixDeg_YPR, 5, Constants.kLongCANTimeoutMs);
+		TalonSRXUtil.checkError(middleDrive.config_IntegralZone(kMiddleDriveMotionMagicSlot,
+				Constants.kMiddleDriveIZone, Constants.kLongCANTimeoutMs),
+				"Could not set middle drive motion magic i zone: ");
 
-		/* Configure neutral deadband */
-		leftDrive1.configNeutralDeadband(0.001, Constants.kLongCANTimeoutMs);
-		rightDrive1.configNeutralDeadband(0.001, Constants.kLongCANTimeoutMs);
+		TalonSRXUtil.checkError(
+				middleDrive.configMaxIntegralAccumulator(kMiddleDriveMotionMagicSlot,
+						Constants.kMiddleDriveMaxIntegralAccumulator, Constants.kLongCANTimeoutMs),
+				"Could not set middle drive motion magic max integral: ");
 
-		// Set Motion Magic accel, velocity terms
-		rightDrive1.configMotionAcceleration(Constants.kDriveAcceleration, Constants.kLongCANTimeoutMs);
-		rightDrive1.configMotionCruiseVelocity(Constants.kDriveCruiseVelocity, Constants.kLongCANTimeoutMs);
-		// rightDrive1.configMotionSCurveStrength(Constants.kDriveScurveStrength,
-		// Constants.kLongCANTimeoutMs);
+		TalonSRXUtil
+				.checkError(
+						middleDrive.configAllowableClosedloopError(kMiddleDriveMotionMagicSlot,
+								Constants.kMiddleDriveDeadband, Constants.kLongCANTimeoutMs),
+						"Could not set middle drive motion magic deadband: ");
 
-		/**
-		 * Max out the peak output (for all modes). However you can limit the output of
-		 * a given PID object with configClosedLoopPeakOutput().
-		 */
-		leftDrive1.configPeakOutputForward(+1.0f, TalonSRXEncoder.TIMEOUT_MS);
-		leftDrive1.configPeakOutputReverse(-1.0f, TalonSRXEncoder.TIMEOUT_MS);
+		TalonSRXUtil.checkError(
+				middleDrive.configMotionAcceleration(Constants.kMiddleDriveAcceleration, Constants.kLongCANTimeoutMs),
+				"Could not set middle drive motion magic acceleration: ");
 
-		rightDrive1.configPeakOutputForward(+1.0f, TalonSRXEncoder.TIMEOUT_MS);
-		rightDrive1.configPeakOutputReverse(-1.0f, TalonSRXEncoder.TIMEOUT_MS);
+		TalonSRXUtil.checkError(middleDrive.configMotionSCurveStrength(Constants.kMiddleDriveScurveStrength,
+				Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic smoothing: ");
 
-		// Set PID gains for straight
-		rightDrive1.config_kP(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKp,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kI(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKi,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kD(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKd,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kF(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightKf,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.config_IntegralZone(kMotionMagicStraightSlot, Constants.kDriveMotionMagicStraightIZone,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.configClosedLoopPeakOutput(kMotionMagicStraightSlot, 1.0, Constants.kLongCANTimeoutMs);
-		// rightDrive1.configMaxIntegralAccumulator(kMotionMagicStraightSlot,
-		// Constants.kDriveMotionMagicStraightMaxIntegralAccumulator,
-		// Constants.kLongCANTimeoutMs);
-		// rightDrive1.configAllowableClosedloopError(kMotionMagicStraightSlot,
-		// Constants.kDriveMotionMagicStraightDeadband, Constants.kLongCANTimeoutMs);
+		TalonSRXUtil.checkError(middleDrive.configMotionCruiseVelocity(Constants.kMiddleDriveCruiseVelocity,
+				Constants.kLongCANTimeoutMs), "Could not set middle drive motion magic cruise velocity: ");
 
-		// Set PID gains for turn
-		rightDrive1.config_kP(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKp, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kI(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKi, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kD(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKd, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_kF(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnKf, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_IntegralZone(kMotionMagicTurnSlot, Constants.kDriveMotionMagicTurnIZone,
-				Constants.kLongCANTimeoutMs);
-		rightDrive1.configClosedLoopPeakOutput(kMotionMagicTurnSlot, 1.0, Constants.kLongCANTimeoutMs);
-		// rightDrive1.configMaxIntegralAccumulator(kMotionMagicTurnSlot,
-		// Constants.kDriveMotionMagicTurnMaxIntegralAccumulator,
-		// Constants.kLongCANTimeoutMs);
-		// rightDrive1.configAllowableClosedloopError(kMotionMagicTurnSlot,
-		// Constants.kDriveMotionMagicTurnDeadband, Constants.kLongCANTimeoutMs);
+		TalonSRXUtil.checkError(middleDrive.configNominalOutputForward(Constants.kMiddleDriveNominalForward,
+				Constants.kLongCANTimeoutMs), "Could not set nominal output forward: ");
 
-		/**
-		 * 1ms per loop. PID loop can be slowed down if need be. For example, - if
-		 * sensor updates are too slow - sensor deltas are very small per update, so
-		 * derivative error never gets large enough to be useful. - sensor movement is
-		 * very slow causing the derivative error to be near zero.
-		 */
-		int closedLoopTimeMs = 1;
-		rightDrive1.configClosedLoopPeriod(0, closedLoopTimeMs, Constants.kLongCANTimeoutMs);
-		rightDrive1.configClosedLoopPeriod(1, closedLoopTimeMs, Constants.kLongCANTimeoutMs);
+		TalonSRXUtil.checkError(middleDrive.configNominalOutputReverse(Constants.kMiddleDriveNominalReverse,
+				Constants.kLongCANTimeoutMs), "Could not set nominal output reverse: ");
 
-		/**
-		 * configAuxPIDPolarity(boolean invert, int timeoutMs) false means talon's local
-		 * output is PID0 + PID1, and other side Talon is PID0 - PID1 true means talon's
-		 * local output is PID0 - PID1, and other side Talon is PID0 + PID1
-		 */
-		rightDrive1.configAuxPIDPolarity(false, Constants.kLongCANTimeoutMs);
+		TalonSRXUtil.checkError(
+				middleDrive.configPeakOutputForward(Constants.kMiddleDrivePeakForward, Constants.kLongCANTimeoutMs),
+				"Could not set peak output forward: ");
 
-		rightDrive1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
+		TalonSRXUtil.checkError(
+				middleDrive.configPeakOutputReverse(Constants.kMiddleDrivePeakReverse, Constants.kLongCANTimeoutMs),
+				"Could not set peak output reverse: ");
 
-		System.out.println("End configMotionMagic");
+		TalonSRXUtil.checkError(middleDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10,
+				Constants.kLongCANTimeoutMs), "Could not set peak output reverse: ");
+
+		TalonSRXUtil.checkError(middleDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10,
+				Constants.kLongCANTimeoutMs), "Could not set peak output reverse: ");
+
+		TalonSRXUtil.checkError(middleDrive.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10,
+				Constants.kLongCANTimeoutMs), "Could not set peak output reverse: ");
+	}
+
+	private void configSpinMove() {
+		// Set PID gains for spin move
+		rightDrive1.config_kP(kSpinMoveControlSlot, Constants.kDriveSpinMoveKp, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kI(kSpinMoveControlSlot, Constants.kDriveSpinMoveKi, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kD(kSpinMoveControlSlot, Constants.kDriveSpinMoveKd, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_kF(kSpinMoveControlSlot, Constants.kDriveSpinMoveKf, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_IntegralZone(kSpinMoveControlSlot, Constants.kDriveSpinMoveIZone, Constants.kLongCANTimeoutMs);
+
+		leftDrive1.config_kP(kSpinMoveControlSlot, Constants.kDriveSpinMoveKp, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kI(kSpinMoveControlSlot, Constants.kDriveSpinMoveKi, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kD(kSpinMoveControlSlot, Constants.kDriveSpinMoveKd, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_kF(kSpinMoveControlSlot, Constants.kDriveSpinMoveKf, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_IntegralZone(kSpinMoveControlSlot, Constants.kDriveSpinMoveIZone, Constants.kLongCANTimeoutMs);
 	}
 
 	public static Drive getInstance() {
@@ -949,7 +820,6 @@ public class Drive extends Subsystem implements Loop {
 		rightDrive1.config_kF(kVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kLongCANTimeoutMs);
 		rightDrive1.config_IntegralZone(kVelocityControlSlot, Constants.kDriveVelocityIZone,
 				Constants.kLongCANTimeoutMs);
-
 	}
 
 	public void writeToLog() {
@@ -1069,30 +939,23 @@ public class Drive extends Subsystem implements Loop {
 			setLimeLED(0);
 			updateLimelight();
 			double cameraSteer = 0;
-			mLastValidGyroAngle = getGyroAngleDeg();
 			if (isLimeValid) {
 				double kCameraDrive = kCameraDriveClose;
 				if (limeX <= kCameraClose) {
 					kCameraDrive = kCameraDriveClose;
-					// System.out.println(" Close Valid lime angle = " + limeX);
 				} else if (limeX < kCameraMid) {
 					kCameraDrive = kCameraDriveMid;
-					// System.out.println("Mid Valid lime angle = " + limeX);
 				} else if (limeX < kCameraFar) {
 					kCameraDrive = kCameraDriveFar;
-					// System.out.println("Far Valid lime angle = " + limeX);
 				}
 				cameraSteer = limeX * kCameraDrive;
-				// System.out.println("Valid lime angle = " + kCameraDrive);
 			} else {
-				// System.out.println("In Valid lime angle = " + limeX);
 				cameraSteer = -m_steerOutput;
 			}
 			m_steerOutput = -cameraSteer;
 		}
 
 		m_drive.arcadeDrive(-m_moveOutput, -m_steerOutput);
-
 	}
 
 	public boolean isBrakeMode() {
@@ -1239,9 +1102,10 @@ public class Drive extends Subsystem implements Loop {
 	private void updateCameraTrack() {
 		updateLimelight();
 		double deltaVelocity = 0;
-		mLastValidGyroAngle = getGyroAngleDeg();
+
 		if (isLimeValid) {
 			deltaVelocity = limeX * kCamera * mCameraVelocity;
+			mLastValidGyroAngle = getGyroAngleDeg();
 			// System.out.println("Valid lime angle = " + limeX);
 		} else {
 			deltaVelocity = (getGyroAngleDeg() - mLastValidGyroAngle) * kCamera * mCameraVelocity;
@@ -1308,42 +1172,16 @@ public class Drive extends Subsystem implements Loop {
 		}
 	}
 
-	public synchronized void setDriveMotionMagic(double positionInches, double turnDegrees) {
-		targetDrivePositionTicks = getDriveEncoderTicks(positionInches);
-		System.out.println("MM Target Ticks = " + targetDrivePositionTicks);
-		driveControlMode = DriveControlMode.MOTION_MAGIC_STRAIGHT;
-		isRunningMotionMagic = false;
-	}
-
-	public synchronized void updateDriveMotionMagic() {
-		isRunningMotionMagic = true;
-		rightDrive1.selectProfileSlot(kMotionMagicStraightSlot, Constants.PID_PRIMARY);
-		rightDrive1.selectProfileSlot(kMotionMagicTurnSlot, Constants.PID_TURN);
-
-		leftDrive1.getSensorCollection().setQuadraturePosition(0, 0);
-		rightDrive1.getSensorCollection().setQuadraturePosition(0, 0);
-
-		double currentGyro = rightDrive1.getSelectedSensorPosition(1);
-		System.out.println("MM Gyro from Talon = " + currentGyro + ", Fused heading from pidgeon = "
-				+ gyroPigeon.getFusedHeading() + ", gyro angle = " + getGyroAngleDeg());
-		System.out.println("MM Target Ticks = " + targetDrivePositionTicks);
-
-		rightDrive1.set(ControlMode.MotionMagic, targetDrivePositionTicks, DemandType.AuxPID, 0);
-		// rightDrive1.set(ControlMode.MotionMagic, targetDrivePositionTicks);
-		// rightDrive1.set(ControlMode.Velocity, 5000, DemandType.AuxPID, 0);
-		leftDrive1.follow(rightDrive1, FollowerType.AuxOutput1);
-	}
-
 	public synchronized void setDriveSpinMove(double turnDegrees) {
-		rightDrive1.selectProfileSlot(kVelocityControlSlot, Constants.PID_PRIMARY);
-		leftDrive1.selectProfileSlot(kVelocityControlSlot, Constants.PID_PRIMARY);
+		rightDrive1.selectProfileSlot(kSpinMoveControlSlot, Constants.PID_PRIMARY);
+		leftDrive1.selectProfileSlot(kSpinMoveControlSlot, Constants.PID_PRIMARY);
 
 		targetSpinAngle = turnDegrees;
 		spinMoveStartAngle = -getGyroAngleDeg();
 //		spinMoveStartVelocity = (rightDrive1.getSelectedSensorVelocity() + leftDrive1.getSelectedSensorVelocity()) / 2;
 		spinMoveStartVelocity = -2900;
 		isSpinMoveFinished = false;
-		mpSpin = new MotionProfileSpinMove(ticksPer100msToInchesPerSec(spinMoveStartVelocity), 0, targetSpinAngle, 180, periodMs, 200, 100);
+		mpSpin = new MotionProfileSpinMove(ticksPer100msToInchesPerSec(spinMoveStartVelocity), 0, targetSpinAngle, 180, periodMs, 400, 200);
 		driveControlMode = DriveControlMode.SPIN_MOVE;
 
 		lastTime = Timer.getFPGATimestamp();
@@ -1358,9 +1196,14 @@ public class Drive extends Subsystem implements Loop {
 		}
 		
 		// Calculate a little gyro correction to help the MP wheel velocities arrive at the proper angle
-		double angleError = turnPoint.position - (-getGyroAngleDeg() - spinMoveStartAngle);
-		double kTurn = 0.004;
-		double deltaVelocity = angleError * kTurn * spinMoveStartVelocity;
+		double currentAngle = (-getGyroAngleDeg() - spinMoveStartAngle);
+		double angleError = turnPoint.position - currentAngle;
+		double kTurn = 0.0;
+		double deltaVelocity = 0.0;
+		if (turnPoint.position > (targetSpinAngle - 20)) {
+			kTurn = Constants.kDriveSpinMovekTurn;
+			deltaVelocity = angleError * kTurn * spinMoveStartVelocity;
+		}
 		
 		double currentTime = Timer.getFPGATimestamp();
 		mSpinMoveIO.deltaTime = currentTime - lastTime;
@@ -1370,7 +1213,7 @@ public class Drive extends Subsystem implements Loop {
 		mSpinMoveIO.targetTime = turnPoint.time;
 
 		mSpinMoveIO.targetTheta = turnPoint.position;
-		mSpinMoveIO.actualTheta = (-getGyroAngleDeg() - spinMoveStartAngle);
+		mSpinMoveIO.actualTheta = currentAngle;
 
 		mSpinMoveIO.targetRightVelocity = inchesPerSecondToTicksPer100ms(turnPoint.rightVelocity);
 		mSpinMoveIO.targetLeftVelocity = inchesPerSecondToTicksPer100ms(turnPoint.leftVelocity);
@@ -1378,8 +1221,12 @@ public class Drive extends Subsystem implements Loop {
 		mSpinMoveIO.actualRightVelocity = rightDrive1.getSelectedSensorVelocity();
 		mSpinMoveIO.actualLeftVelocity = leftDrive1.getSelectedSensorVelocity();
 
-		rightDrive1.set(ControlMode.Velocity, mSpinMoveIO.targetRightVelocity - deltaVelocity);
-		leftDrive1.set(ControlMode.Velocity, mSpinMoveIO.targetLeftVelocity + deltaVelocity);
+		mSpinMoveIO.targetRightAcceleration = turnPoint.rightAcceleration;
+		mSpinMoveIO.targetLeftAcceleration = turnPoint.leftAcceleration;
+
+		// Should try adding an auxilary loop to PID the gyro angle instead of delta velocity (ka does help though...)
+		rightDrive1.set(ControlMode.Velocity, mSpinMoveIO.targetRightVelocity - deltaVelocity, DemandType.ArbitraryFeedForward, turnPoint.rightAcceleration * Constants.kDriveSpinMoveKa);
+		leftDrive1.set(ControlMode.Velocity, mSpinMoveIO.targetLeftVelocity + deltaVelocity, DemandType.ArbitraryFeedForward, turnPoint.leftAcceleration * Constants.kDriveSpinMoveKa);
 	}
 
 	private int getDriveEncoderTicks(double positionInches) {
@@ -1441,6 +1288,8 @@ public class Drive extends Subsystem implements Loop {
 		public double actualLeftVelocity;
 		public double targetRightVelocity;
 		public double actualRightVelocity;
+		public double targetRightAcceleration;
+		public double targetLeftAcceleration;		
 	}
 
 	public static class PeriodicIO {
