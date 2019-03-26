@@ -176,6 +176,7 @@ public class Drive extends Subsystem implements Loop {
 
 	// Hardware states //Poofs
 	private PeriodicIO mPeriodicIO;
+	private SpinMoveIO mSpinMoveIO;
 	private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
 	private DriveMotionPlanner mMotionPlanner;
 	private Rotation2d mGyroOffset = Rotation2d.identity();
@@ -200,8 +201,8 @@ public class Drive extends Subsystem implements Loop {
 	public double targetSpinAngle;
 	public double spinMoveStartAngle;
 	public double spinMoveStartVelocity;
-	private long lastTime = 0;
-	private long totalTime = 0;
+	private double lastTime = 0;
+	private double totalTime = 0;
 
 	@Override
 	public void onStart(double timestamp) {
@@ -258,6 +259,8 @@ public class Drive extends Subsystem implements Loop {
 					break;
 				case MANUAL:
 					break;
+				case VELOCITY_SETPOINT:
+					break;
 				default:
 					System.out.println("Unknown drive control mode: " + currentControlMode);
 					break;
@@ -310,6 +313,7 @@ public class Drive extends Subsystem implements Loop {
 	private Drive() {
 		try {
 			mPeriodicIO = new PeriodicIO();
+			mSpinMoveIO = new SpinMoveIO();
 
 			leftDrive1 = TalonSRXFactory.createTalonEncoder(RobotMap.DRIVETRAIN_LEFT_MOTOR1_CAN_ID,
 					ENCODER_TICKS_TO_INCHES, false, FeedbackDevice.CTRE_MagEncoder_Relative);
@@ -612,6 +616,9 @@ public class Drive extends Subsystem implements Loop {
 		return inchesToRotations(inches_s) * 4096.0 / 10.0;
 	}
 
+	private static double ticksPer100msToInchesPerSec(double ticks_100ms) {
+		return rotationsToInches(ticks_100ms * 10.0 / DRIVE_ENCODER_PPR);
+	}
 	public double getLeftEncoderRotations() {
 		return mPeriodicIO.left_position_ticks / DRIVE_ENCODER_PPR;
 	}
@@ -1334,40 +1341,45 @@ public class Drive extends Subsystem implements Loop {
 		targetSpinAngle = turnDegrees;
 		spinMoveStartAngle = -getGyroAngleDeg();
 //		spinMoveStartVelocity = (rightDrive1.getSelectedSensorVelocity() + leftDrive1.getSelectedSensorVelocity()) / 2;
-		spinMoveStartVelocity = -48;
+		spinMoveStartVelocity = -2900;
 		isSpinMoveFinished = false;
-		mpSpin = new MotionProfileSpinMove(spinMoveStartVelocity, 0, targetSpinAngle, 180, periodMs, 200, 100);
+		mpSpin = new MotionProfileSpinMove(ticksPer100msToInchesPerSec(spinMoveStartVelocity), 0, targetSpinAngle, 180, periodMs, 200, 100);
 		driveControlMode = DriveControlMode.SPIN_MOVE;
 
-		lastTime = System.currentTimeMillis();
-		totalTime = 0;
+		lastTime = Timer.getFPGATimestamp();
+		mSpinMoveIO.totalTime = 0;
 	}
 
 	public synchronized void updateDriveSpinMove() {
 		turnPoint = mpSpin.getNextPoint(turnPoint);
 		if (turnPoint == null) {
 			isSpinMoveFinished = true;
-			rightDrive1.set(ControlMode.Velocity, inchesPerSecondToTicksPer100ms(spinMoveStartVelocity));
-			leftDrive1.set(ControlMode.Velocity, inchesPerSecondToTicksPer100ms(spinMoveStartVelocity));
-			System.out.println("Null point spin move finished");
 			return;
 		}
 		
 		// Calculate a little gyro correction to help the MP wheel velocities arrive at the proper angle
-		double angleError = (-getGyroAngleDeg() - spinMoveStartAngle) - turnPoint.position;
-		double kTurn = 0.00;
-		double deltaVelocity = angleError * kTurn * inchesPerSecondToTicksPer100ms(spinMoveStartVelocity);
-		long currentTime = System.currentTimeMillis();
-		double deltaTime = currentTime - lastTime;
-		totalTime += deltaTime;
+		double angleError = turnPoint.position - (-getGyroAngleDeg() - spinMoveStartAngle);
+		double kTurn = 0.004;
+		double deltaVelocity = angleError * kTurn * spinMoveStartVelocity;
+		
+		double currentTime = Timer.getFPGATimestamp();
+		mSpinMoveIO.deltaTime = currentTime - lastTime;
+		mSpinMoveIO.totalTime += mSpinMoveIO.deltaTime;
 		lastTime = currentTime;
 
-		System.out.println("RealT = " + totalTime + ", delta=" + deltaTime + ", MPT=" + turnPoint.time*1000 + ", Theta=" + turnPoint.position + ", Gyro=" + (-getGyroAngleDeg() - spinMoveStartAngle) + ", TargetR= " + inchesPerSecondToTicksPer100ms(turnPoint.rightVelocity) + ", Actual= " + rightDrive1.getSelectedSensorVelocity() + "TargetL= " + inchesPerSecondToTicksPer100ms(turnPoint.leftVelocity) + ", Actual= " + leftDrive1.getSelectedSensorVelocity());
-		System.out.println();
+		mSpinMoveIO.targetTime = turnPoint.time;
 
-		updateVelocitySetpoint(turnPoint.leftVelocity, turnPoint.rightVelocity);
-//		rightDrive1.set(ControlMode.Velocity, inchesPerSecondToTicksPer100ms(turnPoint.rightVelocity) - deltaVelocity);
-//		leftDrive1.set(ControlMode.Velocity, inchesPerSecondToTicksPer100ms(turnPoint.leftVelocity) + deltaVelocity);
+		mSpinMoveIO.targetTheta = turnPoint.position;
+		mSpinMoveIO.actualTheta = (-getGyroAngleDeg() - spinMoveStartAngle);
+
+		mSpinMoveIO.targetRightVelocity = inchesPerSecondToTicksPer100ms(turnPoint.rightVelocity);
+		mSpinMoveIO.targetLeftVelocity = inchesPerSecondToTicksPer100ms(turnPoint.leftVelocity);
+
+		mSpinMoveIO.actualRightVelocity = rightDrive1.getSelectedSensorVelocity();
+		mSpinMoveIO.actualLeftVelocity = leftDrive1.getSelectedSensorVelocity();
+
+		rightDrive1.set(ControlMode.Velocity, mSpinMoveIO.targetRightVelocity - deltaVelocity);
+		leftDrive1.set(ControlMode.Velocity, mSpinMoveIO.targetLeftVelocity + deltaVelocity);
 	}
 
 	private int getDriveEncoderTicks(double positionInches) {
@@ -1418,6 +1430,18 @@ public class Drive extends Subsystem implements Loop {
 	// return ultrasonic.getRangeInches(); // reads the range on the ultrasonic
 	// sensor
 	// }
+
+	public static class SpinMoveIO {
+		public double totalTime;
+		public double deltaTime;
+		public double targetTime;
+		public double targetTheta;
+		public double actualTheta;
+		public double targetLeftVelocity;
+		public double actualLeftVelocity;
+		public double targetRightVelocity;
+		public double actualRightVelocity;
+	}
 
 	public static class PeriodicIO {
 		// INPUTS
@@ -1487,6 +1511,16 @@ public class Drive extends Subsystem implements Loop {
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
 			}
+			SmartDashboard.putNumber("Total Time", mSpinMoveIO.totalTime);
+			SmartDashboard.putNumber("Delta Time", mSpinMoveIO.deltaTime);
+			SmartDashboard.putNumber("Target Time", mSpinMoveIO.targetTime);
+			
+			SmartDashboard.putNumber("Target Left Velocity", mSpinMoveIO.targetLeftVelocity);
+			SmartDashboard.putNumber("Actual Left Velocity", mSpinMoveIO.actualLeftVelocity);
+			SmartDashboard.putNumber("Target Right Velocity", mSpinMoveIO.targetRightVelocity);
+			SmartDashboard.putNumber("Actual Right Velocity", mSpinMoveIO.actualRightVelocity);
+			SmartDashboard.putNumber("Target Theta", mSpinMoveIO.targetTheta);
+			SmartDashboard.putNumber("Actual Theta", mSpinMoveIO.actualTheta);
 		}
 	}
 
