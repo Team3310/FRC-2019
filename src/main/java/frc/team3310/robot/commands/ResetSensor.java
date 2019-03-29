@@ -9,6 +9,7 @@ package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.Robot;
+import frc.team3310.utility.lib.control.RobotStatus;
 
 public class ResetSensor extends Command {
   public ResetSensor() {
@@ -22,6 +23,7 @@ public class ResetSensor extends Command {
     System.out.println("Reset All");
     Robot.elevator.resetEncoders();
     Robot.drive.zeroSensors();
+    RobotStatus.getInstance().resetDistanceDriven();
   }
 
   // Called repeatedly when this Command is scheduled to run

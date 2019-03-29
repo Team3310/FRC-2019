@@ -9,48 +9,51 @@ package frc.team3310.auto.routes;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
-import frc.team3310.auto.commands.AutoCameraTrackWhenCrossXBoundary;
 import frc.team3310.auto.commands.AutoCameraTrackWhenCrossYBoundary;
-import frc.team3310.auto.commands.DriveAbsoluteTurnMP;
+import frc.team3310.auto.commands.AutoSpinMove180WhenCrossedXBoundary;
 import frc.team3310.auto.commands.DriveMotionCommand;
 import frc.team3310.auto.commands.WaitUntilCrossXBoundary.MovingXDirection;
 import frc.team3310.auto.commands.WaitUntilCrossYBoundary.MovingYDirection;
 import frc.team3310.robot.Constants;
-import frc.team3310.robot.commands.DriveSetSpeed;
 import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
-import frc.team3310.robot.commands.IntakeHatchArms;
+import frc.team3310.robot.commands.ResetSensor;
 import frc.team3310.robot.paths.TrajectoryGenerator;
-import frc.team3310.robot.subsystems.Intake.HatchArmState;
-import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
 public class AutoStartLevel1SideCargo2 extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
-  public AutoStartLevel1SideCargo2() {
-    addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
-    addSequential(new DriveMotionCommand(
-                TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoSideTurn, true));
-        addParallel(new AutoCameraTrackWhenCrossYBoundary(-58, MovingYDirection.OutsideToInside, 1.0 , Constants.finishedAtCargoLimeY));
-        addSequential(
-                new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().turnSideCargoToSideCargoScore, false));
-        addSequential(new WaitCommand("Eject Pause", .25));
-        addSequential(new EjectHatch());
-        addSequential(new DriveSetSpeed(-1, .2));
-        addSequential(new DriveAbsoluteTurnMP(90, 400, MPSoftwareTurnType.TANK));
-        addParallel(new AutoCameraTrackWhenCrossXBoundary(65, MovingXDirection.Negative, 0.7, Constants.finishedAtCargoLimeY));
-        addSequential(new DriveMotionCommand(
-                TrajectoryGenerator.getInstance().getTrajectorySet().cargoSideScoreToLoading, false));
-        addSequential(new IntakeHatchArms(HatchArmState.IN));
-        addSequential(new WaitCommand("Grab Break", .25));
-        addSequential(new DriveMotionCommand(
-                TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoFrontTrack2v2, false));
-        addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive, 1.0, Constants.finishedAtCargoLimeY));
-        addSequential(
-                new DriveMotionCommand(TrajectoryGenerator.getInstance().getTrajectorySet().track2v2PoseToCargo2, false));
-        // addSequential(new WaitForChildren());
-        // addSequential(new WaitCommand("Eject Pause", .25));
-        // addSequential(new EjectHatch());
-  }
+        /**
+         * Add your docs here.
+         */
+        public AutoStartLevel1SideCargo2() {
+                addParallel(new ResetSensor());
+                addParallel(new ElevatorSetPositionMM(Constants.AUTO_HATCH_LEVEL_1));
+                addParallel(new AutoCameraTrackWhenCrossYBoundary(-75, MovingYDirection.OutsideToInside, 0.4,
+                                Constants.finishedAtCargoLimeY));
+                addSequential(new DriveMotionCommand(
+                                TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoSide, true));
+                addSequential(new WaitCommand("Eject Pause", .25));
+                addSequential(new EjectHatch());
+
+                addParallel(new AutoSpinMove180WhenCrossedXBoundary(135, MovingXDirection.Negative)); // 100
+
+                addSequential(new DriveMotionCommand(
+                                TrajectoryGenerator.getInstance().getTrajectorySet().cargoSideScoreMidToLoading,
+                                false));
+                // addSequential(new IntakeHatchArms(HatchArmState.IN));
+                // addSequential(new WaitCommand("Grab Break", .25));
+                // addSequential(new DriveMotionCommand(
+                // TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSide,
+                // false));
+                // addSequential(new DriveSpinMove(-95));
+
+                // addParallel(new AutoCameraTrackWhenCrossYBoundary(-58,
+                // MovingYDirection.OutsideToInside, 0.7,
+                // Constants.finishedAtCargoLimeY));
+                // addSequential(new DriveMotionCommand(
+                // TrajectoryGenerator.getInstance().getTrajectorySet().track2v2PoseToCargo2,
+                // false));
+                // addSequential(new WaitForChildren());
+                // addSequential(new WaitCommand("Eject Pause", .25));
+                // addSequential(new EjectHatch());
+        }
 }

@@ -56,9 +56,9 @@
               "_title": "Auton Side"
             }
           },
-          "3,6": {
+          "0,5": {
             "size": [
-              3,
+              2,
               1
             ],
             "content": {
@@ -104,9 +104,9 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "9,6": {
+          "12,5": {
             "size": [
-              3,
+              2,
               1
             ],
             "content": {
@@ -186,15 +186,26 @@
               "imageHeight": -1
             }
           },
-          "12,5": {
+          "14,5": {
             "size": [
-              3,
+              1,
               1
             ],
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Lime Y",
               "_title": "Lime Y"
+            }
+          },
+          "2,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Lime X",
+              "_title": "Lime X"
             }
           }
         }
@@ -214,7 +225,7 @@
     },
     {
       "title": "Tab 3",
-      "autoPopulate": false,
+      "autoPopulate": true,
       "autoPopulatePrefix": "",
       "widgetPane": {
         "gridSize": 92.0,

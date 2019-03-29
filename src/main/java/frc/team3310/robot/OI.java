@@ -96,7 +96,7 @@ public class OI {
     IntakeHatchManualD.whenReleased(new ElevatorHatchLevel());
 
     Button switchCameraPipeline = m_driver.getRightTrigger();
-    switchCameraPipeline.whenPressed(new SwitchCameraPipeline(2));
+    switchCameraPipeline.whenPressed(new SwitchCameraPipeline(0));
     switchCameraPipeline.whenReleased(new SwitchCameraPipeline(1));
 
     Button overrideClimb = m_driver.getShareButton();
@@ -104,7 +104,7 @@ public class OI {
 
     Button climbLvl2ToLvl3 = m_driver.getOptionsButton();
     climbLvl2ToLvl3.whenPressed(new ElevatorClimbEndGameExtra());
-    
+
     // Operator Controls
     // Elevator
     Button intakeBallAndLift = m_operator.getButtonX();

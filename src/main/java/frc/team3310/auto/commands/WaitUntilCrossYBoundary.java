@@ -8,11 +8,14 @@ import frc.team3310.utility.lib.control.RobotStatus;
 
 public class WaitUntilCrossYBoundary extends Command {
 
-    public enum MovingYDirection {OutsideToInside, InsideToOutside};
+    public enum MovingYDirection {
+        OutsideToInside, InsideToOutside
+    };
 
     private double mYBoundary = 0;
     private double mFlip = 1;
     private MovingYDirection mMovingDirection;
+    private boolean validDirection = false;
 
     public WaitUntilCrossYBoundary(double yForRightSideAuton, MovingYDirection movingDirection) {
         mYBoundary = yForRightSideAuton;
@@ -24,16 +27,31 @@ public class WaitUntilCrossYBoundary extends Command {
         RightLeftAutonSide autonSide = Robot.trajectoryGenerator.getRightLeftAutonSide();
         if (autonSide == RightLeftAutonSide.LEFT) {
             mFlip = -1;
-        } 
+        }
+        validDirection = false;
     }
-    
+
     @Override
     public boolean isFinished() {
-        if (mMovingDirection == MovingYDirection.OutsideToInside) {
-            return mFlip * RobotStatus.getInstance().getFieldToVehicle().getTranslation().y() > mYBoundary;
-        }
-        else {
-            return mFlip * RobotStatus.getInstance().getFieldToVehicle().getTranslation().y() < mYBoundary;
+        if (validDirection) {
+            if (mMovingDirection == MovingYDirection.OutsideToInside) {
+                return mFlip * RobotStatus.getInstance().getFieldToVehicle().getTranslation().y() > mYBoundary;
+            } else {
+                return mFlip * RobotStatus.getInstance().getFieldToVehicle().getTranslation().y() < mYBoundary;
+            }
+        } else {
+            if (mMovingDirection == MovingYDirection.OutsideToInside) {
+                validDirection = mFlip
+                        * RobotStatus.getInstance().getFieldToVehicle().getTranslation().y() < mYBoundary;
+            } else {
+                validDirection = mFlip
+                        * RobotStatus.getInstance().getFieldToVehicle().getTranslation().y() > mYBoundary;
+            }
+            if (validDirection == true) {
+                System.out.println(
+                        "validDirection y = " + RobotStatus.getInstance().getFieldToVehicle().getTranslation().y());
+            }
+            return false;
         }
     }
 
@@ -44,6 +62,7 @@ public class WaitUntilCrossYBoundary extends Command {
 
     @Override
     public void end() {
-        System.out.println("Passed Y Boundary");
+        System.out
+                .println("Passed Y Boundary Y = " + RobotStatus.getInstance().getFieldToVehicle().getTranslation().y());
     }
 }
