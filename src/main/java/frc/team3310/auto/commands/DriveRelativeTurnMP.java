@@ -17,14 +17,14 @@ public class DriveRelativeTurnMP extends Command {
 	}
 
 	protected void initialize() {
-		Robot.drive.setRelativeTurnMP(relativeTurnAngleDeg, maxTurnRateDegPerSec, turnType);
+		Robot.drive.setRelativeMaxTurnMP(relativeTurnAngleDeg, maxTurnRateDegPerSec, turnType);
 	}
 
 	protected void execute() {
 	}
 
 	protected boolean isFinished() {
-		return Robot.drive.isFinished(); 
+		return Robot.drive.isFinished();
 	}
 
 	protected void end() {

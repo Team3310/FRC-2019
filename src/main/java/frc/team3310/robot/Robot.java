@@ -15,11 +15,12 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team3310.auto.commands.DriveSpinMove;
-import frc.team3310.auto.routes.AutoStartLevel1SideCargo2;
+import frc.team3310.auto.routes.AutoStartLevel1CargoSide2Reversed;
+import frc.team3310.auto.routes.AutoStartLevel1RocketBack2;
 import frc.team3310.auto.routes.AutoStartLevel1SideCargoFront2v2;
 import frc.team3310.auto.routes.AutoStartLevel1SideCargoFrontSide1;
 import frc.team3310.auto.routes.AutoStartLevel1SideRocketFrontBackLow;
+import frc.team3310.auto.routes.AutoStartLevel2CargoSide2;
 import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
@@ -93,9 +94,14 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 
 		autonTaskChooser = new SendableChooser<Command>();
+
+		autonTaskChooser.addOption("L2 Cargo Side/Side", new AutoStartLevel2CargoSide2());
+
+		autonTaskChooser.addOption("L1 Rocket Back/Back", new AutoStartLevel1RocketBack2());
+
 		autonTaskChooser.setDefaultOption("L1 Rocket Front/Back Low", new AutoStartLevel1SideRocketFrontBackLow());
 
-		autonTaskChooser.addOption("L1 Cargo Side/Side", new AutoStartLevel1SideCargo2());
+		autonTaskChooser.addOption("L1 Cargo Side/Side Reversed", new AutoStartLevel1CargoSide2Reversed());
 
 		autonTaskChooser.addOption("L1 Cargo Front/Side", new AutoStartLevel1SideCargoFrontSide1());
 

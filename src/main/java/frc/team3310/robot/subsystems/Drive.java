@@ -72,8 +72,8 @@ public class Drive extends Subsystem implements Loop {
 	public static final double MP_STRAIGHT_T2 = 300;
 	public static final double MP_TURN_T1 = 600;
 	public static final double MP_TURN_T2 = 300;
-	public static final double MP_MAX_TURN_T1 = 400;
-	public static final double MP_MAX_TURN_T2 = 200;
+	public static final double MP_MAX_TURN_T1 = 200;
+	public static final double MP_MAX_TURN_T2 = 100;
 
 	public static final double OPEN_LOOP_VOLTAGE_RAMP_HI = 0.0;
 	public static final double OPEN_LOOP_VOLTAGE_RAMP_LO = 0.1;
@@ -148,8 +148,12 @@ public class Drive extends Subsystem implements Loop {
 	private PIDParams mpHoldPIDParams = new PIDParams(1, 0, 0, 0.0, 0.0, 0.0);
 
 	private MPSoftwarePIDController mpTurnController; // p i d a v g izone
-	private PIDParams mpTurnPIDParams = new PIDParams(0.035, 0.000, 0.0, 0.00025, 0.00375, 0.0, 100); // 4 colson
-																										// wheels
+	// private PIDParams mpTurnPIDParams = new PIDParams(0.035, 0.000, 0.0, 0.00025,
+	// 0.00375, 0.0, 100); // 4 colson
+
+	private PIDParams mpTurnPIDParams = new PIDParams(0.005, 0.0001, 0.2, 0.00035, 0.0025, 0.0, 100); // 4 colson
+	// wheels
+
 	// private PIDParams mpTurnPIDParams = new PIDParams(0.03, 0.00002, 0.4, 0.0004,
 	// 0.0030, 0.0, 100); // 4 omni
 
@@ -650,6 +654,14 @@ public class Drive extends Subsystem implements Loop {
 		setControlMode(DriveControlMode.MP_TURN);
 	}
 
+	public void setAbsoluteMaxTurnMP(double absoluteTurnAngleDeg, double turnRateDegPerSec,
+			MPSoftwareTurnType turnType) {
+		mpTurnController.setMPTurnTarget(getGyroAngleDeg(),
+				BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), absoluteTurnAngleDeg), turnRateDegPerSec,
+				MP_MAX_TURN_T1, MP_MAX_TURN_T2, turnType, TRACK_WIDTH_INCHES);
+		setControlMode(DriveControlMode.MP_TURN);
+	}
+
 	public synchronized void setGyroLock(boolean useGyroLock, boolean snapToAbsolute0or180) { // Delete
 		if (snapToAbsolute0or180) {
 			gyroLockAngleDeg = BHRMathUtils.adjustAccumAngleToClosest180(getGyroAngleDeg());
@@ -1136,6 +1148,14 @@ public class Drive extends Subsystem implements Loop {
 		mCameraVelocity = straightVelocity;
 	}
 
+	public synchronized void setCameraTrackWithVelocity(double velocityInchesPerSec) {
+		double straightVelocity = inchesPerSecondToTicksPer100ms(velocityInchesPerSec);
+		setFinished(false);
+		driveControlMode = DriveControlMode.CAMERA_TRACK;
+		mLastValidGyroAngle = getGyroAngleDeg();
+		mCameraVelocity = straightVelocity;
+	}
+
 	public boolean onTarget() {
 		if (limeX < 5) {
 			onTarget = true;
@@ -1182,9 +1202,11 @@ public class Drive extends Subsystem implements Loop {
 
 		targetSpinAngle = turnDegrees;
 		spinMoveStartAngle = -getGyroAngleDeg();
-		spinMoveStartVelocity = (rightDrive1.getSelectedSensorVelocity() + leftDrive1.getSelectedSensorVelocity()) / 2;
-		// spinMoveStartVelocity = -2900;
+		// spinMoveStartVelocity = (rightDrive1.getSelectedSensorVelocity() +
+		// leftDrive1.getSelectedSensorVelocity()) / 2;
+		spinMoveStartVelocity = -2000; // inchesPerSecondToTicksPer100ms(4);
 		isSpinMoveFinished = false;
+		turnPoint = new MotionProfileTurnPoint();
 		mpSpin = new MotionProfileSpinMove(ticksPer100msToInchesPerSec(spinMoveStartVelocity), 0, targetSpinAngle, 240,
 				periodMs, 200, 100);
 		driveControlMode = DriveControlMode.SPIN_MOVE;

@@ -10,6 +10,7 @@ package frc.team3310.robot;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.auto.commands.DriveRelativeTurnMP;
 import frc.team3310.robot.commands.EjectBallFast;
 import frc.team3310.robot.commands.EjectBallSlow;
 import frc.team3310.robot.commands.EjectBallStop;
@@ -39,11 +40,11 @@ import frc.team3310.robot.commands.SwitchCameraPipeline;
 import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.commands.TurnCompressorOn;
 import frc.team3310.robot.controller.GameController;
-import frc.team3310.robot.controller.Playstation;
 import frc.team3310.robot.controller.Xbox;
 import frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
+import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
 public class OI {
 
@@ -173,6 +174,10 @@ public class OI {
     Button resetSensors = new InternalButton();
     resetSensors.whenPressed(new ResetSensor());
     SmartDashboard.putData("Reset Sensor", resetSensors);
+
+    Button turnRelative90 = new InternalButton();
+    turnRelative90.whenPressed(new DriveRelativeTurnMP(-90, 240, MPSoftwareTurnType.TANK));
+    SmartDashboard.putData("Turn Relative 90", turnRelative90);
 
   }
 

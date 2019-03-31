@@ -7,6 +7,7 @@ import frc.team3310.robot.Robot;
 
 public class DriveVelocityWithDistance extends Command {
 	private double speed_inches_s, distance_inches;
+	private double startDistance;
 
 	public DriveVelocityWithDistance(double speed_inches_s, double distance_inches) {
 		requires(Robot.drive);
@@ -15,7 +16,7 @@ public class DriveVelocityWithDistance extends Command {
 	}
 
 	protected void initialize() {
-		Robot.drive.resetEncoders();
+		startDistance = (Robot.drive.getLeftPositionInches() + Robot.drive.getRightPositionInches()) / 2;
 		Robot.drive.setVelocitySetpoint(speed_inches_s, speed_inches_s);
 	}
 
@@ -23,13 +24,19 @@ public class DriveVelocityWithDistance extends Command {
 	}
 
 	protected boolean isFinished() {
-		return Math.abs((Robot.drive.getLeftPositionInches() + Robot.drive.getRightPositionInches()) / 2) > Math
-				.abs(distance_inches);
+		double currentDistance = (Robot.drive.getLeftPositionInches() + Robot.drive.getRightPositionInches()) / 2;
+		double distanceTraveled = currentDistance - startDistance;
+		System.out.println("Distance = " + distanceTraveled);
+		if (distance_inches < 0) {
+			return distanceTraveled < distance_inches;
+		} else {
+			return distanceTraveled > distance_inches;
+		}
 	}
 
 	protected void end() {
 		System.out.println("I'm Done");
-		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
+		// Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
 	}
 
 	protected void interrupted() {
