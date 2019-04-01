@@ -12,6 +12,7 @@ import frc.team3310.utility.lib.geometry.Pose2d;
 import frc.team3310.utility.lib.geometry.Rotation2d;
 import frc.team3310.utility.lib.geometry.Translation2d;
 import frc.team3310.utility.lib.geometry.Twist2d;
+import frc.team3310.utility.lib.trajectory.LazyLoadTrajectory;
 import frc.team3310.utility.lib.trajectory.TimedView;
 import frc.team3310.utility.lib.trajectory.TrajectoryIterator;
 import frc.team3310.utility.lib.trajectory.timing.CentripetalAccelerationConstraint;
@@ -28,8 +29,10 @@ public class DriveMotionPlannerTest {
 
         DriveMotionPlanner motion_planner = new DriveMotionPlanner();
         motion_planner.setFollowerType(DriveMotionPlanner.FollowerType.PURE_PURSUIT);
+        LazyLoadTrajectory lazyTrajectory = TrajectoryGenerator.getInstance().getTrajectorySet().driveStraight;
+        lazyTrajectory.activate();
         motion_planner.setTrajectory(new TrajectoryIterator<>(
-                new TimedView<>(TrajectoryGenerator.getInstance().getTrajectorySet().driveStraight.right)));
+                new TimedView<>(lazyTrajectory.getTrajectory().right)));
 
         double t = 0.0;
         Pose2d pose = motion_planner.setpoint().state().getPose();

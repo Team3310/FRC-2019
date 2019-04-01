@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.auto.commands.LazyLoadCommandGroup;
 import frc.team3310.auto.routes.AutoStartLevel1CargoSide2Reversed;
 import frc.team3310.auto.routes.AutoStartLevel1RocketBack2;
 import frc.team3310.auto.routes.AutoStartLevel1SideCargoFront2v2;
@@ -52,6 +53,7 @@ public class Robot extends TimedRobot {
 	private SendableChooser<Command> autonTaskChooser;
 	private SendableChooser<RightLeftAutonSide> autonRightLeftChooser;
 	private Command autonomousCommand;
+	private Command previousAutonomousCommand;
 
 	public static enum OperationMode {
 		TEST, PRACTICE, COMPETITION
@@ -95,11 +97,13 @@ public class Robot extends TimedRobot {
 
 		autonTaskChooser = new SendableChooser<Command>();
 
+		autonTaskChooser.setDefaultOption("None", null);
+
 		autonTaskChooser.addOption("L2 Cargo Side/Side", new AutoStartLevel2CargoSide2());
 
 		autonTaskChooser.addOption("L1 Rocket Back/Back", new AutoStartLevel1RocketBack2());
 
-		autonTaskChooser.setDefaultOption("L1 Rocket Front/Back Low", new AutoStartLevel1SideRocketFrontBackLow());
+		autonTaskChooser.addOption("L1 Rocket Front/Back Low", new AutoStartLevel1SideRocketFrontBackLow());
 
 		autonTaskChooser.addOption("L1 Cargo Side/Side Reversed", new AutoStartLevel1CargoSide2Reversed());
 
@@ -138,6 +142,15 @@ public class Robot extends TimedRobot {
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 		drive.setPipeline(1);
+		
+		autonomousCommand = autonTaskChooser.getSelected();
+		if (autonomousCommand != previousAutonomousCommand) {
+			if (autonomousCommand != null && autonomousCommand instanceof LazyLoadCommandGroup) {
+				LazyLoadCommandGroup lazyLoad = (LazyLoadCommandGroup)autonomousCommand;
+				lazyLoad.activate();
+				previousAutonomousCommand = autonomousCommand;
+			}
+		}
 	}
 
 	// Called once at the start of auto
@@ -150,8 +163,6 @@ public class Robot extends TimedRobot {
 
 		rightLeftSide = autonRightLeftChooser.getSelected();
 		trajectoryGenerator.setRightLeftAutonSide(rightLeftSide);
-
-		autonomousCommand = autonTaskChooser.getSelected();
 
 		if (autonomousCommand != null) {
 			autonomousCommand.start();

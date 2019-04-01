@@ -9,8 +9,8 @@ import frc.team3310.utility.lib.geometry.Pose2d;
 import frc.team3310.utility.lib.geometry.Pose2dWithCurvature;
 import frc.team3310.utility.lib.geometry.Rotation2d;
 import frc.team3310.utility.lib.geometry.Translation2d;
+import frc.team3310.utility.lib.trajectory.LazyLoadTrajectory;
 import frc.team3310.utility.lib.trajectory.Trajectory;
-import frc.team3310.utility.lib.trajectory.TrajectoryUtil;
 import frc.team3310.utility.lib.trajectory.timing.CentripetalAccelerationConstraint;
 import frc.team3310.utility.lib.trajectory.timing.TimedState;
 import frc.team3310.utility.lib.trajectory.timing.TimingConstraint;
@@ -194,61 +194,47 @@ public class TrajectoryGenerator {
                         Rotation2d.fromDegrees(181.00));
 
         public class TrajectorySet {
-                public class MirroredTrajectory {
-                        public MirroredTrajectory(Trajectory<TimedState<Pose2dWithCurvature>> right) {
-                                this.right = right;
-                                this.left = TrajectoryUtil.mirrorTimed(right);
-                        }
 
-                        public Trajectory<TimedState<Pose2dWithCurvature>> get(boolean left) {
-                                return left ? this.left : this.right;
-                        }
+                public final LazyLoadTrajectory platformToCargoSide;
+                public final LazyLoadTrajectory level1StartToRocketFront;
+                public final LazyLoadTrajectory level1StartReversedToRocketBack;
+                public final LazyLoadTrajectory level1StartReversedToCargoSide;
+                public final LazyLoadTrajectory level1StartToCargoFront;
+                public final LazyLoadTrajectory rocketFrontToTurn1A;
+                public final LazyLoadTrajectory rocketFrontTurn1AToLoading;
+                public final LazyLoadTrajectory loadingToRocketBack;
+                public final LazyLoadTrajectory turn3ToRocketBack;
+                public final LazyLoadTrajectory cargoFrontToTurn1;
+                public final LazyLoadTrajectory cargoFrontTurn1ToLoading;
+                public final LazyLoadTrajectory loadingToCargoFrontTrack2v2;
+                public final LazyLoadTrajectory track2v2PoseToCargo2;
+                public final LazyLoadTrajectory cargoBackNearToLoading;
+                public final LazyLoadTrajectory cargoBackMidToLoading;
+                public final LazyLoadTrajectory cargoBackFarToLoading;
+                public final LazyLoadTrajectory loadingToCargoSide;
 
-                        public final Trajectory<TimedState<Pose2dWithCurvature>> left;
-                        public final Trajectory<TimedState<Pose2dWithCurvature>> right;
-                }
-
-                public final MirroredTrajectory platformToCargoSide;
-                public final MirroredTrajectory level1StartToRocketFront;
-                public final MirroredTrajectory level1StartReversedToRocketBack;
-                public final MirroredTrajectory level1StartReversedToCargoSide;
-                public final MirroredTrajectory level1StartToCargoFront;
-                public final MirroredTrajectory rocketFrontToTurn1A;
-                public final MirroredTrajectory rocketFrontTurn1AToLoading;
-                public final MirroredTrajectory loadingToRocketBack;
-                public final MirroredTrajectory turn3ToRocketBack;
-                public final MirroredTrajectory cargoFrontToTurn1;
-                public final MirroredTrajectory cargoFrontTurn1ToLoading;
-                public final MirroredTrajectory loadingToCargoFrontTrack2v2;
-                public final MirroredTrajectory track2v2PoseToCargo2;
-                public final MirroredTrajectory cargoBackNearToLoading;
-                public final MirroredTrajectory cargoBackMidToLoading;
-                public final MirroredTrajectory cargoBackFarToLoading;
-                public final MirroredTrajectory loadingToCargoSide;
-
-                public final MirroredTrajectory driveStraight;
+                public final LazyLoadTrajectory driveStraight;
 
                 private TrajectorySet() {
-                        platformToCargoSide = new MirroredTrajectory(getPlatformToCargoSideReversed());
-                        level1StartToRocketFront = null; // new MirroredTrajectory(getLevel1StartToRocketFront());
-                        level1StartReversedToRocketBack = new MirroredTrajectory(getLevel1SideStartToRocketBack());
-                        level1StartReversedToCargoSide = new MirroredTrajectory(getLevel1StartToCargoSideReversed());
-                        level1StartToCargoFront = null; // new MirroredTrajectory(getLevel1StartToCargoFront());
-                        rocketFrontToTurn1A = null; // new MirroredTrajectory(getRocketFrontToTurn1());
-                        rocketFrontTurn1AToLoading = null; // new MirroredTrajectory(getRocketFrontTurnToLoading());
-                        loadingToRocketBack = null;// new MirroredTrajectory(getLoadingToRocketBack());
-                        turn3ToRocketBack = null; // new MirroredTrajectory(getTurn3ToRocketBack());
-                        cargoFrontToTurn1 = null; // new MirroredTrajectory(getCargoFrontToTurn1());
-                        cargoFrontTurn1ToLoading = null; // new MirroredTrajectory(getCargoFrontTurn1ToLoading());
-                        loadingToCargoFrontTrack2v2 = null; // new MirroredTrajectory(getLoadingToCargoFrontTrack2());
-                        track2v2PoseToCargo2 = null; // new MirroredTrajectory(getCargoTrack2ToCargoScore2Pose());
-                        cargoBackNearToLoading = null; // new MirroredTrajectory(getCargoNearBackToLoading());
-                        cargoBackMidToLoading = new MirroredTrajectory(getCargoMidBackToLoading());
-                        cargoBackFarToLoading = null; // new MirroredTrajectory(getCargoFarBackToLoading());
-                        loadingToCargoSide = new MirroredTrajectory(getLoadingToCargoSide());
+                        platformToCargoSide             = new LazyLoadTrajectory(()->getPlatformToCargoSideReversed());
+                        level1StartToRocketFront        = new LazyLoadTrajectory(()->getLevel1StartToRocketFront());
+                        level1StartReversedToRocketBack = new LazyLoadTrajectory(()->getLevel1SideStartToRocketBack());
+                        level1StartReversedToCargoSide  = new LazyLoadTrajectory(()->getLevel1StartToCargoSideReversed());
+                        level1StartToCargoFront         = new LazyLoadTrajectory(()->getLevel1StartToCargoFront());
+                        rocketFrontToTurn1A             = new LazyLoadTrajectory(()->getRocketFrontToTurn1());
+                        rocketFrontTurn1AToLoading      = new LazyLoadTrajectory(()->getRocketFrontTurnToLoading());
+                        loadingToRocketBack             = new LazyLoadTrajectory(()->getLoadingToRocketBack());
+                        turn3ToRocketBack               = new LazyLoadTrajectory(()->getTurn3ToRocketBack());
+                        cargoFrontToTurn1               = new LazyLoadTrajectory(()->getCargoFrontToTurn1());
+                        cargoFrontTurn1ToLoading        = new LazyLoadTrajectory(()->getCargoFrontTurn1ToLoading());
+                        loadingToCargoFrontTrack2v2     = new LazyLoadTrajectory(()->getLoadingToCargoFrontTrack2());
+                        track2v2PoseToCargo2            = new LazyLoadTrajectory(()->getCargoTrack2ToCargoScore2Pose());
+                        cargoBackNearToLoading          = new LazyLoadTrajectory(()->getCargoNearBackToLoading());
+                        cargoBackMidToLoading           = new LazyLoadTrajectory(()->getCargoMidBackToLoading());
+                        cargoBackFarToLoading           = new LazyLoadTrajectory(()->getCargoFarBackToLoading());
+                        loadingToCargoSide              = new LazyLoadTrajectory(()->getLoadingToCargoSide());
 
-                        driveStraight = new MirroredTrajectory(getLevel2StartDriveStraight());
-
+                        driveStraight                   = new LazyLoadTrajectory(()->getLevel2StartDriveStraight());
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getPlatformToCargoSideReversed() {
@@ -422,9 +408,33 @@ public class TrajectoryGenerator {
                                         kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
                 }
 
+                private Trajectory<TimedState<Pose2dWithCurvature>> getCargoFarBackToLoading() {
+                        List<Pose2d> waypoints = new ArrayList<>();
+                        waypoints.add(kCargoFarFaceLoadingPose);
+                        waypoints.add(kLoadingMidFudgev2Pose);
+                        waypoints.add(kLoadingGrabFudgev2Pose);
+
+                        return generateTrajectory(false, waypoints,
+                                        Arrays.asList(new CentripetalAccelerationConstraint(
+                                                        kMaxCentripetalAccelElevatorDown)),
+                                        96, 0, kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                }
+
                 private Trajectory<TimedState<Pose2dWithCurvature>> getCargoMidBackToLoading() {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kCargoMidFaceLoadingPose);
+                        waypoints.add(kLoadingMidFudgev2Pose);
+                        waypoints.add(kLoadingGrabFudgev2Pose);
+
+                        return generateTrajectory(false, waypoints,
+                                        Arrays.asList(new CentripetalAccelerationConstraint(
+                                                        kMaxCentripetalAccelElevatorDown)),
+                                        96, 0, kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                }
+                
+                private Trajectory<TimedState<Pose2dWithCurvature>> getCargoNearBackToLoading() {
+                        List<Pose2d> waypoints = new ArrayList<>();
+                        waypoints.add(kCargoNearFaceLoadingPose);
                         waypoints.add(kLoadingMidFudgev2Pose);
                         waypoints.add(kLoadingGrabFudgev2Pose);
 

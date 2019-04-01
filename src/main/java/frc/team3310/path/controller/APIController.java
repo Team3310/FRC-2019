@@ -3,7 +3,6 @@ package frc.team3310.path.controller;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +19,8 @@ import frc.team3310.utility.lib.geometry.Translation2d;
 import frc.team3310.utility.lib.spline.QuinticHermiteSpline;
 import frc.team3310.utility.lib.spline.Spline;
 import frc.team3310.utility.lib.spline.SplineGenerator;
+import frc.team3310.utility.lib.trajectory.LazyLoadTrajectory;
+import frc.team3310.utility.lib.trajectory.MirroredTrajectory;
 import frc.team3310.utility.lib.trajectory.Trajectory;
 import frc.team3310.utility.lib.trajectory.timing.TimedState;
 
@@ -69,27 +70,22 @@ public class APIController {
         Trajectory<TimedState<Pose2dWithCurvature>> trajectory = null;
         try {
             boolean isLeft = false;
-            boolean isMirrored = false;
             if (trajectoryName.endsWith("_Left")) {
                 trajectoryName = trajectoryName.substring(0, trajectoryName.length() - 5);
                 isLeft = true;
-                isMirrored = true;
             }
             else if (trajectoryName.endsWith("_Right")) {
                 trajectoryName = trajectoryName.substring(0, trajectoryName.length() - 6);
                 isLeft = false;
-                isMirrored = true;
             }
 
             Field field = TrajectorySet.class.getField(trajectoryName);
 
-            if (isMirrored) {
-                TrajectorySet.MirroredTrajectory mirroredTrajectory = (TrajectorySet.MirroredTrajectory)field.get(trajectories.getTrajectorySet());
-                trajectory = mirroredTrajectory.get(isLeft);
-            }
-            else {
-                trajectory = (Trajectory<TimedState<Pose2dWithCurvature>>)field.get(trajectories.getTrajectorySet());
-            }
+            LazyLoadTrajectory lazyLoadTrajectory = (LazyLoadTrajectory)field.get(trajectories.getTrajectorySet());
+            lazyLoadTrajectory.activate();
+
+            MirroredTrajectory mirroredTrajectory = lazyLoadTrajectory.getTrajectory();
+            trajectory = mirroredTrajectory.get(isLeft);
         }
         catch (Exception e) {
             System.out.println("Unable to find trajectory = " + trajectoryName);
@@ -113,7 +109,7 @@ public class APIController {
 
         Field[] allFields = TrajectorySet.class.getDeclaredFields();
         for (Field field : allFields) {
-            if (field.getType().equals(TrajectorySet.MirroredTrajectory.class)) {
+            if (field.getType().equals(LazyLoadTrajectory.class)) {
                 strBuilder.append("\"" + field.getName() + "_Left" + "\",");
                 strBuilder.append("\"" + field.getName() + "_Right" + "\",");
             }

@@ -6,19 +6,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import frc.team3310.robot.paths.TrajectoryGenerator;
+import frc.team3310.utility.Util;
 import frc.team3310.utility.lib.geometry.Pose2d;
 import frc.team3310.utility.lib.geometry.Pose2dWithCurvature;
 import frc.team3310.utility.lib.geometry.Twist2d;
+import frc.team3310.utility.lib.trajectory.LazyLoadTrajectory;
+import frc.team3310.utility.lib.trajectory.MirroredTrajectory;
 import frc.team3310.utility.lib.trajectory.TimedView;
 import frc.team3310.utility.lib.trajectory.TrajectoryIterator;
 import frc.team3310.utility.lib.trajectory.timing.TimedState;
-import frc.team3310.utility.Util;
 
 public class TrajectoryGeneratorTest {
         public static final double kTestEpsilon = 1e-5;
 
-        public void verifyMirroredTrajectories(final TrajectoryGenerator.TrajectorySet.MirroredTrajectory mirrored,
-                        boolean shouldBeReversed) {
+        public void verifyMirroredTrajectories(final MirroredTrajectory mirrored, boolean shouldBeReversed) {
                 assertEquals(mirrored.left.length(), mirrored.right.length());
                 TrajectoryIterator<TimedState<Pose2dWithCurvature>> left_iterator = new TrajectoryIterator<>(
                                 new TimedView<>(mirrored.left));
@@ -104,10 +105,14 @@ public class TrajectoryGeneratorTest {
         public void test() {
                 TrajectoryGenerator.getInstance().generateTrajectories();
 
-                verifyMirroredTrajectories(
-                                TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront, false);
-                verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack,
-                                true);
+                LazyLoadTrajectory level1StartToRocketFront = TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront;
+                level1StartToRocketFront.activate();
+                verifyMirroredTrajectories(level1StartToRocketFront.getTrajectory(), false);
+
+                LazyLoadTrajectory loadingToRocketBack = TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack;
+                loadingToRocketBack.activate();
+                verifyMirroredTrajectories(loadingToRocketBack.getTrajectory(), true);
+
                 // verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontToLoading,
                 // true);
 
