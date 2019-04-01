@@ -7,6 +7,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - MotionProfileSpinMove",
+      "request": "launch",
+      "mainClass": "frc.team3310.utility.MotionProfileSpinMove",
+      "projectName": "2019_DeepSpace"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - MotionProfileBoxCar",
       "request": "launch",
       "mainClass": "frc.team3310.utility.MotionProfileBoxCar",

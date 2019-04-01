@@ -18,7 +18,7 @@ public class WaitUntilCrossXBoundary extends Command {
 
     @Override
     public boolean isFinished() {
-        System.out.println("X Position" +RobotStatus.getInstance().getFieldToVehicle().getTranslation().x() + ", Y Position" +RobotStatus.getInstance().getFieldToVehicle().getTranslation().y());
+        // System.out.println("X Position" +RobotStatus.getInstance().getFieldToVehicle().getTranslation().x() + ", Y Position" +RobotStatus.getInstance().getFieldToVehicle().getTranslation().y());
         if (mMovingDirection == MovingXDirection.Positive) {
             return RobotStatus.getInstance().getFieldToVehicle().getTranslation().x() > mXBoundary;
         }

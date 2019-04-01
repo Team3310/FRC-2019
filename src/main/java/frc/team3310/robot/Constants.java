@@ -79,13 +79,13 @@ public class Constants {
     public static double kDriveNominalOutput = 0.1;// 0.5 / 12.0;
     public static double kDriveMaxSetpoint = 11.0 * 12.0; // 11 fps
 
-    public static final double kDriveSpinMoveKp = 0.05; 
+    public static final double kDriveSpinMoveKp = 0.05;
     public static final double kDriveSpinMoveKi = 0.0;
-    public static final double kDriveSpinMoveKd = 0.0; 
+    public static final double kDriveSpinMoveKd = 0.0;
     public static final double kDriveSpinMoveKf = 0.14;
     public static final int kDriveSpinMoveIZone = 200;
-    public static final double kDriveSpinMoveKa = 0.001; 
-    public static final double kDriveSpinMovekTurn = 0.02;   
+    public static final double kDriveSpinMoveKa = 0.001;
+    public static final double kDriveSpinMovekTurn = 0.02;
 
     // 2019 Motion Magic
     // PID gains for elevator velocity loop
@@ -166,7 +166,6 @@ public class Constants {
     public static final int kClimbCruiseVelocity = 20000; // 12500; //Max Velocity 10475
     public static final int kClimbAcceleration = 30000;// 33000; //Max Velocity / Time to reach top .82
     public static final int kClimbScurveStrength = 0;
-
 
     // 2019 Elevator Levels
     public static final double AUTO_HATCH_LEVEL_1 = 17.5; // 19.5

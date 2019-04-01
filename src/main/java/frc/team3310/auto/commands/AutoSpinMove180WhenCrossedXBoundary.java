@@ -5,18 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team3310.auto.routes;
+package frc.team3310.auto.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team3310.auto.commands.DriveMotionMagic;
-import frc.team3310.robot.commands.ResetSensor;
+import frc.team3310.auto.commands.WaitUntilCrossXBoundary.MovingXDirection;
 
-public class AutoDriveMotionMagic extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
-  public AutoDriveMotionMagic() {
-    addSequential(new ResetSensor());
-    addSequential(new DriveMotionMagic(30, 0));
+public class AutoSpinMove180WhenCrossedXBoundary extends CommandGroup {
+
+  public AutoSpinMove180WhenCrossedXBoundary(double xBoundary, MovingXDirection movingDirection) {
+    addSequential(new WaitUntilCrossXBoundary(xBoundary, movingDirection));
+    addSequential(new DriveSpinMove(-180));
   }
 }

@@ -15,10 +15,12 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team3310.auto.commands.DriveSpinMove;
+import frc.team3310.auto.routes.AutoStartLevel1CargoSide2Reversed;
+import frc.team3310.auto.routes.AutoStartLevel1RocketBack2;
 import frc.team3310.auto.routes.AutoStartLevel1SideCargoFront2v2;
 import frc.team3310.auto.routes.AutoStartLevel1SideCargoFrontSide1;
 import frc.team3310.auto.routes.AutoStartLevel1SideRocketFrontBackLow;
+import frc.team3310.auto.routes.AutoStartLevel2CargoSide2;
 import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
@@ -92,15 +94,19 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putData("Operation Mode", operationModeChooser);
 
 		autonTaskChooser = new SendableChooser<Command>();
+
+		autonTaskChooser.addOption("L2 Cargo Side/Side", new AutoStartLevel2CargoSide2());
+
+		autonTaskChooser.addOption("L1 Rocket Back/Back", new AutoStartLevel1RocketBack2());
+
 		autonTaskChooser.setDefaultOption("L1 Rocket Front/Back Low", new AutoStartLevel1SideRocketFrontBackLow());
 
-		// autonTaskChooser.addOption("L1 Rocket Right Front/Back Low", new AutoStartLevel1RightSideRocketFrontBack());
+		autonTaskChooser.addOption("L1 Cargo Side/Side Reversed", new AutoStartLevel1CargoSide2Reversed());
 
 		autonTaskChooser.addOption("L1 Cargo Front/Side", new AutoStartLevel1SideCargoFrontSide1());
 
 		autonTaskChooser.addOption("L1 Cargo Front/Front v2", new AutoStartLevel1SideCargoFront2v2());
-		autonTaskChooser.addOption("Spin Move", new DriveSpinMove(180));
-		
+
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 
 		autonRightLeftChooser = new SendableChooser<RightLeftAutonSide>();
@@ -138,7 +144,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		controlLoop.start();
-		//drive.setIsRed(getAlliance().equals(Alliance.Red));
+		// drive.setIsRed(getAlliance().equals(Alliance.Red));
 		drive.setPipeline(1);
 		zeroAllSensors();
 

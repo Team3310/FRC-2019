@@ -72,8 +72,8 @@ public class Drive extends Subsystem implements Loop {
 	public static final double MP_STRAIGHT_T2 = 300;
 	public static final double MP_TURN_T1 = 600;
 	public static final double MP_TURN_T2 = 300;
-	public static final double MP_MAX_TURN_T1 = 400;
-	public static final double MP_MAX_TURN_T2 = 200;
+	public static final double MP_MAX_TURN_T1 = 200;
+	public static final double MP_MAX_TURN_T2 = 100;
 
 	public static final double OPEN_LOOP_VOLTAGE_RAMP_HI = 0.0;
 	public static final double OPEN_LOOP_VOLTAGE_RAMP_LO = 0.1;
@@ -135,10 +135,11 @@ public class Drive extends Subsystem implements Loop {
 	private static final int kVelocityControlSlot = 1;
 	private static final int kSpinMoveControlSlot = 2;
 
-	private boolean isRunningMotionMagic = false;
 	private MotionProfileSpinMove mpSpin;
 	private MotionProfileTurnPoint turnPoint = new MotionProfileTurnPoint();
 	private boolean isSpinMoveFinished;
+
+	private double targetVelocityDistance;
 
 	private MPTalonPIDController mpStraightController;
 	private PIDParams mpStraightPIDParams = new PIDParams(0.1, 0, 0, 0.005, 0.03, 0.15); // 4 colsons
@@ -147,8 +148,12 @@ public class Drive extends Subsystem implements Loop {
 	private PIDParams mpHoldPIDParams = new PIDParams(1, 0, 0, 0.0, 0.0, 0.0);
 
 	private MPSoftwarePIDController mpTurnController; // p i d a v g izone
-	private PIDParams mpTurnPIDParams = new PIDParams(0.035, 0.000, 0.0, 0.00025, 0.00375, 0.0, 100); // 4 colson
-																										// wheels
+	// private PIDParams mpTurnPIDParams = new PIDParams(0.035, 0.000, 0.0, 0.00025,
+	// 0.00375, 0.0, 100); // 4 colson
+
+	private PIDParams mpTurnPIDParams = new PIDParams(0.005, 0.0001, 0.2, 0.00035, 0.0025, 0.0, 100); // 4 colson
+	// wheels
+
 	// private PIDParams mpTurnPIDParams = new PIDParams(0.03, 0.00002, 0.4, 0.0004,
 	// 0.0030, 0.0, 100); // 4 omni
 
@@ -442,13 +447,15 @@ public class Drive extends Subsystem implements Loop {
 		rightDrive1.config_kI(kSpinMoveControlSlot, Constants.kDriveSpinMoveKi, Constants.kLongCANTimeoutMs);
 		rightDrive1.config_kD(kSpinMoveControlSlot, Constants.kDriveSpinMoveKd, Constants.kLongCANTimeoutMs);
 		rightDrive1.config_kF(kSpinMoveControlSlot, Constants.kDriveSpinMoveKf, Constants.kLongCANTimeoutMs);
-		rightDrive1.config_IntegralZone(kSpinMoveControlSlot, Constants.kDriveSpinMoveIZone, Constants.kLongCANTimeoutMs);
+		rightDrive1.config_IntegralZone(kSpinMoveControlSlot, Constants.kDriveSpinMoveIZone,
+				Constants.kLongCANTimeoutMs);
 
 		leftDrive1.config_kP(kSpinMoveControlSlot, Constants.kDriveSpinMoveKp, Constants.kLongCANTimeoutMs);
 		leftDrive1.config_kI(kSpinMoveControlSlot, Constants.kDriveSpinMoveKi, Constants.kLongCANTimeoutMs);
 		leftDrive1.config_kD(kSpinMoveControlSlot, Constants.kDriveSpinMoveKd, Constants.kLongCANTimeoutMs);
 		leftDrive1.config_kF(kSpinMoveControlSlot, Constants.kDriveSpinMoveKf, Constants.kLongCANTimeoutMs);
-		leftDrive1.config_IntegralZone(kSpinMoveControlSlot, Constants.kDriveSpinMoveIZone, Constants.kLongCANTimeoutMs);
+		leftDrive1.config_IntegralZone(kSpinMoveControlSlot, Constants.kDriveSpinMoveIZone,
+				Constants.kLongCANTimeoutMs);
 	}
 
 	public static Drive getInstance() {
@@ -490,6 +497,7 @@ public class Drive extends Subsystem implements Loop {
 	private static double ticksPer100msToInchesPerSec(double ticks_100ms) {
 		return rotationsToInches(ticks_100ms * 10.0 / DRIVE_ENCODER_PPR);
 	}
+
 	public double getLeftEncoderRotations() {
 		return mPeriodicIO.left_position_ticks / DRIVE_ENCODER_PPR;
 	}
@@ -643,6 +651,14 @@ public class Drive extends Subsystem implements Loop {
 		mpTurnController.setMPTurnTarget(getGyroAngleDeg(),
 				BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), absoluteTurnAngleDeg), turnRateDegPerSec,
 				MP_TURN_T1, MP_TURN_T2, turnType, TRACK_WIDTH_INCHES);
+		setControlMode(DriveControlMode.MP_TURN);
+	}
+
+	public void setAbsoluteMaxTurnMP(double absoluteTurnAngleDeg, double turnRateDegPerSec,
+			MPSoftwareTurnType turnType) {
+		mpTurnController.setMPTurnTarget(getGyroAngleDeg(),
+				BHRMathUtils.adjustAccumAngleToDesired(getGyroAngleDeg(), absoluteTurnAngleDeg), turnRateDegPerSec,
+				MP_MAX_TURN_T1, MP_MAX_TURN_T2, turnType, TRACK_WIDTH_INCHES);
 		setControlMode(DriveControlMode.MP_TURN);
 	}
 
@@ -931,7 +947,7 @@ public class Drive extends Subsystem implements Loop {
 		if (Math.abs(pitchAngle) > PITCH_THRESHOLD) {
 			m_moveOutput = Math.signum(pitchAngle) * -1.0;
 			m_steerOutput = 0;
-			System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
+			// System.out.println("Pitch Treshhold 2 angle = " + pitchAngle);
 		}
 
 		if (cameraTrackTapeButton) {
@@ -1132,6 +1148,14 @@ public class Drive extends Subsystem implements Loop {
 		mCameraVelocity = straightVelocity;
 	}
 
+	public synchronized void setCameraTrackWithVelocity(double velocityInchesPerSec) {
+		double straightVelocity = inchesPerSecondToTicksPer100ms(velocityInchesPerSec);
+		setFinished(false);
+		driveControlMode = DriveControlMode.CAMERA_TRACK;
+		mLastValidGyroAngle = getGyroAngleDeg();
+		mCameraVelocity = straightVelocity;
+	}
+
 	public boolean onTarget() {
 		if (limeX < 5) {
 			onTarget = true;
@@ -1178,10 +1202,13 @@ public class Drive extends Subsystem implements Loop {
 
 		targetSpinAngle = turnDegrees;
 		spinMoveStartAngle = -getGyroAngleDeg();
-//		spinMoveStartVelocity = (rightDrive1.getSelectedSensorVelocity() + leftDrive1.getSelectedSensorVelocity()) / 2;
-		spinMoveStartVelocity = -2900;
+		// spinMoveStartVelocity = (rightDrive1.getSelectedSensorVelocity() +
+		// leftDrive1.getSelectedSensorVelocity()) / 2;
+		spinMoveStartVelocity = -2000; // inchesPerSecondToTicksPer100ms(4);
 		isSpinMoveFinished = false;
-		mpSpin = new MotionProfileSpinMove(ticksPer100msToInchesPerSec(spinMoveStartVelocity), 0, targetSpinAngle, 180, periodMs, 400, 200);
+		turnPoint = new MotionProfileTurnPoint();
+		mpSpin = new MotionProfileSpinMove(ticksPer100msToInchesPerSec(spinMoveStartVelocity), 0, targetSpinAngle, 240,
+				periodMs, 200, 100);
 		driveControlMode = DriveControlMode.SPIN_MOVE;
 
 		lastTime = Timer.getFPGATimestamp();
@@ -1194,8 +1221,9 @@ public class Drive extends Subsystem implements Loop {
 			isSpinMoveFinished = true;
 			return;
 		}
-		
-		// Calculate a little gyro correction to help the MP wheel velocities arrive at the proper angle
+
+		// Calculate a little gyro correction to help the MP wheel velocities arrive at
+		// the proper angle
 		double currentAngle = (-getGyroAngleDeg() - spinMoveStartAngle);
 		double angleError = turnPoint.position - currentAngle;
 		double kTurn = 0.0;
@@ -1204,7 +1232,7 @@ public class Drive extends Subsystem implements Loop {
 			kTurn = Constants.kDriveSpinMovekTurn;
 			deltaVelocity = angleError * kTurn * spinMoveStartVelocity;
 		}
-		
+
 		double currentTime = Timer.getFPGATimestamp();
 		mSpinMoveIO.deltaTime = currentTime - lastTime;
 		mSpinMoveIO.totalTime += mSpinMoveIO.deltaTime;
@@ -1224,9 +1252,12 @@ public class Drive extends Subsystem implements Loop {
 		mSpinMoveIO.targetRightAcceleration = turnPoint.rightAcceleration;
 		mSpinMoveIO.targetLeftAcceleration = turnPoint.leftAcceleration;
 
-		// Should try adding an auxilary loop to PID the gyro angle instead of delta velocity (ka does help though...)
-		rightDrive1.set(ControlMode.Velocity, mSpinMoveIO.targetRightVelocity - deltaVelocity, DemandType.ArbitraryFeedForward, turnPoint.rightAcceleration * Constants.kDriveSpinMoveKa);
-		leftDrive1.set(ControlMode.Velocity, mSpinMoveIO.targetLeftVelocity + deltaVelocity, DemandType.ArbitraryFeedForward, turnPoint.leftAcceleration * Constants.kDriveSpinMoveKa);
+		// Should try adding an auxilary loop to PID the gyro angle instead of delta
+		// velocity (ka does help though...)
+		rightDrive1.set(ControlMode.Velocity, mSpinMoveIO.targetRightVelocity - deltaVelocity,
+				DemandType.ArbitraryFeedForward, turnPoint.rightAcceleration * Constants.kDriveSpinMoveKa);
+		leftDrive1.set(ControlMode.Velocity, mSpinMoveIO.targetLeftVelocity + deltaVelocity,
+				DemandType.ArbitraryFeedForward, turnPoint.leftAcceleration * Constants.kDriveSpinMoveKa);
 	}
 
 	private int getDriveEncoderTicks(double positionInches) {
@@ -1289,7 +1320,7 @@ public class Drive extends Subsystem implements Loop {
 		public double targetRightVelocity;
 		public double actualRightVelocity;
 		public double targetRightAcceleration;
-		public double targetLeftAcceleration;		
+		public double targetLeftAcceleration;
 	}
 
 	public static class PeriodicIO {
@@ -1349,6 +1380,17 @@ public class Drive extends Subsystem implements Loop {
 				SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
 				SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
 
+				SmartDashboard.putNumber("Total Time", mSpinMoveIO.totalTime);
+				SmartDashboard.putNumber("Delta Time", mSpinMoveIO.deltaTime);
+				SmartDashboard.putNumber("Target Time", mSpinMoveIO.targetTime);
+
+				SmartDashboard.putNumber("Target Left Velocity", mSpinMoveIO.targetLeftVelocity);
+				SmartDashboard.putNumber("Actual Left Velocity", mSpinMoveIO.actualLeftVelocity);
+				SmartDashboard.putNumber("Target Right Velocity", mSpinMoveIO.targetRightVelocity);
+				SmartDashboard.putNumber("Actual Right Velocity", mSpinMoveIO.actualRightVelocity);
+				SmartDashboard.putNumber("Target Theta", mSpinMoveIO.targetTheta);
+				SmartDashboard.putNumber("Actual Theta", mSpinMoveIO.actualTheta);
+
 				SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
 				SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());
 				SmartDashboard.putNumber("theta err", mPeriodicIO.error.getRotation().getDegrees());
@@ -1357,19 +1399,12 @@ public class Drive extends Subsystem implements Loop {
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Vison = ", isValid());
 			SmartDashboard.putNumber("Lime Y", limeY);
+			SmartDashboard.putNumber("Lime X", limeX);
+
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
 			}
-			SmartDashboard.putNumber("Total Time", mSpinMoveIO.totalTime);
-			SmartDashboard.putNumber("Delta Time", mSpinMoveIO.deltaTime);
-			SmartDashboard.putNumber("Target Time", mSpinMoveIO.targetTime);
-			
-			SmartDashboard.putNumber("Target Left Velocity", mSpinMoveIO.targetLeftVelocity);
-			SmartDashboard.putNumber("Actual Left Velocity", mSpinMoveIO.actualLeftVelocity);
-			SmartDashboard.putNumber("Target Right Velocity", mSpinMoveIO.targetRightVelocity);
-			SmartDashboard.putNumber("Actual Right Velocity", mSpinMoveIO.actualRightVelocity);
-			SmartDashboard.putNumber("Target Theta", mSpinMoveIO.targetTheta);
-			SmartDashboard.putNumber("Actual Theta", mSpinMoveIO.actualTheta);
+
 		}
 	}
 
