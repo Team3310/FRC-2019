@@ -39,13 +39,13 @@ public class ElevatorSetMMClimb extends Command {
   @Override
   protected boolean isFinished() {
     if (Elevator.getInstance().hasFinishedTrajectory()) {
-      System.out.println("Trajectory finished end");
-      return true;
+      System.out.println("Trajectory finished end true");
     }
-    if (Robot.elevator.getClimbFrontTop() || Elevator.getInstance().getClimbRearTop() || Robot.elevator.isClimbOverrided()) {
-      System.out.println("Trajectory finished limit switch");
-      return true;
-    }
+    System.out.println("Trajectory finished end false");
+    // if (Robot.elevator.getClimbFrontTop() || Elevator.getInstance().getClimbRearTop() || Robot.elevator.isClimbOverrided()) {
+    //   System.out.println("Trajectory finished limit switch");
+    //   return true;
+    // }
     return false;
   }
 

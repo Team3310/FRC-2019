@@ -4,14 +4,13 @@ import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team3310.utility.lib.trajectory.LazyLoadTrajectory;
-import frc.team3310.utility.lib.trajectory.MirroredTrajectory;
 
 public class LazyLoadCommandGroup extends CommandGroup {
     private ArrayList<LazyLoadTrajectory> trajectories = new ArrayList<LazyLoadTrajectory>();
     
-    public MirroredTrajectory registerTrajectory(LazyLoadTrajectory trajectory) {
+    public LazyLoadTrajectory registerTrajectory(LazyLoadTrajectory trajectory) {
         trajectories.add(trajectory);
-        return trajectory.getTrajectory();
+        return trajectory;
     }
 
     public void activate() {

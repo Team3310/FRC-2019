@@ -9,7 +9,9 @@ package frc.team3310.auto.routes;
 
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team3310.auto.commands.AutoCameraTrackWhenCrossXBoundary;
+import frc.team3310.auto.commands.DriveAbsoluteTurnMP;
 import frc.team3310.auto.commands.DriveMotionCommand;
+import frc.team3310.auto.commands.DrivePathCameraTrackWithVelocity;
 import frc.team3310.auto.commands.LazyLoadCommandGroup;
 import frc.team3310.auto.commands.WaitUntilCrossXBoundary.MovingXDirection;
 import frc.team3310.robot.Constants;
@@ -19,6 +21,7 @@ import frc.team3310.robot.commands.IntakeHatch;
 import frc.team3310.robot.commands.IntakeHatchArms;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
+import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
 public class AutoStartLevel1SideCargoFrontSide1 extends LazyLoadCommandGroup {
 
@@ -42,6 +45,11 @@ public class AutoStartLevel1SideCargoFrontSide1 extends LazyLoadCommandGroup {
                                 4);
                 addSequential(new IntakeHatchArms(HatchArmState.IN));
                 addSequential(new WaitCommand("Grab Break", .15));
+                addSequential(new DriveMotionCommand(registerTrajectory(
+                        TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSide), false));
+                addSequential(new DriveAbsoluteTurnMP(90, 240, MPSoftwareTurnType.TANK));
+                // addSequential(new DriveRelativeTurnMP(-85, 240, MPSoftwareTurnType.TANK));
+                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
 
                 // addSequential(new DriveMotionCommand(
                 // TrajectoryGenerator.getInstance().getTrajectorySet().loadingToTurnCargoSide,

@@ -21,6 +21,8 @@ import frc.team3310.robot.commands.ElevatorClimbBoost;
 import frc.team3310.robot.commands.ElevatorClimbEndGameExtra;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl2;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl3;
+import frc.team3310.robot.commands.ElevatorClimbEndGameSuccLvl3;
+import frc.team3310.robot.commands.ElevatorClimbRaiseLegs;
 import frc.team3310.robot.commands.ElevatorHatchLevel;
 import frc.team3310.robot.commands.ElevatorSetMode;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
@@ -32,14 +34,12 @@ import frc.team3310.robot.commands.IntakeHatch;
 import frc.team3310.robot.commands.IntakeHatchArms;
 import frc.team3310.robot.commands.OverrideClimb;
 import frc.team3310.robot.commands.ResetSensor;
-import frc.team3310.robot.commands.SetRobotClimbBack;
-import frc.team3310.robot.commands.SetRobotClimbFront;
 import frc.team3310.robot.commands.SetRobotClimbMode;
-import frc.team3310.robot.commands.SetRobotScoreMode;
 import frc.team3310.robot.commands.SwitchCameraPipeline;
 import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.commands.TurnCompressorOn;
 import frc.team3310.robot.controller.GameController;
+import frc.team3310.robot.controller.Playstation;
 import frc.team3310.robot.controller.Xbox;
 import frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
@@ -71,26 +71,23 @@ public class OI {
     ejectHatch.whenReleased(new IntakeBallArms(BallArmState.IN));
     ejectHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
 
+    Button raiseLegs = m_driver.getButtonY();
+    raiseLegs.whenPressed(new ElevatorClimbRaiseLegs());
+
+    Button climbMode = m_driver.getButtonX();
+    climbMode.whenPressed(new SetRobotClimbMode());
+
     Button climbLvl3 = m_driver.getButtonY();
     climbLvl3.whenPressed(new ElevatorClimbEndGameLvl3());
 
-    Button climbLvl2 = m_driver.getButtonB();
+    Button climbLvl2 = m_driver.getButtonX();
     climbLvl2.whenPressed(new ElevatorClimbEndGameLvl2());
 
-    Button climbBoost = m_driver.getButtonX();
+    Button climbBoost = m_driver.getButtonB();
     climbBoost.whenPressed(new ElevatorClimbBoost());
 
-    Button climbFront = m_driver.getDPadDown();
-    climbFront.whenPressed(new SetRobotClimbFront());
-
-    Button climbBack = m_driver.getDPadUp();
-    climbBack.whenPressed(new SetRobotClimbBack());
-
-    Button climbState = m_driver.getDPadRight();
-    climbState.whenPressed(new SetRobotClimbMode());
-
-    Button scoreState = m_driver.getDPadLeft();
-    scoreState.whenPressed(new SetRobotScoreMode());
+    Button climbSucc = m_driver.getDPadUp();
+    climbSucc.whenPressed(new ElevatorClimbEndGameSuccLvl3());
 
     Button IntakeHatchManualD = m_driver.getLeftTrigger();
     IntakeHatchManualD.whenReleased(new IntakeHatchArms(HatchArmState.IN));

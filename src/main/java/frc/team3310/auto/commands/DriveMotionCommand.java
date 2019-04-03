@@ -14,6 +14,7 @@ import frc.team3310.robot.paths.TrajectoryGenerator.RightLeftAutonSide;
 import frc.team3310.robot.subsystems.Drive;
 import frc.team3310.utility.lib.control.RobotStatus;
 import frc.team3310.utility.lib.geometry.Pose2dWithCurvature;
+import frc.team3310.utility.lib.trajectory.LazyLoadTrajectory;
 import frc.team3310.utility.lib.trajectory.MirroredTrajectory;
 import frc.team3310.utility.lib.trajectory.TimedView;
 import frc.team3310.utility.lib.trajectory.TrajectoryIterator;
@@ -21,23 +22,24 @@ import frc.team3310.utility.lib.trajectory.timing.TimedState;
 
 public class DriveMotionCommand extends Command {
 
-  private final MirroredTrajectory mMirroredTrajectory;
+  private final LazyLoadTrajectory mLazyLoadTrajectory;
   private final boolean mResetPose;
 
-  public DriveMotionCommand(MirroredTrajectory mirroredTrajectory, boolean resetPose) {
-    mMirroredTrajectory = mirroredTrajectory;
+  public DriveMotionCommand(LazyLoadTrajectory lazyLoadTrajectory, boolean resetPose) {
+    mLazyLoadTrajectory = lazyLoadTrajectory;
     mResetPose = resetPose;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    MirroredTrajectory mirroredTrajectory = mLazyLoadTrajectory.getTrajectory();
     TrajectoryIterator<TimedState<Pose2dWithCurvature>> mTrajectory = null;
     if (Robot.trajectoryGenerator.getRightLeftAutonSide() == RightLeftAutonSide.RIGHT) {
-      mTrajectory = new TrajectoryIterator<TimedState<Pose2dWithCurvature>>(new TimedView<>(mMirroredTrajectory.right));
+      mTrajectory = new TrajectoryIterator<TimedState<Pose2dWithCurvature>>(new TimedView<>(mirroredTrajectory.right));
     }  
     else {
-      mTrajectory = new TrajectoryIterator<TimedState<Pose2dWithCurvature>>(new TimedView<>(mMirroredTrajectory.left));
+      mTrajectory = new TrajectoryIterator<TimedState<Pose2dWithCurvature>>(new TimedView<>(mirroredTrajectory.left));
     }
     System.out.println("Starting trajectory on " + Robot.trajectoryGenerator.getRightLeftAutonSide() + " side! (length=" + mTrajectory.getRemainingProgress() + ")");
     if (mResetPose) {

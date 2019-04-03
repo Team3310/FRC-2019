@@ -7,6 +7,8 @@
 
 package frc.team3310.robot;
 
+import edu.wpi.first.wpilibj.Timer;
+
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -99,10 +101,6 @@ public class Robot extends TimedRobot {
 
 		autonTaskChooser.setDefaultOption("None", null);
 
-		autonTaskChooser.addOption("L2 Cargo Side/Side", new AutoStartLevel2CargoSide2());
-
-		autonTaskChooser.addOption("L1 Rocket Back/Back", new AutoStartLevel1RocketBack2());
-
 		autonTaskChooser.addOption("L1 Rocket Front/Back Low", new AutoStartLevel1SideRocketFrontBackLow());
 
 		autonTaskChooser.addOption("L1 Cargo Side/Side Reversed", new AutoStartLevel1CargoSide2Reversed());
@@ -147,7 +145,10 @@ public class Robot extends TimedRobot {
 		if (autonomousCommand != previousAutonomousCommand) {
 			if (autonomousCommand != null && autonomousCommand instanceof LazyLoadCommandGroup) {
 				LazyLoadCommandGroup lazyLoad = (LazyLoadCommandGroup)autonomousCommand;
+				// System.out.println("Activate auton");
+				// double startTime = Timer.getFPGATimestamp();
 				lazyLoad.activate();
+				// System.out.println("Activate auton complete t = " + (Timer.getFPGATimestamp() - startTime) + " sec");
 				previousAutonomousCommand = autonomousCommand;
 			}
 		}
