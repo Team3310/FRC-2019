@@ -20,18 +20,18 @@ public class IntakeBallSensor extends ExtraTimeoutCommand {
         requires(Robot.intake);
     }
 
-    public IntakeBallSensor(double speed, double afterSensorTimeout) {
-        this.speed = speed;
-        EXTRA_INTAKE_TIME = afterSensorTimeout;
-        requires(Robot.intake);
-    }
+    // public IntakeBallSensor(double speed, double afterSensorTimeout) {
+    //     this.speed = speed;
+    //     EXTRA_INTAKE_TIME = afterSensorTimeout;
+    //     requires(Robot.intake);
+    // }
 
-    public IntakeBallSensor(double speed, double afterSensorTimeout, double deployIntakeTimeout) {
-        this.speed = speed;
-        EXTRA_INTAKE_TIME = afterSensorTimeout;
-        EXTRA_INTAKE_DEPLOY_TIME = deployIntakeTimeout;
-        requires(Robot.intake);
-    }
+    // public IntakeBallSensor(double speed, double afterSensorTimeout, double deployIntakeTimeout) {
+    //     this.speed = speed;
+    //     EXTRA_INTAKE_TIME = afterSensorTimeout;
+    //     EXTRA_INTAKE_DEPLOY_TIME = deployIntakeTimeout;
+    //     requires(Robot.intake);
+    // }
 
     // Called just before this Command runs the first time
     protected void initialize() {

@@ -29,6 +29,8 @@ public class RobotMap {
 	public static final int INTAKE_LEFT_CAN_ID = 10;
 	public static final int INTAKE_RIGHT_CAN_ID = 11;
 
+	public static final int CLIMB_PUMP_CAN_ID = 9;
+
 	// Pneumatics
 	public static final int INTAKE_HATCH_ARM_PCM_ID = 1;
 	public static final int INTAKE_BALL_ARM_PCM_ID = 2;

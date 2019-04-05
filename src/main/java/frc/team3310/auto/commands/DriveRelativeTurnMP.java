@@ -1,9 +1,10 @@
 package frc.team3310.auto.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team3310.robot.Robot;
+import frc.team3310.robot.paths.TrajectoryGenerator.RightLeftAutonSide;
 import frc.team3310.robot.subsystems.Drive.DriveControlMode;
 import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
-import frc.team3310.robot.Robot;
 
 public class DriveRelativeTurnMP extends Command {
 	private double relativeTurnAngleDeg, maxTurnRateDegPerSec;
@@ -17,6 +18,9 @@ public class DriveRelativeTurnMP extends Command {
 	}
 
 	protected void initialize() {
+		if (Robot.trajectoryGenerator.getRightLeftAutonSide() == RightLeftAutonSide.RIGHT) {
+			relativeTurnAngleDeg = -relativeTurnAngleDeg;
+		}
 		Robot.drive.setRelativeMaxTurnMP(relativeTurnAngleDeg, maxTurnRateDegPerSec, turnType);
 	}
 

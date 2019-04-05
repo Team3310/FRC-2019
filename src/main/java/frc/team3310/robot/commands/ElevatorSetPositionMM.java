@@ -7,12 +7,11 @@
 
 package frc.team3310.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.Constants;
 import frc.team3310.robot.Robot;
 import frc.team3310.robot.subsystems.Elevator;
 
-public class ElevatorSetPositionMM extends Command {
+public class ElevatorSetPositionMM extends ExtraTimeoutCommand {
   private double targetPositionInches;
 
   public ElevatorSetPositionMM(double targetPositionInches) {
@@ -24,15 +23,17 @@ public class ElevatorSetPositionMM extends Command {
   @Override
   protected void initialize() {
 
-    if (Robot.elevator.elevatorCargoMode == true) {
-      Robot.elevator.setElevatorMotionMagicPosition(targetPositionInches + Constants.BALL_OFFSET);
+    // if (Robot.elevator.elevatorCargoMode == true) {
+    //   Robot.elevator.setElevatorMotionMagicPosition(targetPositionInches + Constants.BALL_OFFSET);
 
-    } else {
-      Robot.elevator.setElevatorMotionMagicPosition(targetPositionInches);
+    // } else {
+    //   Robot.elevator.setElevatorMotionMagicPosition(targetPositionInches);
 
-    }
+    // }
     Robot.elevator.setElevatorMotionMagicPosition(targetPositionInches);
 
+    resetExtraOneTimer();
+    startExtraOneTimeout(0.1);
     System.out.println("Elevator set MM initialized, target = " + targetPositionInches);
   }
 
@@ -44,7 +45,8 @@ public class ElevatorSetPositionMM extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (Elevator.getInstance().hasFinishedTrajectory()) {
+    System.out.println("Elevator position = " + Robot.elevator.getElevatorInchesOffGround());
+    if (isExtraOneTimedOut() && Elevator.getInstance().hasFinishedTrajectory()) {
       System.out.println("Trajectory finished");
       return true;
     }

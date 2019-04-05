@@ -28,7 +28,7 @@ public class AutoStartLevel1SideCargoFront2v2 extends LazyLoadCommandGroup {
         public AutoStartLevel1SideCargoFront2v2() {
                 addParallel(new ElevatorSetPositionMM(Constants.AUTO_HATCH_LEVEL_1));
 
-                addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive, 1.0,
+                addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive, 0.6,
                                 Constants.finishedAtCargoLimeY));
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoFront), true));
@@ -42,10 +42,9 @@ public class AutoStartLevel1SideCargoFront2v2 extends LazyLoadCommandGroup {
                                 false));
 
                 addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.6,
-                                Constants.finishedAtCargoLimeY));
+                                Constants.finishedAtCargoLimeY), 4);
                 addSequential(new DriveMotionCommand(registerTrajectory(
-                                TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontTurn1ToLoading), false),
-                                4);
+                                TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontTurn1ToLoading), false));
                 addSequential(new WaitForChildren());
                 addSequential(new IntakeHatchArms(HatchArmState.IN));
                 addSequential(new WaitCommand("Grab Break", .25));
@@ -53,7 +52,7 @@ public class AutoStartLevel1SideCargoFront2v2 extends LazyLoadCommandGroup {
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoFrontTrack2v2),
                                 false));
-                addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive, 1.0,
+                addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive, 0.65,
                                 Constants.finishedAtCargoLimeY));
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().track2v2PoseToCargo2), false));

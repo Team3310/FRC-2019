@@ -10,10 +10,13 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 	private boolean isTracking = false;
 	private double velocityScale = 1.0;
 	private final double PIPELINE_TIMEOUT = 0.02;
-	// private final double isVisonTimedOut = 1.5;
 	private boolean isTrackFinished = false;
 	private double finishAtLimeY = Constants.finishedAtCargoLimeY;
 	private int invalidCounter = 0;
+	private int velocityWindowSize = 25;
+	private int windowIndex = 0;
+	private double velocitySum = 0;
+	private double[] pitchAverageWindow = new double[velocityWindowSize];
 
 	public DrivePathCameraTrack() {
 		requires(Robot.drive);
@@ -23,20 +26,17 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 		this.velocityScale = velocityScale;
 		this.finishAtLimeY = finishAtLimeY;
 		requires(Robot.drive);
-		isTrackFinished = false;
-		invalidCounter = 0;
 	}
 
 	protected void initialize() {
 		System.out.println("Switch Pipeline");
+		isTrackFinished = false;
 		isTracking = false;
+		invalidCounter = 0;
 		resetExtraOneTimer();
 		resetExtraTwoTimer();
 		startExtraOneTimeout(PIPELINE_TIMEOUT);
-		// startExtraTwoTimeout(isVisonTimedOut);
 		Robot.drive.setPipeline(0);
-
-		// setTimeout(timeout);
 		Robot.drive.isLimeValid = true;
 	}
 
@@ -47,14 +47,20 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 			Robot.drive.setCameraTrack(velocityScale);
 			isTracking = true;
 		} else if (isTracking && !isTrackFinished) {
-			if (Robot.drive.isLimeValid == false) {
-				invalidCounter++;
-			} else {
-				invalidCounter = 0;
-			}
-
-			isTrackFinished = (Robot.drive.isLimeValid == false && invalidCounter > 10)
-					|| (Robot.drive.limeY < finishAtLimeY); // || isExtraTwoTimedOut();
+			// double avgVelocity = updatePitchWindow();
+			// if (windowIndex > velocityWindowSize && avgVelocity < 500) {
+			// 	isTrackFinished = true;
+			// }
+			// else {
+				if (Robot.drive.isLimeValid == false) {
+					invalidCounter++;
+				} else {
+					invalidCounter = 0;
+				}
+	
+				isTrackFinished = (Robot.drive.isLimeValid == false && invalidCounter > 10)
+						|| (Robot.drive.limeY < finishAtLimeY); // || isExtraTwoTimedOut();
+			// }
 
 			System.out.println("valid = " + Robot.drive.isLimeValid + ", lime Y =" + Robot.drive.limeY);
 			if (isTrackFinished == true) {
@@ -82,4 +88,19 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 		System.out.println("Time to eject done camera track");
 		end();
 	}
+
+	private double updatePitchWindow() {
+		double lastPitchAngle = pitchAverageWindow[windowIndex];
+		double currentPitchAngle = Robot.drive.getAverageRightLeftVelocity();
+		pitchAverageWindow[windowIndex] = currentPitchAngle;
+		velocitySum = velocitySum - lastPitchAngle + currentPitchAngle;
+
+		windowIndex++;
+		if (windowIndex == velocityWindowSize) {
+			windowIndex = 0;
+		}
+
+		return velocitySum / velocityWindowSize;
+	}
+
 }

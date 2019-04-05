@@ -10,7 +10,6 @@ package frc.team3310.robot;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team3310.auto.commands.DriveRelativeTurnMP;
 import frc.team3310.robot.commands.EjectBallFast;
 import frc.team3310.robot.commands.EjectBallSlow;
 import frc.team3310.robot.commands.EjectBallStop;
@@ -18,9 +17,9 @@ import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.commands.ElevatorClimbBoost;
-import frc.team3310.robot.commands.ElevatorClimbEndGameExtra;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl2;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl3;
+import frc.team3310.robot.commands.ElevatorClimbEndGameSuccLvl2;
 import frc.team3310.robot.commands.ElevatorClimbEndGameSuccLvl3;
 import frc.team3310.robot.commands.ElevatorClimbRaiseLegs;
 import frc.team3310.robot.commands.ElevatorHatchLevel;
@@ -36,15 +35,15 @@ import frc.team3310.robot.commands.OverrideClimb;
 import frc.team3310.robot.commands.ResetSensor;
 import frc.team3310.robot.commands.SetRobotClimbMode;
 import frc.team3310.robot.commands.SwitchCameraPipeline;
+import frc.team3310.robot.commands.TurnClimbPumpOff;
+import frc.team3310.robot.commands.TurnClimbPumpOn;
 import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.commands.TurnCompressorOn;
 import frc.team3310.robot.controller.GameController;
-import frc.team3310.robot.controller.Playstation;
 import frc.team3310.robot.controller.Xbox;
 import frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
-import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
 public class OI {
 
@@ -71,12 +70,6 @@ public class OI {
     ejectHatch.whenReleased(new IntakeBallArms(BallArmState.IN));
     ejectHatch.whenReleased(new IntakeHatchArms(HatchArmState.IN));
 
-    Button raiseLegs = m_driver.getButtonY();
-    raiseLegs.whenPressed(new ElevatorClimbRaiseLegs());
-
-    Button climbMode = m_driver.getButtonX();
-    climbMode.whenPressed(new SetRobotClimbMode());
-
     Button climbLvl3 = m_driver.getButtonY();
     climbLvl3.whenPressed(new ElevatorClimbEndGameLvl3());
 
@@ -86,8 +79,17 @@ public class OI {
     Button climbBoost = m_driver.getButtonB();
     climbBoost.whenPressed(new ElevatorClimbBoost());
 
-    Button climbSucc = m_driver.getDPadUp();
-    climbSucc.whenPressed(new ElevatorClimbEndGameSuccLvl3());
+    Button climbSuccLvl3 = m_driver.getDPadUp();
+    climbSuccLvl3.whenPressed(new ElevatorClimbEndGameSuccLvl3());
+
+    // Button climbSuccLvl2 = m_driver.getDPadDown();
+    // climbSuccLvl2.whenPressed(new ElevatorClimbEndGameSuccLvl2());
+
+    // Button climbMode = m_driver.getDPadLeft();
+    // climbMode.whenPressed(new SetRobotClimbMode());
+
+    // Button raiseLegs = m_driver.getDPadRight();
+    // raiseLegs.whenPressed(new ElevatorClimbRaiseLegs());
 
     Button IntakeHatchManualD = m_driver.getLeftTrigger();
     IntakeHatchManualD.whenReleased(new IntakeHatchArms(HatchArmState.IN));
@@ -99,9 +101,6 @@ public class OI {
 
     Button overrideClimb = m_driver.getShareButton();
     overrideClimb.whenPressed(new OverrideClimb());
-
-    Button climbLvl2ToLvl3 = m_driver.getOptionsButton();
-    climbLvl2ToLvl3.whenPressed(new ElevatorClimbEndGameExtra());
 
     // Operator Controls
     // Elevator
@@ -168,15 +167,19 @@ public class OI {
     turnCompressorOn.whenPressed(new TurnCompressorOn());
     SmartDashboard.putData("Compressor On", turnCompressorOn);
 
+    Button turnPumpOn = new InternalButton();
+    turnPumpOn.whenPressed(new TurnClimbPumpOn());
+    SmartDashboard.putData("Pump On", turnPumpOn);
+
+    Button turnPumpOff = new InternalButton();
+    turnPumpOff.whenPressed(new TurnClimbPumpOff());
+    SmartDashboard.putData("Pump Off", turnPumpOff);
+
     Button resetSensors = new InternalButton();
     resetSensors.whenPressed(new ResetSensor());
     SmartDashboard.putData("Reset Sensor", resetSensors);
-
-    Button turnRelative90 = new InternalButton();
-    turnRelative90.whenPressed(new DriveRelativeTurnMP(-90, 240, MPSoftwareTurnType.TANK));
-    SmartDashboard.putData("Turn Relative 90", turnRelative90);
-
   }
+
 
   public GameController getDriverController() {
     return m_driver;

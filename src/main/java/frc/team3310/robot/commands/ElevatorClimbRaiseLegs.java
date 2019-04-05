@@ -16,7 +16,7 @@ public class ElevatorClimbRaiseLegs extends CommandGroup {
    */
   public ElevatorClimbRaiseLegs() {
     addSequential(new SetRobotClimbMode());
-    addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL_3_SUCC - 3));
+    addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL2_TO_LVL3 - 3));
     addSequential(new SetRobotLockedMode());
 
   }

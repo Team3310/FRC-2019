@@ -20,6 +20,7 @@ public class OverrideClimb extends Command {
   @Override
   protected void initialize() {
     Robot.elevator.overrideClimb = true;
+    Robot.elevator.setRobotScoreMode();
   }
 
   // Called repeatedly when this Command is scheduled to run

@@ -150,7 +150,7 @@ public class TrajectoryGenerator {
         public static final Pose2d kMissRocketBack = new Pose2d(new Translation2d(250, -100),
                         Rotation2d.fromDegrees(150.00)); // 135 = -45 facing feild
 
-        public static final Pose2d kRocketBackTurnPose = new Pose2d(new Translation2d(290, -125),
+        public static final Pose2d kRocketBackTurnPose = new Pose2d(new Translation2d(280, -125),
                 Rotation2d.fromDegrees(160.00));
 
         public static final Pose2d kRocketBackScorePose = new Pose2d(new Translation2d(258, -138),

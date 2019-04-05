@@ -546,6 +546,11 @@ public class Drive extends Subsystem implements Loop {
 		return (getRightLinearVelocity() - getLeftLinearVelocity()) / Constants.kDriveWheelTrackWidthInches;
 	}
 
+	public double getAverageRightLeftVelocity() {
+		return (leftDrive1.getSelectedSensorVelocity() + rightDrive1.getSelectedSensorVelocity())/2;
+	}
+
+
 	public synchronized void resetEncoders() {
 		rightDrive1.setPosition(0);
 		leftDrive1.setPosition(0);

@@ -24,6 +24,7 @@ import frc.team3310.auto.routes.AutoStartLevel1SideCargoFront2v2;
 import frc.team3310.auto.routes.AutoStartLevel1SideCargoFrontSide1;
 import frc.team3310.auto.routes.AutoStartLevel1SideRocketFrontBackLow;
 import frc.team3310.auto.routes.AutoStartLevel2CargoSide2;
+import frc.team3310.auto.routes.AutoTest;
 import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
@@ -109,6 +110,8 @@ public class Robot extends TimedRobot {
 
 		autonTaskChooser.addOption("L1 Cargo Front/Front v2", new AutoStartLevel1SideCargoFront2v2());
 
+		autonTaskChooser.addOption("Auto Test", new AutoTest());
+
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 
 		autonRightLeftChooser = new SendableChooser<RightLeftAutonSide>();
@@ -133,6 +136,7 @@ public class Robot extends TimedRobot {
 	// Called once when is disabled
 	@Override
 	public void disabledInit() {
+		Robot.elevator.setRobotLockedMode();
 	}
 
 	// Called constantly when the robot is disabled
@@ -140,6 +144,7 @@ public class Robot extends TimedRobot {
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 		drive.setPipeline(1);
+		compressor.turnClimbPumpOff();
 		
 		autonomousCommand = autonTaskChooser.getSelected();
 		if (autonomousCommand != previousAutonomousCommand) {
@@ -161,6 +166,7 @@ public class Robot extends TimedRobot {
 		// drive.setIsRed(getAlliance().equals(Alliance.Red));
 		drive.setPipeline(1);
 		zeroAllSensors();
+		Robot.elevator.setRobotScoreMode();
 
 		rightLeftSide = autonRightLeftChooser.getSelected();
 		trajectoryGenerator.setRightLeftAutonSide(rightLeftSide);
@@ -174,6 +180,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
+		Robot.elevator.setRobotScoreMode();
+
+
 	}
 
 	// Called once at the start of teleOp
