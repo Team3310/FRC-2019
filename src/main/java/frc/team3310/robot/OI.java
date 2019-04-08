@@ -10,6 +10,7 @@ package frc.team3310.robot;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.robot.commands.DriveSetSpeed;
 import frc.team3310.robot.commands.EjectBallFast;
 import frc.team3310.robot.commands.EjectBallSlow;
 import frc.team3310.robot.commands.EjectBallStop;
@@ -178,6 +179,16 @@ public class OI {
     Button resetSensors = new InternalButton();
     resetSensors.whenPressed(new ResetSensor());
     SmartDashboard.putData("Reset Sensor", resetSensors);
+
+    Button driveSetSpeed = new InternalButton();
+    driveSetSpeed.whenPressed(new DriveSetSpeed(.4, 300));
+    SmartDashboard.putData("Move Wheels", driveSetSpeed);
+
+    Button driveSetSpeedStop = new InternalButton();
+    driveSetSpeedStop.whenPressed(new DriveSetSpeed(0, 2));
+    SmartDashboard.putData("Stop Wheels", driveSetSpeedStop);
+
+    
   }
 
 

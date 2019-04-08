@@ -50,7 +50,7 @@ public class Constants {
     public static final double kDriveKa = 0.01; // 0.011505866811140018; // V per rad/s^2
 
     public static final double finishedAtRocketLimeY = -10;
-    public static final double finishedAtCargoLimeY = -12.35;
+    public static final double finishedAtCargoLimeY = -12.25;
 
     // Geometry
     // 2019 Robot Values
@@ -163,8 +163,8 @@ public class Constants {
     public static final double kMiddleDrivePeakForward = 1.0;
     public static final double kMiddleDrivePeakReverse = -1.0;
 
-    public static final int kClimbCruiseVelocity = 20000; // 12500; //Max Velocity 10475
-    public static final int kClimbAcceleration = 27000;  //27000 // 33000; //Max Velocity / Time to reach top .82
+    public static final int kClimbCruiseVelocity = 8000; // 12500; //Max Velocity 10475
+    public static final int kClimbAcceleration = 15000;  //27000 // 33000; //Max Velocity / Time to reach top .82
     public static final int kClimbScurveStrength = 0;
 
     // 2019 Elevator Levels
@@ -178,7 +178,7 @@ public class Constants {
     public static final double BALL_LEVEL_CARGO = 42.0;
     public static final double BALL_OFFSET = 7;
     public static final double LOADING_STATION_HATCH = 19.5;
-    public static final double CLIMB_LVL_3 = 21.25;
+    public static final double CLIMB_LVL_3 = 19;
     public static final double CLIMB_LVL_3_SUCC = 20.25; //18.25
     public static final double CLIMB_LVL2_TO_LVL3 = 14.25;
     public static final double CLIMB_LEG_LIFT = 2;

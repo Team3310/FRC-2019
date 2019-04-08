@@ -125,7 +125,7 @@ public class TrajectoryGenerator {
         public static final Pose2d kLoadingMidFudgev2Pose = new Pose2d(new Translation2d(125, -140),
                         Rotation2d.fromDegrees(180.00));
 
-        public static final Pose2d kLoadingGrabFudgePose = new Pose2d(new Translation2d(0, -130),
+        public static final Pose2d kLoadingGrabFudgePose = new Pose2d(new Translation2d(0, -127),
                         Rotation2d.fromDegrees(180.00));
 
         public static final Pose2d kLoadingGrabFudgev2Pose = new Pose2d(new Translation2d(0, -140),

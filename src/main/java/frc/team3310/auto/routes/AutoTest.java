@@ -8,12 +8,14 @@
 package frc.team3310.auto.routes;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team3310.auto.commands.DrivePathCameraTrackWithVelocity;
-import frc.team3310.robot.Constants;
+import frc.team3310.auto.commands.DrivePathCameraTrack;
+import frc.team3310.auto.commands.DriveVelocityWithDistance;
 
 public class AutoTest extends CommandGroup {
  
   public AutoTest() {
-    addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
-  }
+    // addParallel(new AutoCameraTrackWhenCrossXBoundary(6, MovingXDirection.Positive, 0.5, Constants.finishedAtCargoLimeY));
+    addSequential(new DriveVelocityWithDistance(96, 12));
+    addSequential(new DrivePathCameraTrack());
+  } 
 }

@@ -491,10 +491,10 @@ public class Elevator extends Subsystem implements Loop {
 		frontShiftState = state;
 		if (state == FrontLegShiftState.LOCKED) {
 			frontLegShift.set(false);
-			System.out.println("FL IN NOT CLIMB");
+			// System.out.println("FL IN NOT CLIMB");
 		} else if (state == FrontLegShiftState.ENGAGED) {
 			frontLegShift.set(true);
-			System.out.println("FL OUT CLIMB MODE");
+			// System.out.println("FL OUT CLIMB MODE");
 		}
 	}
 
@@ -502,10 +502,10 @@ public class Elevator extends Subsystem implements Loop {
 		backShiftState = state;
 		if (state == BackLegShiftState.LOCKED) {
 			backLegShift.set(false);
-			System.out.println("BL IN NOT CLIMB");
+			// System.out.println("BL IN NOT CLIMB");
 		} else if (state == BackLegShiftState.ENGAGED) {
 			backLegShift.set(true);
-			System.out.println("BL OUT CLIMB MODE");
+			// System.out.println("BL OUT CLIMB MODE");
 		}
 	}
 
@@ -513,10 +513,10 @@ public class Elevator extends Subsystem implements Loop {
 		elevatorClimbShiftState = state;
 		if (state == ElevatorClimbShiftState.LOCKED) {
 			elevatorShift.set(false);
-			System.out.println("GG IN CLIMB");
+			// System.out.println("GG IN CLIMB");
 		} else if (state == ElevatorClimbShiftState.ENGAGED) {
 			elevatorShift.set(true);
-			System.out.println("GG OUT NOT CLIMB");
+			// System.out.println("GG OUT NOT CLIMB");
 		}
 	}
 

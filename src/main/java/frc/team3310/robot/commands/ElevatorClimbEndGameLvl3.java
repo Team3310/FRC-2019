@@ -22,7 +22,7 @@ public class ElevatorClimbEndGameLvl3 extends CommandGroup {
     addSequential(new DriveForwardClimbMM(10, false));
     addSequential(new SetRobotClimbFront());
     addSequential(new ElevatorSetMMClimb(0.0));
-    addSequential(new DriveForwardClimbMM(12, true));
+    addSequential(new DriveForwardClimbMM(10, true));
     addSequential(new SetRobotClimbBack());
     addSequential(new ElevatorSetMMClimb(-(Constants.CLIMB_LVL_3)));
     addSequential(new SetRobotScoreMode());

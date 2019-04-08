@@ -16,6 +16,7 @@ import frc.team3310.auto.commands.DriveVelocityWithDistance;
 import frc.team3310.auto.commands.LazyLoadCommandGroup;
 import frc.team3310.auto.commands.WaitUntilCrossXBoundary.MovingXDirection;
 import frc.team3310.robot.Constants;
+import frc.team3310.robot.commands.DriveSetJoystickMode;
 import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
@@ -53,10 +54,12 @@ public class AutoStartLevel1CargoSide2Reversed extends LazyLoadCommandGroup {
 
                 addSequential(new IntakeHatchArms(HatchArmState.IN));
                 addSequential(new WaitCommand("Grab Break", .25));
-                addSequential(new DriveMotionCommand(registerTrajectory(
-                                TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSide), false));
-                addSequential(new DriveAbsoluteTurnMP(-90, 240, MPSoftwareTurnType.TANK));
-                // addSequential(new DriveRelativeTurnMP(-85, 240, MPSoftwareTurnType.TANK));
-                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
+                addSequential(new DriveSetJoystickMode());
+
+                // addSequential(new DriveMotionCommand(registerTrajectory(
+                //                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSide), false));
+                // addSequential(new DriveAbsoluteTurnMP(-90, 240, MPSoftwareTurnType.TANK));
+                // // addSequential(new DriveRelativeTurnMP(-85, 240, MPSoftwareTurnType.TANK));
+                // addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
         }
 }
