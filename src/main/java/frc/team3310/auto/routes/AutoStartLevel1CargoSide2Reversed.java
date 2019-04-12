@@ -22,6 +22,7 @@ import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
 import frc.team3310.robot.commands.IntakeHatch;
 import frc.team3310.robot.commands.IntakeHatchArms;
+import frc.team3310.robot.commands.ResetRobotToLoadingPose;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
 import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
@@ -47,19 +48,18 @@ public class AutoStartLevel1CargoSide2Reversed extends LazyLoadCommandGroup {
                 addParallel(new IntakeHatch());
                 addSequential(new DriveAbsoluteTurnMP(10, 240, MPSoftwareTurnType.TANK));
                 // addSequential(new DriveRelativeTurnMP(100, 240, MPSoftwareTurnType.TANK));
-                addParallel(new AutoCameraTrackWhenCrossXBoundary(75, MovingXDirection.Negative, 0.55,
+                addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.6,
                                 Constants.finishedAtCargoLimeY), 4.5); // 100
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().cargoBackMidToLoading), false));
 
                 addSequential(new IntakeHatchArms(HatchArmState.IN));
+                addParallel(new ResetRobotToLoadingPose());
                 addSequential(new WaitCommand("Grab Break", .25));
-                addSequential(new DriveSetJoystickMode());
-
-                // addSequential(new DriveMotionCommand(registerTrajectory(
-                //                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSide), false));
-                // addSequential(new DriveAbsoluteTurnMP(-90, 240, MPSoftwareTurnType.TANK));
-                // // addSequential(new DriveRelativeTurnMP(-85, 240, MPSoftwareTurnType.TANK));
-                // addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
+                addSequential(new DriveMotionCommand(registerTrajectory(
+                                TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSide), false, true));
+                addSequential(new DriveAbsoluteTurnMP(-90, 240, MPSoftwareTurnType.TANK));
+                // addSequential(new DriveRelativeTurnMP(-85, 240, MPSoftwareTurnType.TANK));
+                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
         }
 }

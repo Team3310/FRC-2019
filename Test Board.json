@@ -67,17 +67,6 @@
               "_title": "Compressor On/pressed"
             }
           },
-          "6,6": {
-            "size": [
-              3,
-              1
-            ],
-            "content": {
-              "_type": "Toggle Button",
-              "_source0": "network_table:///SmartDashboard/Reset Sensor/pressed",
-              "_title": "Reset Sensor/pressed"
-            }
-          },
           "12,2": {
             "size": [
               3,
@@ -104,7 +93,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "12,5": {
+          "2,5": {
             "size": [
               2,
               1
@@ -170,7 +159,7 @@
           "3,0": {
             "size": [
               9,
-              6
+              5
             ],
             "content": {
               "_type": "Camera Stream",
@@ -186,6 +175,61 @@
               "imageHeight": -1
             }
           },
+          "13,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Lime X",
+              "_title": "Lime X"
+            }
+          },
+          "8,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Button",
+              "_source0": "network_table:///SmartDashboard/Pump Off/pressed",
+              "_title": "Pump Off/pressed"
+            }
+          },
+          "6,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Button",
+              "_source0": "network_table:///SmartDashboard/Move Wheels/pressed",
+              "_title": "Move Wheels/pressed"
+            }
+          },
+          "4,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Button",
+              "_source0": "network_table:///SmartDashboard/Stop Wheels/pressed",
+              "_title": "Stop Wheels/pressed"
+            }
+          },
+          "10,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Button",
+              "_source0": "network_table:///SmartDashboard/Pump On/pressed",
+              "_title": "Pump On/pressed"
+            }
+          },
           "14,5": {
             "size": [
               1,
@@ -197,15 +241,59 @@
               "_title": "Lime Y"
             }
           },
-          "2,5": {
+          "0,6": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Robot Pose Theta",
+              "_title": "Robot Pose Theta"
+            }
+          },
+          "2,6": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Robot Linear Vel",
+              "_title": "Robot Linear Vel"
+            }
+          },
+          "11,6": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Robot Pose X",
+              "_title": "Robot Pose X"
+            }
+          },
+          "13,6": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Robot Pose Y",
+              "_title": "Robot Pose Y"
+            }
+          },
+          "12,5": {
             "size": [
               1,
               1
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Lime X",
-              "_title": "Lime X"
+              "_source0": "network_table:///SmartDashboard/Ult",
+              "_title": "Ult"
             }
           }
         }

@@ -10,11 +10,11 @@ package frc.team3310.robot.commands;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team3310.robot.Constants;
 
-public class ElevatorClimbEndGameExtra extends CommandGroup {
+public class ElevatorClimbEndGameLvl2ToLvl3 extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public ElevatorClimbEndGameExtra() {
+  public ElevatorClimbEndGameLvl2ToLvl3() {
     addParallel(new ResetSensor());
     addSequential(new SetRobotClimbMode());
     addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL2_TO_LVL3));

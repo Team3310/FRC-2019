@@ -49,17 +49,16 @@ public class AutoStartLevel1SideCargoFront2v2 extends LazyLoadCommandGroup {
                 addSequential(new WaitForChildren());
                 addSequential(new IntakeHatchArms(HatchArmState.IN));
                 addSequential(new WaitCommand("Grab Break", .25));
-                addSequential(new DriveSetJoystickMode());
 
-                // addSequential(new DriveMotionCommand(registerTrajectory(
-                //                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoFrontTrack2v2),
-                //                 false));
-                // addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive, 0.65,
-                //                 Constants.finishedAtCargoLimeY));
-                // addSequential(new DriveMotionCommand(registerTrajectory(
-                //                 TrajectoryGenerator.getInstance().getTrajectorySet().track2v2PoseToCargo2), false));
-                // addSequential(new WaitForChildren());
-                // addSequential(new WaitCommand("Eject Pause", .25));
-                // addSequential(new EjectHatch());
+                addSequential(new DriveMotionCommand(registerTrajectory(
+                                TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoFrontTrack2v2),
+                                false));
+                addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive, 0.6,
+                                Constants.finishedAtCargoLimeY));
+                addSequential(new DriveMotionCommand(registerTrajectory(
+                                TrajectoryGenerator.getInstance().getTrajectorySet().track2v2PoseToCargo2), false));
+                addSequential(new WaitForChildren());
+                addSequential(new WaitCommand("Eject Pause", .25));
+                addSequential(new EjectHatch());
         }
 }

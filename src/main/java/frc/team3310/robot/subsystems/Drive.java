@@ -6,23 +6,19 @@ import java.util.ArrayList;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-import com.ctre.phoenix.motorcontrol.SensorTerm;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode;
-import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.robot.Constants;
@@ -162,6 +158,7 @@ public class Drive extends Subsystem implements Loop {
 
 	private PigeonIMU gyroPigeon;
 	private double[] yprPigeon = new double[3];
+	private short[] xyzPigeon = new short[3];
 	private boolean useGyroLock;
 	private double gyroLockAngleDeg;
 	private double kPGyro = 0.04;
@@ -197,8 +194,9 @@ public class Drive extends Subsystem implements Loop {
 	public double camMode;
 	public boolean onTarget;
 
+	
 	// Ultrasonic
-	// public Ultrasonic ultrasonic;
+	public Ultrasonic ultrasonic = new Ultrasonic(4, 5);
 
 	public double targetDrivePositionTicks;
 	public double targetMiddlePositionTicks;
@@ -230,6 +228,7 @@ public class Drive extends Subsystem implements Loop {
 			if (currentControlMode == DriveControlMode.JOYSTICK) {
 				driveWithJoystick();
 			} else if (!isFinished()) {
+				readPeriodicInputs();
 				switch (currentControlMode) {
 				case MP_STRAIGHT:
 					setFinished(mpStraightController.controlLoopUpdate(getGyroAngleDeg()));
@@ -241,7 +240,6 @@ public class Drive extends Subsystem implements Loop {
 					setFinished(pidTurnController.controlLoopUpdate(getGyroAngleDeg()));
 					break;
 				case PATH_FOLLOWING:
-					readPeriodicInputs();
 					updatePathFollower();
 					writePeriodicOutputs();
 					break;
@@ -328,9 +326,6 @@ public class Drive extends Subsystem implements Loop {
 					RobotMap.DRIVETRAIN_RIGHT_MOTOR1_CAN_ID);
 
 			middleDrive = TalonSRXFactory.createDefaultTalon(RobotMap.DRIVE_MIDDLE_CLIMB_WHEEL);
-
-			// ultrasonic = new Ultrasonic(RobotMap.ULTRA_SONIC_INPUT_CHANNEL,
-			// RobotMap.ULTRA_SONIC_OUTPUT_CHANNEL);
 
 			leftDrive1.setSafetyEnabled(false);
 			leftDrive1.setSensorPhase(false);
@@ -587,6 +582,21 @@ public class Drive extends Subsystem implements Loop {
 	public synchronized double getGyroPitchAngle() {
 		gyroPigeon.getYawPitchRoll(yprPigeon);
 		return yprPigeon[2];
+	}
+
+	public short getGyroXAccel() {
+		gyroPigeon.getBiasedAccelerometer(xyzPigeon);
+		return xyzPigeon[0];
+	}
+
+	public short getGyroYAccel() {
+		gyroPigeon.getBiasedAccelerometer(xyzPigeon);
+		return xyzPigeon[1];
+	}
+
+	public short getGyroZAccel() {
+		gyroPigeon.getBiasedAccelerometer(xyzPigeon);
+		return xyzPigeon[2];
 	}
 
 	public boolean checkPitchAngle() {
@@ -1305,14 +1315,13 @@ public class Drive extends Subsystem implements Loop {
 	}
 
 	// Ultrasonic
-	// public void setAutomatic() {
-	// ultrasonic.setAutomaticMode(true); // turns on automatic mode
-	// }
+	public void setAutomatic() {
+	ultrasonic.setAutomaticMode(true); // turns on automatic mode
+	}
 
-	// public double ultrasonicDistance() {
-	// return ultrasonic.getRangeInches(); // reads the range on the ultrasonic
-	// sensor
-	// }
+	public double getUltrasonicDistance() {
+	return ultrasonic.getRangeInches(); // reads the range on the ultrasonic sensor
+	}
 
 	public static class SpinMoveIO {
 		public double totalTime;
@@ -1399,12 +1408,19 @@ public class Drive extends Subsystem implements Loop {
 				SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
 				SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());
 				SmartDashboard.putNumber("theta err", mPeriodicIO.error.getRotation().getDegrees());
+
+				SmartDashboard.putNumber("Gyro X-accel", getGyroXAccel());
+				SmartDashboard.putNumber("Gyro y-accel", getGyroYAccel());
+				SmartDashboard.putNumber("Gyro z-accel", getGyroZAccel());
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {
 			SmartDashboard.putBoolean("Vison = ", isValid());
 			SmartDashboard.putNumber("Lime Y", limeY);
 			SmartDashboard.putNumber("Lime X", limeX);
+			SmartDashboard.putNumber("Ult", getUltrasonicDistance());
+	
+
 
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());

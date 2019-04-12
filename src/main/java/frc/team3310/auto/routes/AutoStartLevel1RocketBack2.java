@@ -20,6 +20,7 @@ import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
 import frc.team3310.robot.commands.IntakeHatch;
 import frc.team3310.robot.commands.IntakeHatchArms;
+import frc.team3310.robot.commands.ResetRobotToLoadingPose;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
 import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
@@ -31,7 +32,7 @@ public class AutoStartLevel1RocketBack2 extends LazyLoadCommandGroup {
   public AutoStartLevel1RocketBack2() {
     addSequential(new DriveMotionCommand(registerTrajectory(
         TrajectoryGenerator.getInstance().getTrajectorySet().level1StartReversedToRocketBack), true));
-    addParallel(new ElevatorSetPositionMM(Constants.AUTO_HATCH_LEVEL_1));
+    addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
     addSequential(new DriveAbsoluteTurnMP(30, 240, MPSoftwareTurnType.TANK));
     addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
     addSequential(new WaitCommand("Eject Pause", .25));
@@ -45,7 +46,7 @@ public class AutoStartLevel1RocketBack2 extends LazyLoadCommandGroup {
         TrajectoryGenerator.getInstance().getTrajectorySet().rocketBackToLoading), false));
 
     addSequential(new IntakeHatchArms(HatchArmState.IN));
-    addSequential(new WaitCommand("Grab Break", .25));
+    addParallel(new WaitCommand("Grab Break", .25));
     addSequential(new DriveMotionCommand(registerTrajectory(
       TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack), false));
     addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_2));

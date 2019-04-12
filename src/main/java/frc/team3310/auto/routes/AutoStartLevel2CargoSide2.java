@@ -33,7 +33,7 @@ public class AutoStartLevel2CargoSide2 extends LazyLoadCommandGroup {
         // Backward
         addParallel(new ResetSensor());
         addSequential(new DriveMotionCommand(
-                registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().driveStraight), true));
+                registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().driveStraightReversed), true));
         addSequential(new DriveMotionCommand(
                 registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().platformToCargoSide), false));
         addParallel(new ElevatorSetPositionMM(Constants.AUTO_HATCH_LEVEL_1));

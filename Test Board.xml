@@ -1,72 +1,82 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="Robot Linear Vel" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="428"/>
+	<widget field="Robot Pose Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="291" y="-2"/>
+		<width>1055</width>
+		<height>484</height>
 	</widget>
-	<widget field="Robot Pose Theta" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="408"/>
+	<widget field="Robot Pose X" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.LinePlot">
+		<location x="287" y="484"/>
+		<width>1064</width>
+		<height>357</height>
 	</widget>
-	<widget field="Robot Pose Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="388"/>
+	<widget field="Stop Wheels" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="659"/>
 	</widget>
-	<widget field="Robot Pose X" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="368"/>
+	<widget field="Move Wheels" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
+		<location x="0" y="637"/>
 	</widget>
 	<widget field="Compressor On" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="0" y="450"/>
+		<location x="0" y="615"/>
 	</widget>
 	<widget field="Pump On" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="184" y="526"/>
+		<location x="0" y="593"/>
 	</widget>
 	<widget field="Compressor Off" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="66" y="513"/>
+		<location x="21" y="446"/>
 	</widget>
 	<widget field="Autonomous" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="294" y="409"/>
-	</widget>
-	<widget field="Reset Sensor" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="0" y="346"/>
+		<location x="0" y="446"/>
 	</widget>
 	<widget field="Pump Off" type="Button" class="edu.wpi.first.smartdashboard.gui.elements.Button">
-		<location x="21" y="324"/>
+		<location x="0" y="424"/>
 	</widget>
 	<widget field="Auton Side" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="285" y="264"/>
+		<location x="199" y="480"/>
 	</widget>
 	<widget field="Operation Mode" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
-		<location x="0" y="240"/>
+		<location x="0" y="340"/>
 	</widget>
 	<widget field="Plaform Detect Bot = " type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="220"/>
+		<location x="0" y="320"/>
 	</widget>
 	<widget field="Intake Front Left IR Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="200"/>
+		<location x="0" y="300"/>
 	</widget>
 	<widget field="Elevator Max Switch = " type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="180"/>
+		<location x="0" y="280"/>
 	</widget>
 	<widget field="Lime Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="160"/>
+		<location x="0" y="260"/>
 	</widget>
 	<widget field="Lime X" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="140"/>
+		<location x="0" y="240"/>
+	</widget>
+	<widget field="Ult" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="220"/>
 	</widget>
 	<widget field="Vison = " type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="120"/>
+		<location x="0" y="160"/>
 	</widget>
 	<widget field="limelight_Stream" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="100"/>
+		<location x="0" y="140"/>
 	</widget>
 	<widget field="Platform Detect Front = " type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="80"/>
+		<location x="0" y="120"/>
 	</widget>
 	<widget field="Elevator Min Switch = " type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="60"/>
+		<location x="0" y="100"/>
 	</widget>
 	<widget field="limelight_Interface" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="40"/>
+		<location x="0" y="80"/>
+	</widget>
+	<widget field="Robot Linear Vel" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="60"/>
 	</widget>
 	<widget field="limelight_PipelineName" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="40"/>
+	</widget>
+	<widget field="Robot Pose Theta" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="20"/>
 	</widget>
 	<widget field="Intake Front Right IR Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">

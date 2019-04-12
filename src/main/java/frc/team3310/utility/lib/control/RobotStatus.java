@@ -102,7 +102,7 @@ public class RobotStatus {
     }
 
     public void updateStatus(OperationMode operationMode) {
-        if (operationMode == OperationMode.PRACTICE) {
+        if (operationMode == OperationMode.COMPETITION) {
  //           Pose2d odometry = getLatestFieldToVehicle().getValue();
             Pose2d odometry = getFieldToVehicle();
             SmartDashboard.putNumber("Robot Pose X", odometry.getTranslation().x());

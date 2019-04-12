@@ -51,6 +51,9 @@ public class Constants {
 
     public static final double finishedAtRocketLimeY = -10;
     public static final double finishedAtCargoLimeY = -12.25;
+    public static final double finishedAtRocketUlt = 11;
+    public static final double finishedAtCargoUlt = 8;
+
 
     // Geometry
     // 2019 Robot Values

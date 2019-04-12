@@ -13,6 +13,7 @@ import frc.team3310.robot.Robot;
 import frc.team3310.robot.paths.TrajectoryGenerator.RightLeftAutonSide;
 import frc.team3310.robot.subsystems.Drive;
 import frc.team3310.utility.lib.control.RobotStatus;
+import frc.team3310.utility.lib.geometry.Pose2d;
 import frc.team3310.utility.lib.geometry.Pose2dWithCurvature;
 import frc.team3310.utility.lib.trajectory.LazyLoadTrajectory;
 import frc.team3310.utility.lib.trajectory.MirroredTrajectory;
@@ -24,10 +25,18 @@ public class DriveMotionCommand extends Command {
 
   private final LazyLoadTrajectory mLazyLoadTrajectory;
   private final boolean mResetPose;
+  private final boolean mResetXYPose;
 
   public DriveMotionCommand(LazyLoadTrajectory lazyLoadTrajectory, boolean resetPose) {
     mLazyLoadTrajectory = lazyLoadTrajectory;
     mResetPose = resetPose;
+    mResetXYPose = false;
+  }
+
+  public DriveMotionCommand(LazyLoadTrajectory lazyLoadTrajectory, boolean resetPose, boolean resetXYPose) {
+    mLazyLoadTrajectory = lazyLoadTrajectory;
+    mResetPose = resetPose;
+    mResetXYPose = resetXYPose;
   }
 
   // Called just before this Command runs the first time
@@ -45,6 +54,11 @@ public class DriveMotionCommand extends Command {
     if (mResetPose) {
       RobotStatus.getInstance().reset(Timer.getFPGATimestamp(), mTrajectory.getState().state().getPose());
     }
+    else if (mResetXYPose) {
+      Pose2d resetPose = new Pose2d(mTrajectory.getState().state().getPose().getTranslation(), RobotStatus.getInstance().getFieldToVehicle().getRotation());
+      RobotStatus.getInstance().reset(Timer.getFPGATimestamp(), resetPose);
+    }
+
 //    Robot.drive.startLogging();
     Drive.getInstance().setTrajectory(mTrajectory);
   }

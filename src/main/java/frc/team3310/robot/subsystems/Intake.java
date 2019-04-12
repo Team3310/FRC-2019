@@ -66,7 +66,7 @@ public class Intake extends Subsystem {
 	}
 
 	public void setBallArmState(BallArmState state) {
-		System.out.println("Ball arm state = " + state);
+		// System.out.println("Ball arm state = " + state);
 		if (state == BallArmState.IN) {
 			ballArms.set(false);
 			return;

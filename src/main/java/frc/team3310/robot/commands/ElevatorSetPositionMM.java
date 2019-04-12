@@ -28,13 +28,12 @@ public class ElevatorSetPositionMM extends ExtraTimeoutCommand {
 
     // } else {
     //   Robot.elevator.setElevatorMotionMagicPosition(targetPositionInches);
-
     // }
     Robot.elevator.setElevatorMotionMagicPosition(targetPositionInches);
 
     resetExtraOneTimer();
     startExtraOneTimeout(0.1);
-    System.out.println("Elevator set MM initialized, target = " + targetPositionInches);
+    // System.out.println("Elevator set MM initialized, target = " + targetPositionInches);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -45,9 +44,9 @@ public class ElevatorSetPositionMM extends ExtraTimeoutCommand {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    System.out.println("Elevator position = " + Robot.elevator.getElevatorInchesOffGround());
+    // System.out.println("Elevator position = " + Robot.elevator.getElevatorInchesOffGround());
     if (isExtraOneTimedOut() && Elevator.getInstance().hasFinishedTrajectory()) {
-      System.out.println("Trajectory finished");
+      // System.out.println("Trajectory finished");
       return true;
     }
     return false;

@@ -41,6 +41,7 @@ import frc.team3310.robot.commands.TurnClimbPumpOn;
 import frc.team3310.robot.commands.TurnCompressorOff;
 import frc.team3310.robot.commands.TurnCompressorOn;
 import frc.team3310.robot.controller.GameController;
+import frc.team3310.robot.controller.Playstation;
 import frc.team3310.robot.controller.Xbox;
 import frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
@@ -62,7 +63,7 @@ public class OI {
 
   private OI() {
     // Driver controller
-    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
+    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
     m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Xbox());
 
     // Driver Controls
@@ -175,10 +176,6 @@ public class OI {
     Button turnPumpOff = new InternalButton();
     turnPumpOff.whenPressed(new TurnClimbPumpOff());
     SmartDashboard.putData("Pump Off", turnPumpOff);
-
-    Button resetSensors = new InternalButton();
-    resetSensors.whenPressed(new ResetSensor());
-    SmartDashboard.putData("Reset Sensor", resetSensors);
 
     Button driveSetSpeed = new InternalButton();
     driveSetSpeed.whenPressed(new DriveSetSpeed(.4, 300));

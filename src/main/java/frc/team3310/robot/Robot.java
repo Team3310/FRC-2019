@@ -104,13 +104,13 @@ public class Robot extends TimedRobot {
 
 		autonTaskChooser.addOption("L1 Rocket Front/Back Low", new AutoStartLevel1SideRocketFrontBackLow());
 
+		autonTaskChooser.addOption("L1 Rocket Back/Back", new AutoStartLevel1RocketBack2());
+
 		autonTaskChooser.addOption("L1 Cargo Side/Side Reversed", new AutoStartLevel1CargoSide2Reversed());
 
 		autonTaskChooser.addOption("L1 Cargo Front/Side", new AutoStartLevel1SideCargoFrontSide1());
 
 		autonTaskChooser.addOption("L1 Cargo Front/Front v2", new AutoStartLevel1SideCargoFront2v2());
-
-		autonTaskChooser.addOption("Auto Test", new AutoTest());
 
 		SmartDashboard.putData("Autonomous", autonTaskChooser);
 
@@ -126,6 +126,7 @@ public class Robot extends TimedRobot {
 		compressor.turnCompressorOff();
 		drive.setPipeline(1);
 		Robot.elevator.setRobotScoreMode();
+		drive.setAutomatic();
 	}
 
 	// Called every loop for all modes

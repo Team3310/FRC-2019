@@ -19,20 +19,16 @@ import frc.team3310.utility.lib.trajectory.timing.TimingConstraint;
 public class TrajectoryGenerator {
         public static enum RightLeftAutonSide {
                 RIGHT, LEFT
-        };
-
-        private static final double kMaxVelocity = 130.0;
-        private static final double kMaxAccel = 130.0;
-        private static final double kMaxCentripetalAccelElevatorDown = 110.0;
-        private static final double kMaxCentripetalAccel = 100.0;
-        private static final double kMaxVoltage = 10.0;
+        };        
         private static final double kFirstPathMaxVoltage = 9.0;
-        private static final double kFirstPathMaxAccel = 130.0;
-        private static final double kFirstPathMaxVel = 130.0;
+        private static final double kFirstPathMaxAccel = 108.0;
+        private static final double kFirstPathMaxVel = 108.0;
 
-        private static final double kSimpleSwitchMaxAccel = 140.0;
-        private static final double kSimpleSwitchMaxCentripetalAccel = 110.0;
-        private static final double kSimpleSwitchMaxVelocity = 144.0;
+        private static final double kMaxVoltage = 10.0;
+        private static final double kPathMaxAccel = 140.0;
+        private static final double kPathMaxCentripetalAccel = 110.0; 
+        private static final double kMaxCentripetalAccelElevatorDown = 120.0;
+        private static final double kPathMaxVelocity = 144.0;
 
         private static TrajectoryGenerator mInstance = new TrajectoryGenerator();
         private final DriveMotionPlanner mMotionPlanner;
@@ -102,14 +98,20 @@ public class TrajectoryGenerator {
 
         public static final Pose2d kStartReversedLevel2 = new Pose2d(42.25, -47.4, Rotation2d.fromDegrees(-180.0));
 
-        public static final Pose2d kFrontPlatfromPose = new Pose2d(new Translation2d(100, -48.4),
+        public static final Pose2d kFrontPlatfromPose = new Pose2d(new Translation2d(115, -48.4),
                         Rotation2d.fromDegrees(0.0));
 
-        public static final Pose2d kReversedFrontPlatfromPose = new Pose2d(new Translation2d(100, -47.4),
+        public static final Pose2d kReversedFrontPlatfromPose = new Pose2d(new Translation2d(115, -47.4),
                         Rotation2d.fromDegrees(-180.0));
 
         // Multipurposes Poses
-        public static final Pose2d kLoadingTrackPose = new Pose2d(new Translation2d(30.00, -135),
+        public static final Pose2d kLoadingTrackPose = new Pose2d(new Translation2d(40.00, -135),
+                        Rotation2d.fromDegrees(180.00));
+
+        public static final Pose2d kLoadingTrackFudgePose = new Pose2d(new Translation2d(40.00, -130),
+                        Rotation2d.fromDegrees(180.00));
+
+        public static final Pose2d kLoadingTrackFudgev2Pose = new Pose2d(new Translation2d(40.00, -140),
                         Rotation2d.fromDegrees(180.00));
 
         public static final Pose2d kLoadingGrabPose = new Pose2d(new Translation2d(0.00, -135),
@@ -117,7 +119,6 @@ public class TrajectoryGenerator {
 
         public static final Pose2d kLoadingMidPose = new Pose2d(new Translation2d(125, -135),
                         Rotation2d.fromDegrees(180.00));
-
 
         public static final Pose2d kLoadingMidFudgePose = new Pose2d(new Translation2d(125, -130),
                         Rotation2d.fromDegrees(180.00));
@@ -131,7 +132,6 @@ public class TrajectoryGenerator {
         public static final Pose2d kLoadingGrabFudgev2Pose = new Pose2d(new Translation2d(0, -140),
                         Rotation2d.fromDegrees(180.00));
 
-                        
 
         // Rocket Poses
         // Front
@@ -150,14 +150,14 @@ public class TrajectoryGenerator {
         public static final Pose2d kMissRocketBack = new Pose2d(new Translation2d(250, -100),
                         Rotation2d.fromDegrees(150.00)); // 135 = -45 facing feild
 
-        public static final Pose2d kRocketBackTurnPose = new Pose2d(new Translation2d(280, -125),
+        public static final Pose2d kRocketBackTurnPose = new Pose2d(new Translation2d(290, -125),
                 Rotation2d.fromDegrees(160.00));
 
         public static final Pose2d kRocketBackScorePose = new Pose2d(new Translation2d(258, -138),
                  Rotation2d.fromDegrees(-150.00)); // -150 = 30 facing wall
 
         public static final Pose2d kMidRocketBackPose = new Pose2d(new Translation2d(230, -100),
-                  Rotation2d.fromDegrees(180.00));
+                  Rotation2d.fromDegrees(178.00));
 
         // Cargo Poses
         // Front
@@ -182,7 +182,7 @@ public class TrajectoryGenerator {
         public static final Pose2d kCargoNearReversedPose = new Pose2d(new Translation2d(256.75, -80.5),
                         Rotation2d.fromDegrees(-180.00));
 
-        public static final Pose2d kCargoMidReversedPose = new Pose2d(new Translation2d(280.75, -80.5),
+        public static final Pose2d kCargoMidReversedPose = new Pose2d(new Translation2d(283.75, -80.5),
                         Rotation2d.fromDegrees(-180.00));
 
         public static final Pose2d kCargoFarReversedPose = new Pose2d(new Translation2d(304.75, -80.5),
@@ -201,6 +201,9 @@ public class TrajectoryGenerator {
                         Rotation2d.fromDegrees(181.00));
 
         public static final Pose2d kLoadingToCargoMid = new Pose2d(new Translation2d(280.75, -60.5),
+                        Rotation2d.fromDegrees(179.00));
+
+        public static final Pose2d kLoadingToMidPose = new Pose2d(new Translation2d(170, -80.5),
                         Rotation2d.fromDegrees(181.00));
 
         public static final Pose2d kLoadingToCargoFar = new Pose2d(new Translation2d(304.75, -60.5),
@@ -208,7 +211,6 @@ public class TrajectoryGenerator {
 
         public class TrajectorySet {
 
-                public final LazyLoadTrajectory platformToCargoSide;
                 public final LazyLoadTrajectory level1StartToRocketFront;
                 public final LazyLoadTrajectory level1StartReversedToRocketBack;
                 public final LazyLoadTrajectory level1StartReversedToCargoSide;
@@ -228,9 +230,15 @@ public class TrajectoryGenerator {
                 public final LazyLoadTrajectory loadingToCargoSide;
 
                 public final LazyLoadTrajectory driveStraight;
+                public final LazyLoadTrajectory driveStraightReversed;
+                public final LazyLoadTrajectory platformToCargoSide;
+                public final LazyLoadTrajectory platformToRocketBack;
+                public final LazyLoadTrajectory platformToRocketFront;
+                public final LazyLoadTrajectory platformToCargoFront;
+                public final LazyLoadTrajectory test;
+
 
                 private TrajectorySet() {
-                        platformToCargoSide             = new LazyLoadTrajectory(()->getPlatformToCargoSideReversed());
                         level1StartToRocketFront        = new LazyLoadTrajectory(()->getLevel1StartToRocketFront());
                         level1StartReversedToRocketBack = new LazyLoadTrajectory(()->getLevel1SideStartToRocketBack());
                         level1StartReversedToCargoSide  = new LazyLoadTrajectory(()->getLevel1StartToCargoSideReversed());
@@ -250,30 +258,39 @@ public class TrajectoryGenerator {
                         loadingToCargoSide              = new LazyLoadTrajectory(()->getLoadingToCargoSide());
 
                         driveStraight                   = new LazyLoadTrajectory(()->getLevel2StartDriveStraight());
+                        driveStraightReversed           = new LazyLoadTrajectory(()->getLevel2StartDriveStraightReversed());
+                        platformToCargoFront            = new LazyLoadTrajectory(()->getPlatformToCargoFront());
+                        platformToCargoSide             = new LazyLoadTrajectory(()->getPlatformToCargoSideReversed());
+                        platformToRocketFront           = new LazyLoadTrajectory(()->getPlatformToRocketFront());
+                        platformToRocketBack            = new LazyLoadTrajectory(()->getPlatformToRocketBackReversed());
+                        test                            = new LazyLoadTrajectory(()->test());
+
+
+
                 }
 
-                private Trajectory<TimedState<Pose2dWithCurvature>> getPlatformToCargoSideReversed() {
-                        List<Pose2d> waypoints = new ArrayList<>();
-                        waypoints.add(kReversedFrontPlatfromPose);
-                        waypoints.add(kCargoMidReversedPose);
-
-                        return generateTrajectory(true, waypoints,
-                                        Arrays.asList(new CentripetalAccelerationConstraint(
-                                                        kMaxCentripetalAccelElevatorDown)),
-                                        kSimpleSwitchMaxVelocity, 0, kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel,
-                                        kMaxVoltage);
-                }
-
-                private Trajectory<TimedState<Pose2dWithCurvature>> getLevel2StartDriveStraight() {
+                private Trajectory<TimedState<Pose2dWithCurvature>> getLevel2StartDriveStraightReversed() {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kStartReversedLevel2);
                         waypoints.add(kReversedFrontPlatfromPose);
 
                         return generateTrajectory(true, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
-                                                        kSimpleSwitchMaxCentripetalAccel)),
-                                        0, kSimpleSwitchMaxVelocity, kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel,
-                                        kMaxVoltage);
+                                                        kPathMaxCentripetalAccel)),
+                                        0, kFirstPathMaxVel, kFirstPathMaxVel, kFirstPathMaxAccel,
+                                        kFirstPathMaxVoltage);
+                }
+
+                private Trajectory<TimedState<Pose2dWithCurvature>> getLevel2StartDriveStraight() {
+                        List<Pose2d> waypoints = new ArrayList<>();
+                        waypoints.add(kSideStartLevel2);
+                        waypoints.add(kFrontPlatfromPose);
+
+                        return generateTrajectory(false, waypoints,
+                                        Arrays.asList(new CentripetalAccelerationConstraint(
+                                                        kPathMaxCentripetalAccel)),
+                                        0, kFirstPathMaxVel, kFirstPathMaxVel, kFirstPathMaxAccel,
+                                        kFirstPathMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getLevel1StartToRocketFront() {
@@ -284,8 +301,8 @@ public class TrajectoryGenerator {
 
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
-                                                        kSimpleSwitchMaxCentripetalAccel)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                                        kPathMaxCentripetalAccel)),
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getLevel1SideStartToRocketBack() {
@@ -296,7 +313,7 @@ public class TrajectoryGenerator {
                         return generateTrajectory(true, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getLevel1StartToCargoSideReversed() {
@@ -307,7 +324,7 @@ public class TrajectoryGenerator {
                         return generateTrajectory(true, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getLevel1StartToCargoFront() {
@@ -318,8 +335,8 @@ public class TrajectoryGenerator {
 
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
-                                                        kSimpleSwitchMaxCentripetalAccel)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                                        kPathMaxCentripetalAccel)),
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getRocketFrontToTurn1() {
@@ -329,8 +346,8 @@ public class TrajectoryGenerator {
 
                         return generateTrajectory(true, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
-                                                        kSimpleSwitchMaxCentripetalAccel)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                                        kPathMaxCentripetalAccel)),
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getLoadingToRocketBack() {
@@ -341,8 +358,8 @@ public class TrajectoryGenerator {
 
                         return generateTrajectory(true, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
-                                                        kSimpleSwitchMaxCentripetalAccel)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                                        kPathMaxCentripetalAccel)),
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getRocketBackToLoading() {
@@ -355,7 +372,7 @@ public class TrajectoryGenerator {
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getTurn3ToRocketBack() {
@@ -365,8 +382,8 @@ public class TrajectoryGenerator {
 
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
-                                                        kSimpleSwitchMaxCentripetalAccel)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                                        kPathMaxCentripetalAccel)),
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getCargoFrontToTurn1() {
@@ -376,8 +393,8 @@ public class TrajectoryGenerator {
 
                         return generateTrajectory(true, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
-                                                        kSimpleSwitchMaxCentripetalAccel)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                                        kPathMaxCentripetalAccel)),
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getCargoFrontTurn1ToLoading() {
@@ -388,7 +405,7 @@ public class TrajectoryGenerator {
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getRocketFrontTurnToLoading() {
@@ -399,18 +416,19 @@ public class TrajectoryGenerator {
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getLoadingToCargoSide() {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kLoadingGrabPose);
+                        waypoints.add(kLoadingToMidPose);
                         waypoints.add(kLoadingToCargoNear);
 
                         return generateTrajectory(true, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getLoadingToCargoFrontTrack2() {
@@ -422,7 +440,7 @@ public class TrajectoryGenerator {
                         return generateTrajectory(true, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getCargoTrack2ToCargoScore2Pose() {
@@ -433,43 +451,103 @@ public class TrajectoryGenerator {
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getCargoFarBackToLoading() {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kCargoFarFaceLoadingPose);
                         waypoints.add(kLoadingMidFudgev2Pose);
-                        waypoints.add(kLoadingGrabFudgev2Pose);
+                        waypoints.add(kLoadingTrackFudgev2Pose);
 
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        96, 0, kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                        0, 24, kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getCargoMidBackToLoading() {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kCargoMidFaceLoadingPose);
-                        waypoints.add(kLoadingMidFudgev2Pose);
-                        waypoints.add(kLoadingGrabFudgev2Pose);
+                        waypoints.add(kLoadingMidPose);
+                        waypoints.add(kLoadingGrabPose);
 
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        96, 0, kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                         kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
                 }
                 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getCargoNearBackToLoading() {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kCargoNearFaceLoadingPose);
-                        waypoints.add(kLoadingMidFudgev2Pose);
+                        waypoints.add(kLoadingGrabFudgev2Pose);
                         waypoints.add(kLoadingGrabFudgev2Pose);
 
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        96, 0, kSimpleSwitchMaxVelocity, kSimpleSwitchMaxAccel, kMaxVoltage);
+                                        0, 24, kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
+                }
+
+                private Trajectory<TimedState<Pose2dWithCurvature>> getPlatformToCargoSideReversed() {
+                        List<Pose2d> waypoints = new ArrayList<>();
+                        waypoints.add(kReversedFrontPlatfromPose);
+                        waypoints.add(kCargoMidReversedPose);
+
+                        return generateTrajectory(true, waypoints,
+                                        Arrays.asList(new CentripetalAccelerationConstraint(
+                                                        kMaxCentripetalAccelElevatorDown)),
+                                        kFirstPathMaxVel, 0, kPathMaxVelocity, kPathMaxAccel,
+                                        kMaxVoltage);
+                }
+
+                private Trajectory<TimedState<Pose2dWithCurvature>> getPlatformToRocketBackReversed() {
+                        List<Pose2d> waypoints = new ArrayList<>();
+                        waypoints.add(kReversedFrontPlatfromPose);
+                        waypoints.add(kRocketBackTurnPose);
+
+                        return generateTrajectory(true, waypoints,
+                                        Arrays.asList(new CentripetalAccelerationConstraint(
+                                                        kMaxCentripetalAccelElevatorDown)),
+                                        kFirstPathMaxVel, 0, kPathMaxVelocity, kPathMaxAccel,
+                                        kMaxVoltage);
+                }
+
+                private Trajectory<TimedState<Pose2dWithCurvature>> getPlatformToCargoFront() {
+                        List<Pose2d> waypoints = new ArrayList<>();
+                        waypoints.add(kFrontPlatfromPose);
+                        waypoints.add(kCargoFrontPose);
+
+                        return generateTrajectory(false, waypoints,
+                                        Arrays.asList(new CentripetalAccelerationConstraint(
+                                                        kMaxCentripetalAccelElevatorDown)),
+                                        kFirstPathMaxVel, 0, kPathMaxVelocity, kPathMaxAccel,
+                                        kMaxVoltage);
+                }
+
+                private Trajectory<TimedState<Pose2dWithCurvature>> getPlatformToRocketFront() {
+                        List<Pose2d> waypoints = new ArrayList<>();
+                        waypoints.add(kFrontPlatfromPose);
+                        waypoints.add(kRocketFrontTrackPose);
+
+                        return generateTrajectory(false, waypoints,
+                                        Arrays.asList(new CentripetalAccelerationConstraint(
+                                                        kMaxCentripetalAccelElevatorDown)),
+                                        kFirstPathMaxVel, 0, kPathMaxVelocity, kPathMaxAccel,
+                                        kMaxVoltage);
+                }
+
+                private Trajectory<TimedState<Pose2dWithCurvature>> test() {
+                        List<Pose2d> waypoints = new ArrayList<>();
+                        waypoints.add(kLoadingGrabPose);
+                        waypoints.add(kLoadingToCargoNear);
+
+                        return generateTrajectory(true, waypoints,
+                                        Arrays.asList(new CentripetalAccelerationConstraint(
+                                                        kMaxCentripetalAccelElevatorDown)),
+                                        kFirstPathMaxVel, 0, kPathMaxVelocity, kPathMaxAccel,
+                                        kMaxVoltage);
                 }
         }
 }

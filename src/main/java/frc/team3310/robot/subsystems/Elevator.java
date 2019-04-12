@@ -49,7 +49,7 @@ public class Elevator extends Subsystem implements Loop {
 	// Defined speeds
 	public static final double TEST_SPEED_UP = 0.3;
 	public static final double TEST_SPEED_DOWN = -0.2;
-	public static final double AUTO_ZERO_SPEED = -0.25;
+	public static final double AUTO_ZERO_SPEED = -0.35;
 	public static final double JOYSTICK_TICKS_PER_MS_ELEVATOR = 0.5 * INCHES_TO_ENCODER_TICKS_ELEVATOR;
 	public static final double JOYSTICK_TICKS_PER_MS_GGG = JOYSTICK_TICKS_PER_MS_ELEVATOR
 			/ INCHES_TO_ENCODER_TICKS_ELEVATOR * INCHES_TO_ENCODER_TICKS_GGG * 0.8;
@@ -118,10 +118,10 @@ public class Elevator extends Subsystem implements Loop {
 
 			maxRevElevatorSensor = new DigitalInput(RobotMap.ELEVATOR_MAX_REV_SENSOR_DIO_ID);
 			minRevElevatorSensor = new DigitalInput(RobotMap.ELEVATOR_MIN_REV_SENSOR_DIO_ID);
-			climbFrontTop = new DigitalInput(RobotMap.CLIMB_FRONT_TOP_SENSOR_DIO_ID);
-			climbFrontBot = new DigitalInput(RobotMap.CLIMB_FRONT_BOT_SENSOR_DIO_ID);
-			climbRearTop = new DigitalInput(RobotMap.CLIMB_REAR_TOP_SENSOR_DIO_ID);
-			climbRearBot = new DigitalInput(RobotMap.CLIMB_REAR_BOT_SENSOR_DIO_ID);
+			// climbFrontTop = new DigitalInput(RobotMap.CLIMB_FRONT_TOP_SENSOR_DIO_ID);
+			// climbFrontBot = new DigitalInput(RobotMap.CLIMB_FRONT_BOT_SENSOR_DIO_ID);
+			// climbRearTop = new DigitalInput(RobotMap.CLIMB_REAR_TOP_SENSOR_DIO_ID);
+			// climbRearBot = new DigitalInput(RobotMap.CLIMB_REAR_BOT_SENSOR_DIO_ID);
 			platfromDetectFront = new DigitalInput(RobotMap.PLATFORM_DETECT_FRONT_SENSOR_DIO_ID);
 			platformDetectRear = new DigitalInput(RobotMap.PLATFORM_DETECT_REAR_SENSROR_DIO_ID);
 
@@ -316,21 +316,21 @@ public class Elevator extends Subsystem implements Loop {
 		return !minRevElevatorSensor.get();
 	}
 
-	public boolean getClimbFrontTop() {
-		return !climbFrontTop.get();
-	}
+	// public boolean getClimbFrontTop() {
+	// 	return !climbFrontTop.get();
+	// }
 
-	public boolean getClimbFrontBot() {
-		return climbFrontBot.get();
-	}
+	// public boolean getClimbFrontBot() {
+	// 	return climbFrontBot.get();
+	// }
 
-	public boolean getClimbRearTop() {
-		return !climbRearTop.get();
-	}
+	// public boolean getClimbRearTop() {
+	// 	return !climbRearTop.get();
+	// }
 
-	public boolean getClimbRearBot() {
-		return climbRearBot.get();
-	}
+	// public boolean getClimbRearBot() {
+	// 	return climbRearBot.get();
+	// }
 
 	public boolean getPlatformDetectFront() {
 		return platfromDetectFront.get();
@@ -596,10 +596,10 @@ public class Elevator extends Subsystem implements Loop {
 				SmartDashboard.putNumber("SensorPos", motor1.getSelectedSensorPosition());
 				SmartDashboard.putNumber("MotorOutputPercent", motor1.getMotorOutputPercent());
 				SmartDashboard.putNumber("ClosedLoopError", motor1.getClosedLoopError());
-				SmartDashboard.putBoolean("Climb Front Top = ", getClimbFrontTop());
-				SmartDashboard.putBoolean("Climb Front Bot = ", getClimbFrontBot());
-				SmartDashboard.putBoolean("Climb Rear Top = ", getClimbFrontTop());
-				SmartDashboard.putBoolean("Climb Rear Bot = ", getClimbRearBot());
+				// SmartDashboard.putBoolean("Climb Front Top = ", getClimbFrontTop());
+				// SmartDashboard.putBoolean("Climb Front Bot = ", getClimbFrontBot());
+				// SmartDashboard.putBoolean("Climb Rear Top = ", getClimbFrontTop());
+				// SmartDashboard.putBoolean("Climb Rear Bot = ", getClimbRearBot());
 				SmartDashboard.putNumber("Climb Position Inches", getClimbPositionInches());
 				SmartDashboard.putBoolean("Elevator Max Switch = ", getMaxElevatorSensor());
 				SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
@@ -613,7 +613,6 @@ public class Elevator extends Subsystem implements Loop {
 			SmartDashboard.putBoolean("Elevator Min Switch = ", getMinElevatorSensor());
 			SmartDashboard.putBoolean("Platform Detect Front = ", getPlatformDetectFront());
 			SmartDashboard.putBoolean("Plaform Detect Bot = ", getPlatformDetectRear());
-			SmartDashboard.putNumber("Climb Position Inches", getClimbPositionInches());
 			
 
 
