@@ -13,8 +13,8 @@ import frc.team3310.auto.commands.DrivePathCameraTrack;
 
 public class AutoCameraTrackWhenCrossXBoundary extends CommandGroup {
 
-  public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double velocityScale, double finishedAtLimeY) {
+  public AutoCameraTrackWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double velocityScale, double finishedAtLimeY, double ultrasonicDistance) {
     addSequential(new WaitUntilCrossXBoundary(xBoundary, movingDirection));
-    addSequential(new DrivePathCameraTrack(velocityScale, finishedAtLimeY));
+    addSequential(new DrivePathCameraTrack(velocityScale, finishedAtLimeY, ultrasonicDistance));
   }
 }

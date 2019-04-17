@@ -49,7 +49,7 @@ public class Elevator extends Subsystem implements Loop {
 	// Defined speeds
 	public static final double TEST_SPEED_UP = 0.3;
 	public static final double TEST_SPEED_DOWN = -0.2;
-	public static final double AUTO_ZERO_SPEED = -0.35;
+	public static final double AUTO_ZERO_SPEED = -0.3;
 	public static final double JOYSTICK_TICKS_PER_MS_ELEVATOR = 0.5 * INCHES_TO_ENCODER_TICKS_ELEVATOR;
 	public static final double JOYSTICK_TICKS_PER_MS_GGG = JOYSTICK_TICKS_PER_MS_ELEVATOR
 			/ INCHES_TO_ENCODER_TICKS_ELEVATOR * INCHES_TO_ENCODER_TICKS_GGG * 0.8;

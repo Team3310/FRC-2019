@@ -295,6 +295,17 @@
               "_source0": "network_table:///SmartDashboard/Ult",
               "_title": "Ult"
             }
+          },
+          "9,6": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Cam Vel",
+              "_title": "Cam Vel"
+            }
           }
         }
       }

@@ -11,16 +11,17 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 	private final double PIPELINE_TIMEOUT = 0.02;
 	private boolean isTrackFinished = false;
 	private double finishAtLimeY = Constants.finishedAtCargoLimeY;
-	// private double ultraSonicDistance = 
+	private double ultraSonicDistance = Constants.finishedAtCargoUlt;
 	private int invalidCounter = 0;
 
 	public DrivePathCameraTrack() {
 		requires(Robot.drive);
 	}
 
-	public DrivePathCameraTrack(double velocityScale, double finishAtLimeY) {
+	public DrivePathCameraTrack(double velocityScale, double finishAtLimeY, double ultraSonicDistance) {
 		this.velocityScale = velocityScale;
 		this.finishAtLimeY = finishAtLimeY;
+		this.ultraSonicDistance = ultraSonicDistance;
 		requires(Robot.drive);
 	}
 
@@ -50,10 +51,10 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 				invalidCounter = 0;
 			}
 		
-			// isTrackFinished = (Robot.drive.isLimeValid == false && invalidCounter > 30)
-			// 				 || (Robot.drive.limeY < finishAtLimeY) || Robot.drive.getUltrasonicDistance() < 11;
+			 isTrackFinished = (Robot.drive.limeY < finishAtLimeY) || Robot.drive.getUltrasonicDistance() <= ultraSonicDistance;
 							 
-			isTrackFinished = Robot.drive.getUltrasonicDistance() < 11;
+			// isTrackFinished = Robot.drive.getUltrasonicDistance() < Constants.finishedAtCargoUlt;
+			//(Robot.drive.isLimeValid == false && invalidCounter > 50)
 	
 			System.out.println(", valid = " + Robot.drive.isLimeValid + ", Ultrasonic Distance =" + Robot.drive.getUltrasonicDistance());
 

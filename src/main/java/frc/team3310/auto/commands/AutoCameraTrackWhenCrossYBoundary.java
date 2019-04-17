@@ -9,13 +9,12 @@ package frc.team3310.auto.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team3310.auto.commands.WaitUntilCrossYBoundary.MovingYDirection;
-import frc.team3310.robot.commands.DriveSetSpeed;
 
 public class AutoCameraTrackWhenCrossYBoundary extends CommandGroup {
 
   public AutoCameraTrackWhenCrossYBoundary(double yBoundaryForRightSideAuton, MovingYDirection movingDirection,
-      double velocityScale, double finishedAtLimeY) {
+      double velocityScale, double finishedAtLimeY, double ultrasonicDistance) {
     addSequential(new WaitUntilCrossYBoundary(yBoundaryForRightSideAuton, movingDirection));
-    addSequential(new DrivePathCameraTrack(velocityScale, finishedAtLimeY));
+    addSequential(new DrivePathCameraTrack(velocityScale, finishedAtLimeY, ultrasonicDistance));
   }
 }

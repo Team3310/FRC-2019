@@ -10,6 +10,7 @@ package frc.team3310.robot;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.InternalButton;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team3310.robot.commands.DriveForwardClimbForks;
 import frc.team3310.robot.commands.DriveSetSpeed;
 import frc.team3310.robot.commands.EjectBallFast;
 import frc.team3310.robot.commands.EjectBallSlow;
@@ -18,9 +19,9 @@ import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.commands.ElevatorClimbBoost;
+import frc.team3310.robot.commands.ElevatorClimbEndGameForks;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl2;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl3;
-import frc.team3310.robot.commands.ElevatorClimbEndGameSuccLvl2;
 import frc.team3310.robot.commands.ElevatorClimbEndGameSuccLvl3;
 import frc.team3310.robot.commands.ElevatorClimbRaiseLegs;
 import frc.team3310.robot.commands.ElevatorHatchLevel;
@@ -33,9 +34,8 @@ import frc.team3310.robot.commands.IntakeBallManual;
 import frc.team3310.robot.commands.IntakeHatch;
 import frc.team3310.robot.commands.IntakeHatchArms;
 import frc.team3310.robot.commands.OverrideClimb;
-import frc.team3310.robot.commands.ResetSensor;
-import frc.team3310.robot.commands.SetRobotClimbMode;
 import frc.team3310.robot.commands.SwitchCameraPipeline;
+import frc.team3310.robot.commands.ToggleForks;
 import frc.team3310.robot.commands.TurnClimbPumpOff;
 import frc.team3310.robot.commands.TurnClimbPumpOn;
 import frc.team3310.robot.commands.TurnCompressorOff;
@@ -43,6 +43,7 @@ import frc.team3310.robot.commands.TurnCompressorOn;
 import frc.team3310.robot.controller.GameController;
 import frc.team3310.robot.controller.Playstation;
 import frc.team3310.robot.controller.Xbox;
+import frc.team3310.robot.subsystems.Climb.ForkShiftState;
 import frc.team3310.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.team3310.robot.subsystems.Intake.BallArmState;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
@@ -63,7 +64,7 @@ public class OI {
 
   private OI() {
     // Driver controller
-    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Playstation());
+    m_driver = new GameController(RobotMap.DRIVER_JOYSTICK_1_USB_ID, new Xbox());
     m_operator = new GameController(RobotMap.OPERATOR_JOYSTICK_1_USB_ID, new Xbox());
 
     // Driver Controls
@@ -84,14 +85,15 @@ public class OI {
     Button climbSuccLvl3 = m_driver.getDPadUp();
     climbSuccLvl3.whenPressed(new ElevatorClimbEndGameSuccLvl3());
 
-    // Button climbSuccLvl2 = m_driver.getDPadDown();
-    // climbSuccLvl2.whenPressed(new ElevatorClimbEndGameSuccLvl2());
+    Button toggleForks = m_driver.getDPadLeft();
+    toggleForks.whenPressed(new ToggleForks(ForkShiftState.OUT));
+    toggleForks.whenReleased(new ToggleForks(ForkShiftState.IN));
 
-    // Button climbMode = m_driver.getDPadLeft();
-    // climbMode.whenPressed(new SetRobotClimbMode());
+    Button raiseLegs = m_driver.getDPadRight();
+    raiseLegs.whenPressed(new ElevatorClimbRaiseLegs());
 
-    // Button raiseLegs = m_driver.getDPadRight();
-    // raiseLegs.whenPressed(new ElevatorClimbRaiseLegs());
+    Button climbForks = m_driver.getDPadDown();
+    climbForks.whenPressed(new ElevatorClimbEndGameForks());
 
     Button IntakeHatchManualD = m_driver.getLeftTrigger();
     IntakeHatchManualD.whenReleased(new IntakeHatchArms(HatchArmState.IN));
@@ -100,6 +102,9 @@ public class OI {
     Button switchCameraPipeline = m_driver.getRightTrigger();
     switchCameraPipeline.whenPressed(new SwitchCameraPipeline(0));
     switchCameraPipeline.whenReleased(new SwitchCameraPipeline(1));
+
+    Button driveClimb = m_driver.getRightBumper();
+    driveClimb.whenPressed(new DriveForwardClimbForks());
 
     Button overrideClimb = m_driver.getShareButton();
     overrideClimb.whenPressed(new OverrideClimb());

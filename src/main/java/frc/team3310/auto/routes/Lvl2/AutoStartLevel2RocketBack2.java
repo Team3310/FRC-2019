@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team3310.auto.routes;
+package frc.team3310.auto.routes.Lvl2;
 
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team3310.auto.commands.AutoCameraTrackWhenCrossXBoundary;
@@ -20,37 +20,41 @@ import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
 import frc.team3310.robot.commands.IntakeHatch;
 import frc.team3310.robot.commands.IntakeHatchArms;
-import frc.team3310.robot.commands.ResetRobotToLoadingPose;
+import frc.team3310.robot.commands.ResetSensor;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
 import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
 
-public class AutoStartLevel1RocketBack2 extends LazyLoadCommandGroup {
+public class AutoStartLevel2RocketBack2 extends LazyLoadCommandGroup {
   /**
    * Add your docs here.
    */
-  public AutoStartLevel1RocketBack2() {
-    addSequential(new DriveMotionCommand(registerTrajectory(
-        TrajectoryGenerator.getInstance().getTrajectorySet().level1StartReversedToRocketBack), true));
-    addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_1));
+  public AutoStartLevel2RocketBack2() {
+    addParallel(new ResetSensor());
+    // addSequential(new DriveMotionCommand(
+        // registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().driveStraightReversed), true));
+    // addSequential(new DriveMotionCommand(
+        // registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().platformToRocketBack), false, true));
+    addParallel(new ElevatorSetPositionMM(Constants.AUTO_ROCKET_LEVEL_1));
     addSequential(new DriveAbsoluteTurnMP(30, 240, MPSoftwareTurnType.TANK));
-    addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
-    addSequential(new WaitCommand("Eject Pause", .25));
+    addSequential(
+        new DrivePathCameraTrackWithVelocity(1.5, Constants.finishedAtRocketLimeY, Constants.finishedAtRocketLimeY));
     addSequential(new EjectHatch());
+    addSequential(new WaitCommand("Eject Pause", .35));
     addSequential(new DriveVelocityWithDistance(-60, -32));
     addParallel(new IntakeHatch());
     addSequential(new DriveAbsoluteTurnMP(-30, 240, MPSoftwareTurnType.TANK));
-    addParallel(
-      new AutoCameraTrackWhenCrossXBoundary(75, MovingXDirection.Negative, 0.55, Constants.finishedAtCargoLimeY)); // 100
-      addSequential(new DriveMotionCommand(registerTrajectory(
-        TrajectoryGenerator.getInstance().getTrajectorySet().rocketBackToLoading), false));
-
+    addParallel(new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.15,
+        Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt)); // 100
+    addSequential(new DriveMotionCommand(
+        registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().rocketBackToLoading), false));
     addSequential(new IntakeHatchArms(HatchArmState.IN));
-    addParallel(new WaitCommand("Grab Break", .25));
-    addSequential(new DriveMotionCommand(registerTrajectory(
-      TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack), false));
-    addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_2));
+    addParallel(new WaitCommand("Grab Break", .5));
+    addSequential(new DriveMotionCommand(
+        registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack), false, true));
+    addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_3));
     addSequential(new DriveAbsoluteTurnMP(30, 240, MPSoftwareTurnType.TANK));
-    addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtRocketLimeY));
+    addSequential(
+        new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtRocketLimeY, Constants.finishedAtRocketUlt));
   }
 }

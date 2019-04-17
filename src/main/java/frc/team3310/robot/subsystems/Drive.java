@@ -167,6 +167,7 @@ public class Drive extends Subsystem implements Loop {
 
 	private double mLastValidGyroAngle;
 	private double mCameraVelocity = 0;
+	private double mCameraSetVelocity = 0;
 	private double kCamera = 0.04; // .7
 	private double kCameraDriveClose = 0.072; // .04
 	private double kCameraDriveMid = 0.043; // .04
@@ -928,6 +929,10 @@ public class Drive extends Subsystem implements Loop {
 		}
 	}
 
+	public void setMiddleDriveSpeed(double speed){
+		middleDrive.set(ControlMode.PercentOutput, speed);
+	}
+
 	public void setDriveHold(boolean status) {
 		if (status) {
 			setControlMode(DriveControlMode.HOLD);
@@ -1134,9 +1139,16 @@ public class Drive extends Subsystem implements Loop {
 		updateLimelight();
 		double deltaVelocity = 0;
 
+		// Ramp velocity down to scaled velocity
+		if (mCameraVelocity > mCameraSetVelocity) {
+			mCameraVelocity -= 1;
+//			System.out.println("Camera velocity = " + mCameraVelocity);
+		}
+
 		if (isLimeValid) {
 			deltaVelocity = limeX * kCamera * mCameraVelocity;
 			mLastValidGyroAngle = getGyroAngleDeg();
+			
 			// System.out.println("Valid lime angle = " + limeX);
 		} else {
 			deltaVelocity = (getGyroAngleDeg() - mLastValidGyroAngle) * kCamera * mCameraVelocity;
@@ -1155,7 +1167,8 @@ public class Drive extends Subsystem implements Loop {
 	public synchronized void setCameraTrack(double velocityScale) {
 		// double straightVelocity = (mPeriodicIO.left_velocity_ticks_per_100ms
 		// + mPeriodicIO.right_velocity_ticks_per_100ms) / 2;
-		double straightVelocity = velocityScale * (leftDrive1.getVelocityWorld() + rightDrive1.getVelocityWorld()) / 2;
+		double straightVelocity = (leftDrive1.getVelocityWorld() + rightDrive1.getVelocityWorld()) / 2;
+		mCameraSetVelocity = velocityScale * straightVelocity;
 		setFinished(false);
 		// configureTalonsForSpeedControl();
 		driveControlMode = DriveControlMode.CAMERA_TRACK;
@@ -1169,6 +1182,7 @@ public class Drive extends Subsystem implements Loop {
 		driveControlMode = DriveControlMode.CAMERA_TRACK;
 		mLastValidGyroAngle = getGyroAngleDeg();
 		mCameraVelocity = straightVelocity;
+		mCameraSetVelocity = mCameraVelocity;
 	}
 
 	public boolean onTarget() {
@@ -1419,8 +1433,7 @@ public class Drive extends Subsystem implements Loop {
 			SmartDashboard.putNumber("Lime Y", limeY);
 			SmartDashboard.putNumber("Lime X", limeX);
 			SmartDashboard.putNumber("Ult", getUltrasonicDistance());
-	
-
+			SmartDashboard.putNumber("Cam Vel", mCameraVelocity);
 
 			if (getHeading() != null) {
 				// SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());

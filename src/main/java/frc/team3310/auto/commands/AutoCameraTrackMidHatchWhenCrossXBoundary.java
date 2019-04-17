@@ -15,9 +15,9 @@ import frc.team3310.robot.commands.ElevatorSetPositionMM;
 
 public class AutoCameraTrackMidHatchWhenCrossXBoundary extends CommandGroup {
 
-  public AutoCameraTrackMidHatchWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double velocityScale, double finishedAtLimeY) {
+  public AutoCameraTrackMidHatchWhenCrossXBoundary(double xBoundary, MovingXDirection movingDirection, double velocityScale, double finishedAtLimeY, double ultrasonicDistance) {
     addSequential(new WaitUntilCrossXBoundary(xBoundary, movingDirection));
     addSequential(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_2));
-    addSequential(new DrivePathCameraTrack(velocityScale, finishedAtLimeY));
+    addSequential(new DrivePathCameraTrack(velocityScale, finishedAtLimeY,ultrasonicDistance ));
   }
 }

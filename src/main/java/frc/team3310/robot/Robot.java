@@ -7,8 +7,6 @@
 
 package frc.team3310.robot;
 
-import edu.wpi.first.wpilibj.Timer;
-
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -18,23 +16,24 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team3310.auto.commands.LazyLoadCommandGroup;
-import frc.team3310.auto.routes.AutoStartLevel1CargoSide2Reversed;
-import frc.team3310.auto.routes.AutoStartLevel1RocketBack2;
-import frc.team3310.auto.routes.AutoStartLevel1SideCargoFront2v2;
-import frc.team3310.auto.routes.AutoStartLevel1SideCargoFrontSide1;
-import frc.team3310.auto.routes.AutoStartLevel1SideRocketFrontBackLow;
-import frc.team3310.auto.routes.AutoStartLevel2CargoSide2;
-import frc.team3310.auto.routes.AutoTest;
+import frc.team3310.auto.routes.Lvl1.AutoStartLevel1CargoSide2Reversed;
+import frc.team3310.auto.routes.Lvl1.AutoStartLevel1RocketBack2;
+import frc.team3310.auto.routes.Lvl1.AutoStartLevel1SideCargoFront2v2;
+import frc.team3310.auto.routes.Lvl1.AutoStartLevel1SideCargoFrontSide1;
+import frc.team3310.auto.routes.Lvl1.AutoStartLevel1SideRocketFrontBackLow;
+import frc.team3310.auto.routes.Lvl2.AutoStartLevel2CargoSide2;
 import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.loops.Looper;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.paths.TrajectoryGenerator.RightLeftAutonSide;
 import frc.team3310.robot.subsystems.AirCompressor;
+import frc.team3310.robot.subsystems.Climb;
 import frc.team3310.robot.subsystems.Drive;
 import frc.team3310.robot.subsystems.Drive.DriveControlMode;
 import frc.team3310.robot.subsystems.Elevator;
 import frc.team3310.robot.subsystems.Intake;
 import frc.team3310.robot.subsystems.RobotStateEstimator;
+import frc.team3310.robot.subsystems.Climb.ArmShiftState;
 import frc.team3310.utility.lib.control.RobotStatus;
 
 public class Robot extends TimedRobot {
@@ -44,6 +43,7 @@ public class Robot extends TimedRobot {
 	public static final Drive drive = Drive.getInstance();
 	public static final Elevator elevator = Elevator.getInstance();
 	public static final Intake intake = Intake.getInstance();
+	public static final Climb climb = Climb.getInstance();
 	public static final AirCompressor compressor = AirCompressor.getInstance();
 	public static final RobotStateEstimator estimator = RobotStateEstimator.getInstance();
 	public static final TrajectoryGenerator trajectoryGenerator = TrajectoryGenerator.getInstance();
@@ -102,6 +102,8 @@ public class Robot extends TimedRobot {
 
 		autonTaskChooser.setDefaultOption("None", null);
 
+		autonTaskChooser.addOption("L2 Cargo Side/Side Reversed ", new AutoStartLevel2CargoSide2());
+
 		autonTaskChooser.addOption("L1 Rocket Front/Back Low", new AutoStartLevel1SideRocketFrontBackLow());
 
 		autonTaskChooser.addOption("L1 Rocket Back/Back", new AutoStartLevel1RocketBack2());
@@ -127,6 +129,7 @@ public class Robot extends TimedRobot {
 		drive.setPipeline(1);
 		Robot.elevator.setRobotScoreMode();
 		drive.setAutomatic();
+		climb.setSuccArmState(ArmShiftState.IN);
 	}
 
 	// Called every loop for all modes

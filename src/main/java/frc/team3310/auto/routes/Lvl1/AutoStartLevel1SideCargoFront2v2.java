@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team3310.auto.routes;
+package frc.team3310.auto.routes.Lvl1;
 
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj.command.WaitForChildren;
@@ -14,7 +14,6 @@ import frc.team3310.auto.commands.DriveMotionCommand;
 import frc.team3310.auto.commands.LazyLoadCommandGroup;
 import frc.team3310.auto.commands.WaitUntilCrossXBoundary.MovingXDirection;
 import frc.team3310.robot.Constants;
-import frc.team3310.robot.commands.DriveSetJoystickMode;
 import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
 import frc.team3310.robot.commands.IntakeHatch;
@@ -27,10 +26,10 @@ public class AutoStartLevel1SideCargoFront2v2 extends LazyLoadCommandGroup {
          * Add your docs here.
          */
         public AutoStartLevel1SideCargoFront2v2() {
-                addParallel(new ElevatorSetPositionMM(Constants.AUTO_HATCH_LEVEL_1));
+                addParallel(new ElevatorSetPositionMM(Constants.AUTO_CARGO_LEVEL_1));
 
                 addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive, 0.55,
-                                Constants.finishedAtCargoLimeY));
+                                Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoFront), true));
                 addSequential(new WaitForChildren());
@@ -42,8 +41,8 @@ public class AutoStartLevel1SideCargoFront2v2 extends LazyLoadCommandGroup {
                                                 TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontToTurn1),
                                 false));
 
-                addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.5,
-                                Constants.finishedAtCargoLimeY), 4);
+                addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.1,
+                                Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt), 4);
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontTurn1ToLoading), false));
                 addSequential(new WaitForChildren());
@@ -54,7 +53,7 @@ public class AutoStartLevel1SideCargoFront2v2 extends LazyLoadCommandGroup {
                                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoFrontTrack2v2),
                                 false));
                 addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive, 0.6,
-                                Constants.finishedAtCargoLimeY));
+                                Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().track2v2PoseToCargo2), false));
                 addSequential(new WaitForChildren());

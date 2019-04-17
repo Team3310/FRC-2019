@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team3310.auto.routes;
+package frc.team3310.auto.routes.Lvl2;
 
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team3310.auto.commands.AutoCameraTrackWhenCrossXBoundary;
@@ -33,27 +33,27 @@ public class AutoStartLevel2CargoSide2 extends LazyLoadCommandGroup {
         // Backward
         addParallel(new ResetSensor());
         addSequential(new DriveMotionCommand(
-                registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().driveStraightReversed), true));
+                registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().driveStraight), true));
         addSequential(new DriveMotionCommand(
-                registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().platformToCargoSide), false));
-        addParallel(new ElevatorSetPositionMM(Constants.AUTO_HATCH_LEVEL_1));
-        addSequential(new DriveAbsoluteTurnMP(-90, 240, MPSoftwareTurnType.TANK));
-        addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
-        addSequential(new WaitCommand("Eject Pause", .25));
+                registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().platformToCargoSide), false, true));
+        addParallel(new ElevatorSetPositionMM(Constants.AUTO_CARGO_LEVEL_1));
+        addSequential(new DriveAbsoluteTurnMP(90, 240, MPSoftwareTurnType.TANK));
+        addSequential(new DrivePathCameraTrackWithVelocity(2.5, Constants.finishedAtCargoLimeY,Constants.finishedAtCargoUlt));
         addSequential(new EjectHatch());
         addSequential(new DriveVelocityWithDistance(-60, -18));
         addParallel(new IntakeHatch());
-        addSequential(new DriveAbsoluteTurnMP(10, 240, MPSoftwareTurnType.TANK));
-        addParallel(new AutoCameraTrackWhenCrossXBoundary(70, MovingXDirection.Negative, 0.55,
-                Constants.finishedAtCargoLimeY)); // 100
+        addSequential(new DriveAbsoluteTurnMP(190, 240, MPSoftwareTurnType.TANK));
+        addParallel(new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.3,
+                Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt)); // 100
         addSequential(new DriveMotionCommand(
                 registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().cargoBackMidToLoading), false));
-
         addSequential(new IntakeHatchArms(HatchArmState.IN));
         addSequential(new WaitCommand("Grab Break", .25));
         addSequential(new DriveMotionCommand(
-                registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSide), false));
-        addSequential(new DriveAbsoluteTurnMP(-90, 240, MPSoftwareTurnType.TANK));
-        addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
+                registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSideLvl2), false, true));
+        addSequential(new DriveAbsoluteTurnMP(95, 240, MPSoftwareTurnType.TANK));
+        addSequential(new DrivePathCameraTrackWithVelocity(2.5, Constants.finishedAtCargoLimeY,Constants.finishedAtCargoUlt));
+        addSequential(new EjectHatch());
+
     }
 }

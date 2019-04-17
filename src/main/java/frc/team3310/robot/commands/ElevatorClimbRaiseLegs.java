@@ -8,15 +8,15 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team3310.robot.Constants;
 
 public class ElevatorClimbRaiseLegs extends CommandGroup {
   /**
    * Add your docs here.
    */
   public ElevatorClimbRaiseLegs() {
-    addSequential(new SetRobotClimbMode());
-    addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL2_TO_LVL3 - 3));
+    addSequential(new ResetSensor());
+    addSequential(new SetRobotClimbBack());
+    addSequential(new ElevatorSetMMClimb(-20));
     addSequential(new SetRobotLockedMode());
 
   }

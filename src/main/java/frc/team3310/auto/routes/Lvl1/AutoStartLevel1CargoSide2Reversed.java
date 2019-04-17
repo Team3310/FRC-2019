@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team3310.auto.routes;
+package frc.team3310.auto.routes.Lvl1;
 
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team3310.auto.commands.AutoCameraTrackWhenCrossXBoundary;
@@ -16,7 +16,6 @@ import frc.team3310.auto.commands.DriveVelocityWithDistance;
 import frc.team3310.auto.commands.LazyLoadCommandGroup;
 import frc.team3310.auto.commands.WaitUntilCrossXBoundary.MovingXDirection;
 import frc.team3310.robot.Constants;
-import frc.team3310.robot.commands.DriveSetJoystickMode;
 import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
@@ -37,19 +36,16 @@ public class AutoStartLevel1CargoSide2Reversed extends LazyLoadCommandGroup {
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().level1StartReversedToCargoSide),
                                 true));
-                // addSequential(new DriveSpinMove(85));
-                addParallel(new ElevatorSetPositionMM(Constants.AUTO_HATCH_LEVEL_1));
-                // addSequential(new DriveRelativeTurnMP(-85, 240, MPSoftwareTurnType.TANK));
+                addParallel(new ElevatorSetPositionMM(Constants.AUTO_CARGO_LEVEL_1));
                 addSequential(new DriveAbsoluteTurnMP(-90, 240, MPSoftwareTurnType.TANK));
-                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
+                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
                 addSequential(new WaitCommand("Eject Pause", .25));
                 addSequential(new EjectHatch());
                 addSequential(new DriveVelocityWithDistance(-60, -18));
                 addParallel(new IntakeHatch());
                 addSequential(new DriveAbsoluteTurnMP(10, 240, MPSoftwareTurnType.TANK));
-                // addSequential(new DriveRelativeTurnMP(100, 240, MPSoftwareTurnType.TANK));
-                addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.6,
-                                Constants.finishedAtCargoLimeY), 4.5); // 100
+                addParallel(new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.3,
+                                Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt), 4.5); // 100
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().cargoBackMidToLoading), false));
 
@@ -59,7 +55,6 @@ public class AutoStartLevel1CargoSide2Reversed extends LazyLoadCommandGroup {
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSide), false, true));
                 addSequential(new DriveAbsoluteTurnMP(-90, 240, MPSoftwareTurnType.TANK));
-                // addSequential(new DriveRelativeTurnMP(-85, 240, MPSoftwareTurnType.TANK));
-                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY));
+                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
         }
 }

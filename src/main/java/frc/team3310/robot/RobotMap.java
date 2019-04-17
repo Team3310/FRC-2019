@@ -38,16 +38,14 @@ public class RobotMap {
 	public static final int FRONT_LEG_SHIFT_PCM_ID = 4;
 	public static final int BACK_LEG_SHIFT_PCM_ID = 5;
 
+	public static final int FORKS_PCM_ID = 6;
+	public static final int SUCC_ARM_PCM_ID = 7;
+
 	// DIO
 	public static final int INTAKE_FRONT_RIGHT_IR_SENSOR_DIO_ID = 0;
 	public static final int INTAKE_FRONT_LEFT_IR_SENSOR_DIO_ID = 1;
 	public static final int ULTRA_SONIC_INPUT_CHANNEL = 4;
 	public static final int ULTRA_SONIC_OUTPUT_CHANNEL = 5;
-
-	// public static final int CLIMB_REAR_TOP_SENSOR_DIO_ID = 2;
-	// public static final int CLIMB_REAR_BOT_SENSOR_DIO_ID = 3;
-	// public static final int CLIMB_FRONT_TOP_SENSOR_DIO_ID = 4;
-	// public static final int CLIMB_FRONT_BOT_SENSOR_DIO_ID = 5;
 	public static final int PLATFORM_DETECT_FRONT_SENSOR_DIO_ID = 6;
 	public static final int PLATFORM_DETECT_REAR_SENSROR_DIO_ID = 7;
 	public static final int ELEVATOR_MAX_REV_SENSOR_DIO_ID = 8;

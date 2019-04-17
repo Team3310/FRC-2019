@@ -10,22 +10,22 @@ package frc.team3310.robot.commands;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.team3310.robot.Constants;
+import frc.team3310.robot.subsystems.Climb.ForkShiftState;
 
-public class ElevatorClimbEndGameSuccLvl2 extends CommandGroup {
+public class ElevatorClimbEndGameForks extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public ElevatorClimbEndGameSuccLvl2() {
+  public ElevatorClimbEndGameForks() {
     addParallel(new ResetSensor());
-    addSequential(new SetRobotClimbFront());
-    addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LIFT_FRONT));
-    addParallel(new ResetSensor());
-    addParallel(new TurnClimbPumpOn());
     addSequential(new SetRobotClimbMode());
-    addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL2_TO_LVL3));
-    addSequential(new WaitCommand("Succ Pause", 1));
-    // addSequential(new SetRobotClimbMode());
-    // addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL_3_SUCC - 4));
+    addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL_3));
     addSequential(new SetRobotLockedMode());
+    addSequential(new WaitCommand("?", 3));
+    addSequential(new SetRobotClimbFront());
+    addSequential(new ElevatorSetMMClimb(1.0));
+    addSequential(new SetRobotScoreMode());
+    // addSequential(new ToggleForks(ForkShiftState.OUT));
+
   }
 }

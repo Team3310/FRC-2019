@@ -105,9 +105,9 @@ public class TrajectoryGeneratorTest {
         public void test() {
                 TrajectoryGenerator.getInstance().generateTrajectories();
 
-                LazyLoadTrajectory level1StartToRocketFront = TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront;
-                level1StartToRocketFront.activate();
-                verifyMirroredTrajectories(level1StartToRocketFront.getTrajectory(), false);
+                // LazyLoadTrajectory level1StartToRocketFront = TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToRocketFront;
+                // level1StartToRocketFront.activate();
+                // verifyMirroredTrajectories(level1StartToRocketFront.getTrajectory(), false);
 
                 LazyLoadTrajectory loadingToRocketBack = TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack;
                 loadingToRocketBack.activate();
