@@ -34,7 +34,7 @@ public class WaitUntilCrossXBoundary extends Command {
 
     @Override
     public void end() {
-        System.out.println("Passed X Boundary");
+        // System.out.println("Passed X Boundary");
     }
 
     @Override

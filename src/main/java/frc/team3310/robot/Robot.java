@@ -206,7 +206,9 @@ public class Robot extends TimedRobot {
 		Robot.elevator.setRobotScoreMode();
 
 		if (operationMode == OperationMode.COMPETITION) {
-			Robot.elevator.setElevatorMotionMagicPosition(Constants.HATCH_LEVEL_1);
+			// Robot.elevator.setElevatorMotionMagicPosition(Constants.HATCH_LEVEL_2);
+	//		Robot.elevator.setElevatorMotionMagicPosition(Robot.elevator.getElevatorInchesOffGround());
+			Robot.elevator.setJoystickPID();
 		}
 
 		if (operationMode != OperationMode.COMPETITION) {

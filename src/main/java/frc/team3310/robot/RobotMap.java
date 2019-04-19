@@ -38,8 +38,8 @@ public class RobotMap {
 	public static final int FRONT_LEG_SHIFT_PCM_ID = 4;
 	public static final int BACK_LEG_SHIFT_PCM_ID = 5;
 
-	public static final int FORKS_PCM_ID = 6;
-	public static final int SUCC_ARM_PCM_ID = 7;
+	public static final int FORKS_PCM_ID = 7;
+	public static final int SUCC_ARM_PCM_ID = 6;
 
 	// DIO
 	public static final int INTAKE_FRONT_RIGHT_IR_SENSOR_DIO_ID = 0;

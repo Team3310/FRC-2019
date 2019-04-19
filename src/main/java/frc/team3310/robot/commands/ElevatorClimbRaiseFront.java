@@ -8,15 +8,14 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
 
-public class ElevatorClimbRaiseLegs extends CommandGroup {
+public class ElevatorClimbRaiseFront extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public ElevatorClimbRaiseLegs() {
-   addSequential(new SetRobotClimbMode());
-   addSequential(new WaitCommand("Shift Pause", .10));
-   addSequential(new ElevatorSetMMClimb(3.0));
+  public ElevatorClimbRaiseFront() {
+    addSequential(new SetRobotClimbFront());
+    addSequential(new ElevatorSetMMClimb(1.0));
+    addSequential(new SetRobotClimbMode());
   }
 }

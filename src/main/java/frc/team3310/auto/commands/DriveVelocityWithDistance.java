@@ -26,7 +26,7 @@ public class DriveVelocityWithDistance extends Command {
 	protected boolean isFinished() {
 		double currentDistance = (Robot.drive.getLeftPositionInches() + Robot.drive.getRightPositionInches()) / 2;
 		double distanceTraveled = currentDistance - startDistance;
-		System.out.println("Distance = " + distanceTraveled);
+		// System.out.println("Distance = " + distanceTraveled);
 		if (distance_inches < 0) {
 			return distanceTraveled < distance_inches;
 		} else {
@@ -35,7 +35,7 @@ public class DriveVelocityWithDistance extends Command {
 	}
 
 	protected void end() {
-		System.out.println("I'm Done");
+		// System.out.println("I'm Done");
 		// Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
 	}
 

@@ -30,7 +30,7 @@ public class DriveRaiseFrontLegOnSensor extends ExtraTimeoutCommand {
     if (isExtraOneTimedOut()) {
       Robot.elevator.setRobotClimbFront();
       Robot.elevator.setClimbMotionMagicPosition(0);
-      System.out.println("Found sensor edge");
+      // System.out.println("Found sensor edge");
       frontRaised = true;
     }
   }
@@ -43,7 +43,7 @@ public class DriveRaiseFrontLegOnSensor extends ExtraTimeoutCommand {
 
   // Called once after isFinished returns true
   protected void end() {
-    System.out.println("Finished Edge");
+    // System.out.println("Finished Edge");
   }
 
   // Called when another command which requires one or more of the same

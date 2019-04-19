@@ -22,6 +22,7 @@ import frc.team3310.robot.commands.ElevatorSetPositionMM;
 import frc.team3310.robot.commands.IntakeHatch;
 import frc.team3310.robot.commands.IntakeHatchArms;
 import frc.team3310.robot.commands.ResetRobotToLoadingPose;
+import frc.team3310.robot.commands.ResetSensor;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
 import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
@@ -32,19 +33,20 @@ public class AutoStartLevel1CargoSide2Reversed extends LazyLoadCommandGroup {
          */
         public AutoStartLevel1CargoSide2Reversed() {
                 // Backward
+                addSequential(new ResetSensor());
                 addParallel(new ElevatorAutoZeroSensor());
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().level1StartReversedToCargoSide),
                                 true));
                 addParallel(new ElevatorSetPositionMM(Constants.AUTO_CARGO_LEVEL_1));
                 addSequential(new DriveAbsoluteTurnMP(-90, 240, MPSoftwareTurnType.TANK));
-                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
+                addSequential(new DrivePathCameraTrackWithVelocity(1.5, Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
                 addSequential(new WaitCommand("Eject Pause", .25));
                 addSequential(new EjectHatch());
                 addSequential(new DriveVelocityWithDistance(-60, -18));
                 addParallel(new IntakeHatch());
                 addSequential(new DriveAbsoluteTurnMP(10, 240, MPSoftwareTurnType.TANK));
-                addParallel(new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.3,
+                addParallel(new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.4,
                                 Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt), 4.5); // 100
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().cargoBackMidToLoading), false));

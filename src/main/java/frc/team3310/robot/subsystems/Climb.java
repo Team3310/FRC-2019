@@ -43,9 +43,9 @@ public class Climb extends Subsystem {
   public void setSuccArmState(ArmShiftState state) {
     armShiftState = state;
     if (state == ArmShiftState.IN) {
-      forks.set(false);
+      succArm.set(false);
     } else if (state == ArmShiftState.OUT) {
-      forks.set(true);
+      succArm.set(true);
     }
   }
 

@@ -19,7 +19,6 @@ import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorAutoZero;
 import frc.team3310.robot.commands.ElevatorAutoZeroSensor;
 import frc.team3310.robot.commands.ElevatorClimbBoost;
-import frc.team3310.robot.commands.ElevatorClimbEndGameForks;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl2;
 import frc.team3310.robot.commands.ElevatorClimbEndGameLvl3;
 import frc.team3310.robot.commands.ElevatorClimbEndGameSuccLvl3;
@@ -85,15 +84,17 @@ public class OI {
     Button climbSuccLvl3 = m_driver.getDPadUp();
     climbSuccLvl3.whenPressed(new ElevatorClimbEndGameSuccLvl3());
 
-    Button toggleForks = m_driver.getDPadLeft();
-    toggleForks.whenPressed(new ToggleForks(ForkShiftState.OUT));
-    toggleForks.whenReleased(new ToggleForks(ForkShiftState.IN));
+    // Button climbForks = m_driver.getDPadDown();
+    // climbForks.whenPressed(new ElevatorClimbEndGameForks());
 
-    Button raiseLegs = m_driver.getDPadRight();
-    raiseLegs.whenPressed(new ElevatorClimbRaiseLegs());
+    // Button raiseLegsFront = m_driver.getDPadRight();
+    // raiseLegsFront.whenPressed(new ElevatorClimbRaiseFront());
 
-    Button climbForks = m_driver.getDPadDown();
-    climbForks.whenPressed(new ElevatorClimbEndGameForks());
+     Button raiseLegs = m_driver.getDPadRight();
+     raiseLegs.whenPressed(new ElevatorClimbRaiseLegs());
+
+    // Button raiseLegsBack = m_driver.getDPadLeft();
+    // raiseLegsBack.whenPressed(new ElevatorClimbRaiseBack());
 
     Button IntakeHatchManualD = m_driver.getLeftTrigger();
     IntakeHatchManualD.whenReleased(new IntakeHatchArms(HatchArmState.IN));
@@ -104,7 +105,12 @@ public class OI {
     switchCameraPipeline.whenReleased(new SwitchCameraPipeline(1));
 
     Button driveClimb = m_driver.getRightBumper();
-    driveClimb.whenPressed(new DriveForwardClimbForks());
+    driveClimb.whenPressed(new DriveForwardClimbForks(.5, .2));
+    driveClimb.whenReleased(new DriveForwardClimbForks(0, 0));
+
+    Button toggleForks = m_driver.getLeftBumper();
+    toggleForks.whenPressed(new ToggleForks(ForkShiftState.OUT));
+    toggleForks.whenReleased(new ToggleForks(ForkShiftState.IN));
 
     Button overrideClimb = m_driver.getShareButton();
     overrideClimb.whenPressed(new OverrideClimb());

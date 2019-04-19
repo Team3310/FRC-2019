@@ -34,7 +34,7 @@ public class DriveMiddleSetMMPosition extends Command {
   @Override
   protected boolean isFinished() {
     if (Drive.getInstance().hasFinishedTrajectory()) {
-      System.out.println("Trajectory finished");
+      // System.out.println("Trajectory finished");
       return true;
     }
     return false;
@@ -42,7 +42,7 @@ public class DriveMiddleSetMMPosition extends Command {
 
   // Called once after isFinished returns true
   protected void end() {
-    System.out.println("Middle Drive set MM end");
+    // System.out.println("Middle Drive set MM end");
   }
 
   // Called when another command which requires one or more of the same

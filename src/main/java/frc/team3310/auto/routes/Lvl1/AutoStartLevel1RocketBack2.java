@@ -20,6 +20,7 @@ import frc.team3310.robot.commands.EjectHatch;
 import frc.team3310.robot.commands.ElevatorSetPositionMM;
 import frc.team3310.robot.commands.IntakeHatch;
 import frc.team3310.robot.commands.IntakeHatchArms;
+import frc.team3310.robot.commands.ResetSensor;
 import frc.team3310.robot.paths.TrajectoryGenerator;
 import frc.team3310.robot.subsystems.Intake.HatchArmState;
 import frc.team3310.utility.MPSoftwarePIDController.MPSoftwareTurnType;
@@ -29,6 +30,7 @@ public class AutoStartLevel1RocketBack2 extends LazyLoadCommandGroup {
    * Add your docs here.
    */
   public AutoStartLevel1RocketBack2() {
+    addSequential(new ResetSensor());
     addSequential(new DriveMotionCommand(registerTrajectory(
         TrajectoryGenerator.getInstance().getTrajectorySet().level1StartReversedToRocketBack), true));
     addParallel(new ElevatorSetPositionMM(Constants.AUTO_ROCKET_LEVEL_1));
@@ -40,14 +42,15 @@ public class AutoStartLevel1RocketBack2 extends LazyLoadCommandGroup {
     addParallel(new IntakeHatch());
     addSequential(new DriveAbsoluteTurnMP(-20, 240, MPSoftwareTurnType.TANK));
     addParallel(
-      new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.15, Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt)); // 100
+      new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.65
+      , Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt)); // 100
       addSequential(new DriveMotionCommand(registerTrajectory(
         TrajectoryGenerator.getInstance().getTrajectorySet().rocketBackToLoading), false));
 
     addSequential(new IntakeHatchArms(HatchArmState.IN));
-    addParallel(new WaitCommand("Grab Break", .6));
+    addSequential(new WaitCommand("Grab Break", .75));
     addSequential(new DriveMotionCommand(registerTrajectory(
-      TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack), false, true));
+      TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack), false, false));
     addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_2));
     addSequential(new DriveAbsoluteTurnMP(30, 240, MPSoftwareTurnType.TANK));
     addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtRocketLimeY, Constants.finishedAtRocketUlt));

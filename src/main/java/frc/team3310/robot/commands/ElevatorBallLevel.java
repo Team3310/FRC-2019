@@ -36,7 +36,7 @@ public class ElevatorBallLevel extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    System.out.println("Elevator in ball mode");
+    // System.out.println("Elevator in ball mode");
   }
 
   // Called when another command which requires one or more of the same

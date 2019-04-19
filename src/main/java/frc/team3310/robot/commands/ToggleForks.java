@@ -14,7 +14,7 @@ public class ToggleForks extends Command {
   @Override
   protected void initialize() {
     Robot.climb.setForkState(state);
-    System.out.println("Fork Arms " + state);
+    // System.out.println("Fork Arms " + state);
   }
 
   @Override

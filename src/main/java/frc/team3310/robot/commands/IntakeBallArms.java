@@ -14,9 +14,9 @@ public class IntakeBallArms extends Command {
 
 	@Override
 	protected void initialize() {
-		System.out.println("Start Eject ");
+		// System.out.println("Start Eject ");
 		Robot.intake.setBallArmState(state);
-		System.out.println("Ball Arms " + state);
+		// System.out.println("Ball Arms " + state);
 	}
 
 	@Override

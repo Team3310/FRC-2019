@@ -376,14 +376,18 @@ public class Elevator extends Subsystem implements Loop {
 	}
 
 	public synchronized void setClimbMotionMagicPosition(double positionInches) {
+		setClimbMotionMagicPosition(positionInches, Constants.kClimbCruiseVelocity, Constants.kClimbAcceleration);
+	}
+
+	public synchronized void setClimbMotionMagicPosition(double positionInches, int cruiseVelocity, int climbAccel) {
 		if (getElevatorControlMode() != ElevatorControlMode.MOTION_MAGIC) {
 			setElevatorControlMode(ElevatorControlMode.MOTION_MAGIC);
 		}
-				motor1.configMotionAcceleration(Constants.kClimbAcceleration, 0);
+		motor1.configMotionAcceleration(climbAccel, 0);
 
-				motor1.configMotionSCurveStrength(Constants.kClimbScurveStrength, 0);
-	
-				motor1.configMotionCruiseVelocity(Constants.kClimbCruiseVelocity, 0);
+		motor1.configMotionSCurveStrength(Constants.kClimbScurveStrength, 0);
+
+		motor1.configMotionCruiseVelocity(cruiseVelocity, 0);
 		motor1.selectProfileSlot(kClimbMotionMagicSlot, 0);
 		targetPositionTicks = getClimbEncoderTicks(positionInches);
 		motor1.set(ControlMode.MotionMagic, targetPositionTicks, DemandType.ArbitraryFeedForward,

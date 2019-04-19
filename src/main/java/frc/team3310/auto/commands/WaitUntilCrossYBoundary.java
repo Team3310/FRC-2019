@@ -48,8 +48,8 @@ public class WaitUntilCrossYBoundary extends Command {
                         * RobotStatus.getInstance().getFieldToVehicle().getTranslation().y() > mYBoundary;
             }
             if (validDirection == true) {
-                System.out.println(
-                        "validDirection y = " + RobotStatus.getInstance().getFieldToVehicle().getTranslation().y());
+                // System.out.println(
+                //         "validDirection y = " + RobotStatus.getInstance().getFieldToVehicle().getTranslation().y());
             }
             return false;
         }

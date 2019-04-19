@@ -11,7 +11,7 @@ public class ToggleBallArms extends Command {
 
 	@Override
 	protected void initialize() {
-		System.out.println("Ball Arms Out");
+		// System.out.println("Ball Arms Out");
 		Robot.intake.setBallArmState(BallArmState.OUT);
 	}
 
@@ -27,7 +27,7 @@ public class ToggleBallArms extends Command {
 
 	@Override
 	protected void end() {
-		System.out.println("Hatch Arms In");
+		// System.out.println("Hatch Arms In");
 		Robot.intake.setBallArmState(BallArmState.IN);
 
 	}

@@ -20,7 +20,7 @@ public class ResetSensor extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    System.out.println("Reset All");
+    // System.out.println("Reset All");
     Robot.elevator.resetEncoders();
     Robot.drive.zeroSensors();
     RobotStatus.getInstance().resetDistanceDriven();

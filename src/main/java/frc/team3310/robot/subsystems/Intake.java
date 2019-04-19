@@ -76,7 +76,7 @@ public class Intake extends Subsystem {
 		if (isOkToLaunch()) {
 			ballArms.set(true);
 		} else {
-			System.out.println("To far to score");
+			// System.out.println("To far to score");
 		}
 	}
 
@@ -86,7 +86,7 @@ public class Intake extends Subsystem {
 	}
 
 	public void setHatchArmState(HatchArmState state) {
-		System.out.println("Hatch arm state = " + state);
+		// System.out.println("Hatch arm state = " + state);
 		if (state == HatchArmState.IN) {
 			hatchArms.set(false);
 			return;

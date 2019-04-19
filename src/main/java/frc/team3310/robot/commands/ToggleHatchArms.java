@@ -11,7 +11,7 @@ public class ToggleHatchArms extends Command {
 
 	@Override
 	protected void initialize() {
-		System.out.println("Hatch Arms Out");
+		// System.out.println("Hatch Arms Out");
 		Robot.intake.setHatchArmState(HatchArmState.OUT);
 	}
 
@@ -27,7 +27,7 @@ public class ToggleHatchArms extends Command {
 
 	@Override
 	protected void end() {
-		System.out.println("Hatch Arms In");
+		// System.out.println("Hatch Arms In");
 		Robot.intake.setHatchArmState(HatchArmState.IN);
 
 	}

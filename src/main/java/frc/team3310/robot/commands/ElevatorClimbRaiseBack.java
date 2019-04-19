@@ -8,25 +8,16 @@
 package frc.team3310.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
-import frc.team3310.robot.Constants;
 
-public class ElevatorClimbEndGameLvl3 extends CommandGroup {
+public class ElevatorClimbRaiseBack extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public ElevatorClimbEndGameLvl3() {
-
+  public ElevatorClimbRaiseBack() {
     addSequential(new ResetSensor());
-    addSequential(new SetRobotClimbMode());
-    addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL_3));
-    addSequential(new DriveForwardClimbMM(10, false));
-    addSequential(new SetRobotClimbFront());
-    addSequential(new ElevatorSetMMClimb(0.0));
-    addSequential(new DriveForwardClimbMM(8, true));
     addSequential(new SetRobotClimbBack());
-    addSequential(new ElevatorSetMMClimb(-(Constants.CLIMB_LVL_3)));
-    addSequential(new SetRobotScoreMode());
-    addSequential(new DriveSetSpeed(0.3, 0.3));
+    addSequential(new ElevatorSetMMClimb(-6));
+    addSequential(new SetRobotLockedMode());
+
   }
 }

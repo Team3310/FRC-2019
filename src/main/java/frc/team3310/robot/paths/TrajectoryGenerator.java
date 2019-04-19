@@ -92,9 +92,9 @@ public class TrajectoryGenerator {
         // +y is to the left.
         // ALL POSES DEFINED FOR THE CASE THAT ROBOT STARTS ON RIGHT! (mirrored about +x
         // axis for LEFT)
-        public static final Pose2d kSideStartLevel1 = new Pose2d(63.7, -48.4, Rotation2d.fromDegrees(0.0));
+        public static final Pose2d kSideStartLevel1 = new Pose2d(67.7, -48.4, Rotation2d.fromDegrees(0.0));
 
-        public static final Pose2d kSideStartLevel1Reversed = new Pose2d(63.7, -48.4, Rotation2d.fromDegrees(-180.0));
+        public static final Pose2d kSideStartLevel1Reversed = new Pose2d(67.7, -48.4, Rotation2d.fromDegrees(-180.0));
 
         public static final Pose2d kSideStartLevel2 = new Pose2d(44.45, -48.4, Rotation2d.fromDegrees(0.0));
 
@@ -155,7 +155,7 @@ public class TrajectoryGenerator {
         public static final Pose2d kMissRocketBack = new Pose2d(new Translation2d(250, -1),
                         Rotation2d.fromDegrees(150.00)); // 135 = -45 facing feild
 
-        public static final Pose2d kRocketBackTurnPose = new Pose2d(new Translation2d(285, -120),
+        public static final Pose2d kRocketBackTurnPose = new Pose2d(new Translation2d(285, -117),
                 Rotation2d.fromDegrees(160.00));
 
         public static final Pose2d kRocketBackTurnv2Pose = new Pose2d(new Translation2d(280, -117),
@@ -193,7 +193,7 @@ public class TrajectoryGenerator {
         public static final Pose2d kCargoMidReversedPose = new Pose2d(new Translation2d(280.75, -80.5),
                         Rotation2d.fromDegrees(-180.00));
 
-        public static final Pose2d kCargoMidPose = new Pose2d(new Translation2d(284.75, -80.5),
+        public static final Pose2d kCargoMidPose = new Pose2d(new Translation2d(284, -80.5),
                         Rotation2d.fromDegrees(0.00));
 
         public static final Pose2d kCargoMidv2Pose = new Pose2d(new Translation2d(287.75, -80.5),
@@ -211,7 +211,7 @@ public class TrajectoryGenerator {
         public static final Pose2d kCargoFarFaceLoadingPose = new Pose2d(new Translation2d(287.75, -67.5),
                         Rotation2d.fromDegrees(165.00));
 
-        public static final Pose2d kLoadingToCargoNear = new Pose2d(new Translation2d(254.75, -80.5),
+        public static final Pose2d kLoadingToCargoNear = new Pose2d(new Translation2d(240.5, -80.5),
                         Rotation2d.fromDegrees(181.00)); //256
                         
         public static final Pose2d kLoadingToCargoNearLvl2 = new Pose2d(new Translation2d(248.75, -80.5),
@@ -344,7 +344,7 @@ public class TrajectoryGenerator {
                         return generateTrajectory(true, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(
                                                         kMaxCentripetalAccelElevatorDown)),
-                                        kPathMaxVelocity, kPathMaxAccel, kMaxVoltage);
+                                        kPathMaxVelocity, 80, kMaxVoltage);
                 }
 
                 private Trajectory<TimedState<Pose2dWithCurvature>> getLevel1StartToCargoFront() {
@@ -396,7 +396,7 @@ public class TrajectoryGenerator {
                         List<Pose2d> waypoints = new ArrayList<>();
                         waypoints.add(kRocketBackPose);
                         waypoints.add(kLoadingMidFudgePose);
-                        waypoints.add(kLoadingGrabFudgePose);
+                        waypoints.add(kLoadingGrabPose);
 
                         return generateTrajectory(false, waypoints,
                                         Arrays.asList(new CentripetalAccelerationConstraint(

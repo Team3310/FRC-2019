@@ -43,6 +43,6 @@ public class BHRMathUtils {
 	}
 		
 	public static void main(String[] args) {
-		System.out.println("Accum angle to desired 721 to 45 = " + adjustAccumAngleToDesired(721,  45));
+		// System.out.println("Accum angle to desired 721 to 45 = " + adjustAccumAngleToDesired(721,  45));
 	}
 }

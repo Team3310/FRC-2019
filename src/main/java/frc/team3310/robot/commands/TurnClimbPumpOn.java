@@ -20,7 +20,7 @@ public class TurnClimbPumpOn extends Command {
   @Override
   protected void initialize() {
     Robot.compressor.turnClimbPumpOn();
-    System.out.println("Pump On");
+    // System.out.println("Pump On");
   }
 
   // Called repeatedly when this Command is scheduled to run

@@ -15,7 +15,7 @@ public class IntakeHatchArms extends Command {
 	@Override
 	protected void initialize() {
 		Robot.intake.setHatchArmState(state);
-		System.out.println("Hatch Arms " + state);
+		// System.out.println("Hatch Arms " + state);
 	}
 
 	@Override

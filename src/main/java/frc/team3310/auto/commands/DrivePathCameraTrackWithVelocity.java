@@ -30,7 +30,7 @@ public class DrivePathCameraTrackWithVelocity extends ExtraTimeoutCommand {
   }
 
   protected void initialize() {
-    System.out.println("Switch Pipeline");
+    // System.out.println("Switch Pipeline");
     isTracking = false;
     invalidCounter = 0;
     resetExtraOneTimer();
@@ -45,8 +45,8 @@ public class DrivePathCameraTrackWithVelocity extends ExtraTimeoutCommand {
 
   protected void execute() {
     if (!isTracking && isExtraOneTimedOut()) {
-      System.out.println("Start camera track");
-      System.out.println("Velocity Scale " + velocityScale);
+      // System.out.println("Start camera track");
+      // System.out.println("Velocity Scale " + velocityScale);
       Robot.drive.setCameraTrackWithVelocity(velocityScale);
       isTracking = true;
     } else if (isTracking && !isTrackFinished) {
@@ -74,8 +74,8 @@ public class DrivePathCameraTrackWithVelocity extends ExtraTimeoutCommand {
   }
 
   protected void end() {
-    System.out.println("camera track finished");
-    System.out.println("Time to eject done camera track");
+    // System.out.println("camera track finished");
+    // System.out.println("Time to eject done camera track");
     Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
     Robot.drive.overrideTrajectory(true);
     Robot.drive.setPipeline(1);
@@ -83,8 +83,8 @@ public class DrivePathCameraTrackWithVelocity extends ExtraTimeoutCommand {
   }
 
   protected void interrupted() {
-    System.out.println("camera track interrupted");
-    System.out.println("Time to eject done camera track");
+    // System.out.println("camera track interrupted");
+    // System.out.println("Time to eject done camera track");
     end();
   }
 }

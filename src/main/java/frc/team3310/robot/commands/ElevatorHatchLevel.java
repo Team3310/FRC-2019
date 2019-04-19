@@ -36,7 +36,7 @@ public class ElevatorHatchLevel extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    System.out.println("Elevator in hatch mode");
+    // System.out.println("Elevator in hatch mode");
 
   }
 

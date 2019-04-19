@@ -14,7 +14,7 @@ public class ToggleSuccArm extends Command {
   @Override
   protected void initialize() {
     Robot.climb.setSuccArmState(state);
-    System.out.println("Succ Arms " + state);
+    // System.out.println("Succ Arms " + state);
   }
 
   @Override

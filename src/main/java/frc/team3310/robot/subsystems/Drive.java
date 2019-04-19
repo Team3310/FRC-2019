@@ -168,8 +168,8 @@ public class Drive extends Subsystem implements Loop {
 	private double mLastValidGyroAngle;
 	private double mCameraVelocity = 0;
 	private double mCameraSetVelocity = 0;
-	private double kCamera = 0.04; // .7
-	private double kCameraDriveClose = 0.072; // .04
+	private double kCamera = 0.0475; // .7
+	private double kCameraDriveClose = 0.08; // .072
 	private double kCameraDriveMid = 0.043; // .04
 	private double kCameraDriveFar = 0.033; // .04
 	private double kCameraClose = 10;
@@ -1387,6 +1387,7 @@ public class Drive extends Subsystem implements Loop {
 				SmartDashboard.putNumber("Drive Right 1 Amps", rightDrive1.getOutputCurrent());
 				SmartDashboard.putNumber("Drive Right 2 Amps", rightDrive2.getOutputCurrent());
 				SmartDashboard.putNumber("Drive Right 3 Amps", rightDrive3.getOutputCurrent());
+				SmartDashboard.putNumber("Middle Distance", getMiddleEncoderInches());
 				// SmartDashboard.putNumber("Drive Right Average Amps",
 				// getAverageRightCurrent());
 				SmartDashboard.putNumber("Yaw Angle Deg", getGyroAngleDeg());
@@ -1426,6 +1427,8 @@ public class Drive extends Subsystem implements Loop {
 				SmartDashboard.putNumber("Gyro X-accel", getGyroXAccel());
 				SmartDashboard.putNumber("Gyro y-accel", getGyroYAccel());
 				SmartDashboard.putNumber("Gyro z-accel", getGyroZAccel());
+				SmartDashboard.putNumber("Ult", getUltrasonicDistance());
+
 			} catch (Exception e) {
 			}
 		} else if (operationMode == Robot.OperationMode.COMPETITION) {

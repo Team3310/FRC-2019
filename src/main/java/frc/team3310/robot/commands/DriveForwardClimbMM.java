@@ -26,7 +26,7 @@ public class DriveForwardClimbMM extends Command {
     Robot.drive.setMiddleDriveMotionMagicPosition(distance);
     Robot.drive.setVelocitySetpoint(20, 20);
 
-    System.out.println("Start drive");
+    // System.out.println("Start drive");
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -37,7 +37,7 @@ public class DriveForwardClimbMM extends Command {
       double currentDistance = Robot.drive.getMiddleEncoderInches();
       Robot.drive.setMiddleDriveMotionMagicPosition(currentDistance);
       edgeDetected = true;
-      System.out.println("Found sensor edge");
+      // System.out.println("Found sensor edge");
     }
   }
 
@@ -51,7 +51,7 @@ public class DriveForwardClimbMM extends Command {
   protected void end() {
     Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
     // Robot.drive.driveForwardClimb(0);
-    System.out.println("Finished Drive Forward = 0");
+    // System.out.println("Finished Drive Forward = 0");
   }
 
   // Called when another command which requires one or more of the same

@@ -25,7 +25,7 @@ public class ElevatorAutoZeroSensor extends Command {
   @Override
   protected void initialize() {
     Robot.elevator.setSpeed(Elevator.AUTO_ZERO_SPEED);
-    System.out.println("Auto zero initialize");
+    // System.out.println("Auto zero initialize");
     Robot.intake.setBallArmState(BallArmState.IN);
     Robot.intake.setHatchArmState(HatchArmState.IN);
   }
@@ -47,7 +47,7 @@ public class ElevatorAutoZeroSensor extends Command {
     Robot.elevator.setSpeed(0);
     Robot.elevator.resetEncoders(Constants.LOW_HOME_POSITION_INCHES);
     Robot.elevator.setJoystickOpenLoop();
-    System.out.println("Elevator Zeroed");
+    // System.out.println("Elevator Zeroed");
   }
 
   // Called when another command which requires one or more of the same

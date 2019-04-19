@@ -11,16 +11,18 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team3310.robot.Robot;
 
 public class DriveForwardClimbForks extends Command {
-  public DriveForwardClimbForks() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+  private double climbWheel;
+  private double driveWheel;
+  public DriveForwardClimbForks(double climbWheel, double driveWheel) {
+  this.climbWheel = climbWheel;
+  this.driveWheel = driveWheel;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.drive.setSpeed(.2);
-    Robot.drive.setMiddleDriveSpeed(.3);
+    Robot.drive.setSpeed(driveWheel);
+    Robot.drive.setMiddleDriveSpeed(climbWheel);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -38,15 +40,13 @@ public class DriveForwardClimbForks extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.drive.setSpeed(0);
-    Robot.drive.setMiddleDriveSpeed(0);
+  
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.drive.setSpeed(0);
-    Robot.drive.setMiddleDriveSpeed(0);
+  
   }
 }

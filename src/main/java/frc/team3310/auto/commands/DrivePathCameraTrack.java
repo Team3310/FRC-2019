@@ -26,7 +26,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 	}
 
 	protected void initialize() {
-		System.out.println("Switch Pipeline");
+		// System.out.println("Switch Pipeline");
 		isTrackFinished = false;
 		invalidCounter = 0;
 		resetExtraOneTimer();
@@ -38,8 +38,8 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 
 	protected void execute() {
 		if (!isTracking && isExtraOneTimedOut()) {
-			System.out.println("Start camera track");
-			System.out.println("Velocity Scale " + velocityScale);
+			// System.out.println("Start camera track");
+			// System.out.println("Velocity Scale " + velocityScale);
 			Robot.drive.setCameraTrack(velocityScale);
 			isTracking = true;
 
@@ -70,14 +70,14 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 	}
 
 	protected void end() {
-		System.out.println("camera track finished");
+		// System.out.println("camera track finished");
 		Robot.drive.overrideTrajectory(true);
 		Robot.drive.setPipeline(1);
 		Robot.drive.setSpeed(0.0);
 	}
 
 	protected void interrupted() {
-		System.out.println("camera track interrupted");
+		// System.out.println("camera track interrupted");
 		Robot.drive.overrideTrajectory(true);
 		Robot.drive.setPipeline(1);
 		Robot.drive.setSpeed(0.0);	

@@ -19,14 +19,18 @@ public class ElevatorClimbEndGameSuccLvl3 extends CommandGroup {
   public ElevatorClimbEndGameSuccLvl3() {
     addParallel(new ResetSensor());
     addSequential(new SetRobotClimbMode());
+    addSequential(new WaitCommand("Shift Pause", .10));
     addParallel(new TurnClimbPumpOn());
     addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL_3_SUCC));
-    addSequential(new SetRobotClimbFront());
+    addSequential(new WaitCommand("Shift Pause", .10));
     addParallel(new ToggleSuccArm(ArmShiftState.OUT));
-    addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL_3_SUCC + 2.25));//1.5
+    addSequential(new WaitCommand("Arm Settle Pause", 1));
+    addSequential(new SetRobotClimbFront());
+    addSequential(new WaitCommand("Arm Settle Pause", .10));
+    addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL_3_SUCC + 1.75, 3000, 7000));//1.5  normal vel = 8000, accel = 15000
     addSequential(new SetRobotLockedMode());
-    addSequential(new WaitCommand("Succ Pause", 1));
-    addSequential(new SetRobotClimbMode());
-    addSequential(new ElevatorSetMMClimb(3.0));
+    // addSequential(new SetRobotClimbMode());
+    // addSequential(new WaitCommand("Shift Pause", .10));
+    // addSequential(new ElevatorSetMMClimb(3.0));
   }
 }
