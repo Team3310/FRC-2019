@@ -62,7 +62,7 @@ public class WaitUntilCrossYBoundary extends Command {
 
     @Override
     public void end() {
-        System.out
-                .println("Passed Y Boundary Y = " + RobotStatus.getInstance().getFieldToVehicle().getTranslation().y());
+        // System.out
+        //         .println("Passed Y Boundary Y = " + RobotStatus.getInstance().getFieldToVehicle().getTranslation().y());
     }
 }

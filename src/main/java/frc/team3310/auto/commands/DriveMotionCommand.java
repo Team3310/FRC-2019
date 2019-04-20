@@ -50,7 +50,7 @@ public class DriveMotionCommand extends Command {
     else {
       mTrajectory = new TrajectoryIterator<TimedState<Pose2dWithCurvature>>(new TimedView<>(mirroredTrajectory.left));
     }
-    System.out.println("Starting trajectory on " + Robot.trajectoryGenerator.getRightLeftAutonSide() + " side! (length=" + mTrajectory.getRemainingProgress() + ")");
+    // System.out.println("Starting trajectory on " + Robot.trajectoryGenerator.getRightLeftAutonSide() + " side! (length=" + mTrajectory.getRemainingProgress() + ")");
     if (mResetPose) {
       RobotStatus.getInstance().reset(Timer.getFPGATimestamp(), mTrajectory.getState().state().getPose());
     }
@@ -72,7 +72,7 @@ public class DriveMotionCommand extends Command {
   @Override
   protected boolean isFinished() {
     if (Drive.getInstance().isDoneWithTrajectory()) {
-      System.out.println("Trajectory finished");
+      // System.out.println("Trajectory finished");
       return true;
     }
     return false;
@@ -82,7 +82,7 @@ public class DriveMotionCommand extends Command {
   @Override
   protected void end() {
 //    Robot.drive.stopLogging();
-    System.out.println("Time to eject Path done ");
+    // System.out.println("Time to eject Path done ");
   }
 
   // Called when another command which requires one or more of the same

@@ -29,7 +29,7 @@ public class AutoStartLevel1SideCargoFront2v2 extends LazyLoadCommandGroup {
                 addParallel(new ElevatorSetPositionMM(Constants.AUTO_CARGO_LEVEL_1));
 
                 addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive, 0.55,
-                                Constants.finishedAtCargoLimeY, Constants.finshedAtCargoUlt));
+                                Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoFront), true));
                 addSequential(new WaitForChildren());
@@ -53,7 +53,7 @@ public class AutoStartLevel1SideCargoFront2v2 extends LazyLoadCommandGroup {
                                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoFrontTrack2v2),
                                 false));
                 addParallel(new AutoCameraTrackWhenCrossXBoundary(170, MovingXDirection.Positive, 0.6,
-                                Constants.finishedAtCargoLimeY, Constants.finshedAtCargoUlt));
+                                Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().track2v2PoseToCargo2), false));
                 addSequential(new WaitForChildren());

@@ -22,7 +22,7 @@ public class DriveSpinMove extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    System.out.println("Set drive spin move");
+    // System.out.println("Set drive spin move");
     // System.out.println("X Position" +
     // RobotStatus.getInstance().getFieldToVehicle().getTranslation().x()
     // + ", Y Position" +
@@ -43,7 +43,7 @@ public class DriveSpinMove extends Command {
   @Override
   protected boolean isFinished() {
     if (Drive.getInstance().hasFinishedDSpinMove()) {
-      System.out.println("Trajectory finished " + Drive.getInstance().getDriveMotionMagicPosition());
+      // System.out.println("Trajectory finished " + Drive.getInstance().getDriveMotionMagicPosition());
       return true;
     }
     return false;
@@ -51,7 +51,7 @@ public class DriveSpinMove extends Command {
 
   // Called once after isFinished returns true
   protected void end() {
-    System.out.println("Drive set SM end");
+    // System.out.println("Drive set SM end");
 
     // System.out.println("X Position" +
     // RobotStatus.getInstance().getFieldToVehicle().getTranslation().x()
@@ -62,7 +62,7 @@ public class DriveSpinMove extends Command {
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   protected void interrupted() {
-    System.out.println("Drive set SM end");
+    // System.out.println("Drive set SM end");
 
   }
 }

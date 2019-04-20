@@ -18,17 +18,14 @@ public class ElevatorClimbEndGameForks extends CommandGroup {
    * Add your docs here.
    */
   public ElevatorClimbEndGameForks() {
-    addParallel(new ResetSensor());
-    addSequential(new SetRobotClimbFront());
-    addSequential(new ElevatorSetMMClimb(.75));
-    addParallel(new ResetSensor());
     addSequential(new SetRobotClimbMode());
     addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL_3_FORKS));
-    addParallel(new WaitCommand("Forks Deploy", .5));
     addSequential(new ToggleForks(ForkShiftState.OUT));
+    addSequential(new WaitCommand("Forks Deploy", 1));
     addSequential(new SetRobotClimbBack());
-    addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL_3_FORKS + 2));// 1.5
-    addSequential(new DriveForwardClimbMM(10, false));
+    addSequential(new ElevatorSetMMClimb(Constants.CLIMB_LVL_3_FORKS + 1.5, 3000, 7000));// 1.5
+    // addSequential(new DriveForwardClimbMM(10, false));
+    addSequential(new WaitCommand("Tilt Delay", 1));
     addSequential(new SetRobotClimbFront());
     addSequential(new ElevatorSetMMClimb(0.0));
 

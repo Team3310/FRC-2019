@@ -20,7 +20,7 @@ public class DrivePathCameraTrackStop extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    System.out.println("camera track finished");
+    // System.out.println("camera track finished");
 		//Robot.drive.setLimeLED(false);
 		Robot.drive.setControlMode(DriveControlMode.JOYSTICK);
   }

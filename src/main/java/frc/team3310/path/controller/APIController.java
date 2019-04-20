@@ -56,7 +56,7 @@ public class APIController {
     public @ResponseBody String getTrajectory(@RequestBody String trajectoryName) {
         trajectoryName = trajectoryName.substring(0, trajectoryName.length() - 1);
 
-        System.out.println("Loading Trajectory = " + trajectoryName);
+        // System.out.println("Loading Trajectory = " + trajectoryName);
 
         try {
             trajectoryName = URLDecoder.decode(trajectoryName, "UTF-8");
@@ -88,7 +88,7 @@ public class APIController {
             trajectory = mirroredTrajectory.get(isLeft);
         }
         catch (Exception e) {
-            System.out.println("Unable to find trajectory = " + trajectoryName);
+            // System.out.println("Unable to find trajectory = " + trajectoryName);
         }
         
         ArrayList<Pose2dWithCurvature> positions = new ArrayList<>();

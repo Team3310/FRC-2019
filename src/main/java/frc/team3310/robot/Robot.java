@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
 
 	public Robot() {
 		super(Constants.kLooperDt * 2);
-		System.out.println("Main loop period = " + getPeriod());
+		// System.out.println("Main loop period = " + getPeriod());
 	}
 
 	public void zeroAllSensors() {

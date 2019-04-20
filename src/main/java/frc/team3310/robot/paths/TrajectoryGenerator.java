@@ -55,9 +55,9 @@ public class TrajectoryGenerator {
 
         public void generateTrajectories() {
                 if (mTrajectorySet == null) {
-                        System.out.println("Generating trajectories...");
+                        // System.out.println("Generating trajectories...");
                         mTrajectorySet = new TrajectorySet();
-                        System.out.println("Finished trajectory generation");
+                        // System.out.println("Finished trajectory generation");
                 }
         }
 
@@ -190,7 +190,7 @@ public class TrajectoryGenerator {
         public static final Pose2d kCargoNearReversedPose = new Pose2d(new Translation2d(256.75, -80.5),
                         Rotation2d.fromDegrees(-180.00));
 
-        public static final Pose2d kCargoMidReversedPose = new Pose2d(new Translation2d(280.75, -80.5),
+        public static final Pose2d kCargoMidReversedPose = new Pose2d(new Translation2d(284, -80.5),
                         Rotation2d.fromDegrees(-180.00));
 
         public static final Pose2d kCargoMidPose = new Pose2d(new Translation2d(284, -80.5),
@@ -211,8 +211,8 @@ public class TrajectoryGenerator {
         public static final Pose2d kCargoFarFaceLoadingPose = new Pose2d(new Translation2d(287.75, -67.5),
                         Rotation2d.fromDegrees(165.00));
 
-        public static final Pose2d kLoadingToCargoNear = new Pose2d(new Translation2d(240.5, -80.5),
-                        Rotation2d.fromDegrees(181.00)); //256
+        public static final Pose2d kLoadingToCargoNear = new Pose2d(new Translation2d(245.5, -80.5),
+                        Rotation2d.fromDegrees(181.00)); //256 //254
                         
         public static final Pose2d kLoadingToCargoNearLvl2 = new Pose2d(new Translation2d(248.75, -80.5),
                         Rotation2d.fromDegrees(181.00)); //256

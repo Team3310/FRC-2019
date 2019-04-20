@@ -56,7 +56,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 			// isTrackFinished = Robot.drive.getUltrasonicDistance() < Constants.finishedAtCargoUlt;
 			//(Robot.drive.isLimeValid == false && invalidCounter > 50)
 	
-			System.out.println(", valid = " + Robot.drive.isLimeValid + ", Ultrasonic Distance =" + Robot.drive.getUltrasonicDistance());
+			// System.out.println(", valid = " + Robot.drive.isLimeValid + ", Ultrasonic Distance =" + Robot.drive.getUltrasonicDistance());
 
 			if (isTrackFinished == true) {
 				startExtraTwoTimeout(0.2);

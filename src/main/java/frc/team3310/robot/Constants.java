@@ -54,7 +54,7 @@ public class Constants {
     public static final double finshedAtLoadingLimeY = -12;
     public static final double finishedAtRocketUlt = 8.5;
     public static final double finishedAtLoadingUlt = 10.75;
-    public static final double finshedAtCargoUlt = 12;
+    public static final double finishedAtCargoUlt = 12;
 
 
     // Geometry
@@ -185,7 +185,7 @@ public class Constants {
     public static final double BALL_OFFSET = 7;
     public static final double LOADING_STATION_HATCH = 19.5;
     public static final double CLIMB_LVL_3 = 19.5;
-    public static final double CLIMB_LVL_3_FORKS = 22;
+    public static final double CLIMB_LVL_3_FORKS = 21;
     public static final double CLIMB_LVL_3_SUCC = 21.00; //23
     public static final double CLIMB_LVL2_TO_LVL3 = 14.25;
     public static final double CLIMB_LIFT_BACK = 3.5;

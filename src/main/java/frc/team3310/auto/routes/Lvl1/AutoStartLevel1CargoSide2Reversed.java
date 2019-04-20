@@ -40,7 +40,7 @@ public class AutoStartLevel1CargoSide2Reversed extends LazyLoadCommandGroup {
                                 true));
                 addParallel(new ElevatorSetPositionMM(Constants.AUTO_CARGO_LEVEL_1));
                 addSequential(new DriveAbsoluteTurnMP(-90, 240, MPSoftwareTurnType.TANK));
-                addSequential(new DrivePathCameraTrackWithVelocity(1.5, Constants.finishedAtCargoLimeY, Constants.finshedAtCargoUlt));
+                addSequential(new DrivePathCameraTrackWithVelocity(1.5, Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
                 addSequential(new WaitCommand("Eject Pause", .25));
                 addSequential(new EjectHatch());
                 addSequential(new DriveVelocityWithDistance(-60, -18));
@@ -57,6 +57,6 @@ public class AutoStartLevel1CargoSide2Reversed extends LazyLoadCommandGroup {
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSide), false, true));
                 addSequential(new DriveAbsoluteTurnMP(-90, 240, MPSoftwareTurnType.TANK));
-                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY, Constants.finshedAtCargoUlt));
+                addSequential(new DrivePathCameraTrackWithVelocity(2.25, Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
         }
 }
