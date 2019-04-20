@@ -12,7 +12,7 @@ public class DrivePathCameraTrackWithVelocity extends ExtraTimeoutCommand {
   private final double PIPELINE_TIMEOUT = 0.02;
   // private final double isVisonTimedOut = 1.5;
   private boolean isTrackFinished = false;
-  private double ultraSonicDistance = Constants.finishedAtCargoUlt;
+  private double ultraSonicDistance = Constants.finishedAtLoadingUlt;
   private double finishAtLimeY = Constants.finishedAtCargoLimeY;
   private int invalidCounter = 0;
 

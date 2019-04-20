@@ -43,7 +43,7 @@ public class AutoStartLevel1RocketBack2 extends LazyLoadCommandGroup {
     addSequential(new DriveAbsoluteTurnMP(-20, 240, MPSoftwareTurnType.TANK));
     addParallel(
       new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.65
-      , Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt)); // 100
+      , Constants.finshedAtLoadingLimeY, Constants.finishedAtLoadingUlt)); // 100
       addSequential(new DriveMotionCommand(registerTrajectory(
         TrajectoryGenerator.getInstance().getTrajectorySet().rocketBackToLoading), false));
 

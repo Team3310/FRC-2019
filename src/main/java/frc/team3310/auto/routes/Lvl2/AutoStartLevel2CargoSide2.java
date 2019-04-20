@@ -38,13 +38,13 @@ public class AutoStartLevel2CargoSide2 extends LazyLoadCommandGroup {
                 registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().platformToCargoSide), false, true));
         addParallel(new ElevatorSetPositionMM(Constants.AUTO_CARGO_LEVEL_1));
         addSequential(new DriveAbsoluteTurnMP(90, 240, MPSoftwareTurnType.TANK));
-        addSequential(new DrivePathCameraTrackWithVelocity(2.5, Constants.finishedAtCargoLimeY,Constants.finishedAtCargoUlt));
+        addSequential(new DrivePathCameraTrackWithVelocity(2.5, Constants.finishedAtCargoLimeY,Constants.finshedAtCargoUlt));
         addSequential(new EjectHatch());
         addSequential(new DriveVelocityWithDistance(-60, -18));
         addParallel(new IntakeHatch());
         addSequential(new DriveAbsoluteTurnMP(190, 240, MPSoftwareTurnType.TANK));
         addParallel(new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.3,
-                Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt)); // 100
+                Constants.finshedAtLoadingLimeY, Constants.finishedAtLoadingUlt)); // 100
         addSequential(new DriveMotionCommand(
                 registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().cargoBackMidToLoading), false));
         addSequential(new IntakeHatchArms(HatchArmState.IN));
@@ -52,7 +52,7 @@ public class AutoStartLevel2CargoSide2 extends LazyLoadCommandGroup {
         addSequential(new DriveMotionCommand(
                 registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSideLvl2), false, true));
         addSequential(new DriveAbsoluteTurnMP(95, 240, MPSoftwareTurnType.TANK));
-        addSequential(new DrivePathCameraTrackWithVelocity(2.5, Constants.finishedAtCargoLimeY,Constants.finishedAtCargoUlt));
+        addSequential(new DrivePathCameraTrackWithVelocity(2.5, Constants.finishedAtCargoLimeY,Constants.finshedAtCargoUlt));
         addSequential(new EjectHatch());
 
     }

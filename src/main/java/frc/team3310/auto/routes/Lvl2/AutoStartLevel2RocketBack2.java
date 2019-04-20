@@ -45,14 +45,14 @@ public class AutoStartLevel2RocketBack2 extends LazyLoadCommandGroup {
     addParallel(new IntakeHatch());
     addSequential(new DriveAbsoluteTurnMP(-30, 240, MPSoftwareTurnType.TANK));
     addParallel(new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.15,
-        Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt)); // 100
+        Constants.finshedAtLoadingLimeY, Constants.finishedAtLoadingUlt)); // 100
     addSequential(new DriveMotionCommand(
         registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().rocketBackToLoading), false));
     addSequential(new IntakeHatchArms(HatchArmState.IN));
     addParallel(new WaitCommand("Grab Break", .5));
     addSequential(new DriveMotionCommand(
         registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack), false, true));
-    addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_3));
+    addParallel(new ElevatorSetPositionMM(Constants.HATCH_LEVEL_2));
     addSequential(new DriveAbsoluteTurnMP(30, 240, MPSoftwareTurnType.TANK));
     addSequential(
         new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtRocketLimeY, Constants.finishedAtRocketUlt));

@@ -50,9 +50,11 @@ public class Constants {
     public static final double kDriveKa = 0.01; // 0.011505866811140018; // V per rad/s^2
 
     public static final double finishedAtRocketLimeY = -6;
-    public static final double finishedAtCargoLimeY = -12;
+    public static final double finishedAtCargoLimeY = -8;
+    public static final double finshedAtLoadingLimeY = -12;
     public static final double finishedAtRocketUlt = 8.5;
-    public static final double finishedAtCargoUlt = 10.75;
+    public static final double finishedAtLoadingUlt = 10.75;
+    public static final double finshedAtCargoUlt = 12;
 
 
     // Geometry

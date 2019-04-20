@@ -29,7 +29,7 @@ public class AutoStartLevel1SideCargoFrontSide1 extends LazyLoadCommandGroup {
                 addParallel(new ElevatorSetPositionMM(Constants.AUTO_CARGO_LEVEL_1));
 
                 addParallel(new AutoCameraTrackWhenCrossXBoundary(175, MovingXDirection.Positive, 0.6,
-                                Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
+                                Constants.finishedAtCargoLimeY, Constants.finshedAtCargoUlt));
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().level1StartToCargoFront), true));
                 addSequential(new EjectHatch());
@@ -39,7 +39,7 @@ public class AutoStartLevel1SideCargoFrontSide1 extends LazyLoadCommandGroup {
                                 TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontToTurn1), false));
 
                 addParallel(new AutoCameraTrackWhenCrossXBoundary(85, MovingXDirection.Negative, 0.1,
-                                Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt));
+                                Constants.finshedAtLoadingLimeY, Constants.finishedAtLoadingUlt));
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().cargoFrontTurn1ToLoading), false),
                                 4);
@@ -48,6 +48,6 @@ public class AutoStartLevel1SideCargoFrontSide1 extends LazyLoadCommandGroup {
                 addSequential(new DriveMotionCommand(registerTrajectory(
                         TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSide), false));
                 addSequential(new DriveAbsoluteTurnMP(90, 240, MPSoftwareTurnType.TANK));
-                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY,Constants.finishedAtCargoUlt));
+                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY,Constants.finshedAtCargoUlt));
         }
 }
