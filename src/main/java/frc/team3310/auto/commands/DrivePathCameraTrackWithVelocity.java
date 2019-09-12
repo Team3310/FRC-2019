@@ -37,7 +37,7 @@ public class DrivePathCameraTrackWithVelocity extends ExtraTimeoutCommand {
     resetExtraTwoTimer();
     startExtraOneTimeout(PIPELINE_TIMEOUT);
     // startExtraTwoTimeout(isVisonTimedOut);
-    Robot.drive.setPipeline(0);
+    Robot.drive.setPipeline(2);
 
     // setTimeout(timeout);
     Robot.drive.isLimeValid = true;

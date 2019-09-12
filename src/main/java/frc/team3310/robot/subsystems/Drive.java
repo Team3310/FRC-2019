@@ -971,7 +971,7 @@ public class Drive extends Subsystem implements Loop {
 		}
 
 		if (cameraTrackTapeButton) {
-			setPipeline(0);
+			setPipeline(2);
 			setLimeLED(0);
 			updateLimelight();
 			double cameraSteer = 0;

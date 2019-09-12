@@ -97,7 +97,7 @@ public class OI {
     climbForks.whenPressed(new ElevatorClimbEndGameForks());
 
     Button switchCameraPipeline = m_driver.getRightTrigger();
-    switchCameraPipeline.whenPressed(new SwitchCameraPipeline(0));
+    switchCameraPipeline.whenPressed(new SwitchCameraPipeline(2));
     switchCameraPipeline.whenReleased(new SwitchCameraPipeline(1));
 
     Button driveClimb = m_driver.getRightBumper();
