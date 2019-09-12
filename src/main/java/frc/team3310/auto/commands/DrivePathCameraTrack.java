@@ -32,7 +32,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 		resetExtraOneTimer();
 		resetExtraTwoTimer();
 		startExtraOneTimeout(PIPELINE_TIMEOUT);
-		Robot.drive.setPipeline(2);
+		Robot.drive.setPipeline(0);
 		Robot.drive.isLimeValid = true;
 	}
 
