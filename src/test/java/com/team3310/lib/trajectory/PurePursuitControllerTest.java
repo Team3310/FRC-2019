@@ -45,28 +45,28 @@ public class PurePursuitControllerTest {
         assertTrue(i < kMaxIter);
     }
 
-    @Test
-    public void testTheta180() {
-        List<Pose2d> waypoints = Arrays.asList(kLoadingPose, kCargoSideTurnToLoadingPose );
+    // @Test
+    // public void testTheta180() {
+    //     List<Pose2d> waypoints = Arrays.asList(kLoadingPose, kCargoSideTurnToLoadingPose );
 
-        // Create the reference trajectory (straight line motion between waypoints).
-        Trajectory<Pose2d> reference_trajectory = new Trajectory<>(waypoints);
-        DistanceView<Pose2d> arc_length_parameterized_trajectory = new DistanceView<>(reference_trajectory);
-        PurePursuitController<Pose2d> controller = new PurePursuitController<>(
-                arc_length_parameterized_trajectory, 1.0, 6.0, 0.1);
+    //     // Create the reference trajectory (straight line motion between waypoints).
+    //     Trajectory<Pose2d> reference_trajectory = new Trajectory<>(waypoints);
+    //     DistanceView<Pose2d> arc_length_parameterized_trajectory = new DistanceView<>(reference_trajectory);
+    //     PurePursuitController<Pose2d> controller = new PurePursuitController<>(
+    //             arc_length_parameterized_trajectory, 1.0, 6.0, 0.1);
 
-        Pose2d robot_pose = waypoints.get(0);
-        final int kMaxIter = 100;
-        int i = 0;
-        for (; i < kMaxIter; ++i) {
-            if (controller.isDone())
-                break;
-            Twist2d steering_command = controller.steer(robot_pose);
-            steering_command = steering_command.scaled(1.0 / Math.max(1.0, steering_command.norm()));
-            System.out.println("Iter: " + i + ", Pose: " + robot_pose + ", Steering Command: " + steering_command);
-            robot_pose = robot_pose.transformBy(Pose2d.exp(steering_command));
-        }
-        assertTrue(i < kMaxIter);
-    }
+    //     Pose2d robot_pose = waypoints.get(0);
+    //     final int kMaxIter = 100;
+    //     int i = 0;
+    //     for (; i < kMaxIter; ++i) {
+    //         if (controller.isDone())
+    //             break;
+    //         Twist2d steering_command = controller.steer(robot_pose);
+    //         steering_command = steering_command.scaled(1.0 / Math.max(1.0, steering_command.norm()));
+    //         System.out.println("Iter: " + i + ", Pose: " + robot_pose + ", Steering Command: " + steering_command);
+    //         robot_pose = robot_pose.transformBy(Pose2d.exp(steering_command));
+    //     }
+    //     assertTrue(i < kMaxIter);
+    // }
 
 }
