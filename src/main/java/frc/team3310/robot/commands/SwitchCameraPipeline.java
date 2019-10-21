@@ -21,7 +21,7 @@ public class SwitchCameraPipeline extends Command {
   @Override
   protected void initialize() {
     Robot.drive.setPipeline(cameraPipeline);
-    // System.out.println("Switch Camera Pipeline = " + cameraPipeline);
+//    System.out.println("Switch Camera Pipeline = " + cameraPipeline);
   }
 
   // Called repeatedly when this Command is scheduled to run

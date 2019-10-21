@@ -113,7 +113,7 @@ public class Drive extends Subsystem implements Loop {
 	private int m_steerNonLinear = -3;
 
 	private double m_moveScale = 1.0;
-	private double m_steerScale = 1.0;
+	private double m_steerScale = 0.85;
 
 	private double m_moveInput = 0.0;
 	private double m_steerInput = 0.0;
@@ -971,7 +971,7 @@ public class Drive extends Subsystem implements Loop {
 		}
 
 		if (cameraTrackTapeButton) {
-			setPipeline(2);
+			setPipeline(0);
 			setLimeLED(0);
 			updateLimelight();
 			double cameraSteer = 0;
