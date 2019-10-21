@@ -229,63 +229,63 @@ public class TrajectoryGenerator {
 
         public class TrajectorySet {
 
-                // public final LazyLoadTrajectory level1StartToRocketFront;
+                public final LazyLoadTrajectory level1StartToRocketFront;
                 public final LazyLoadTrajectory level1StartReversedToRocketBack;
                 public final LazyLoadTrajectory level1StartReversedToCargoSide;
                 public final LazyLoadTrajectory level1StartToCargoFront;
-                // public final LazyLoadTrajectory rocketFrontToTurn1A;
-                // public final LazyLoadTrajectory rocketFrontTurn1AToLoading;
-                // public final LazyLoadTrajectory rocketFrontFaceWallToLoading;
+                public final LazyLoadTrajectory rocketFrontToTurn1A;
+                public final LazyLoadTrajectory rocketFrontTurn1AToLoading;
+                public final LazyLoadTrajectory rocketFrontFaceWallToLoading;
                 public final LazyLoadTrajectory rocketBackToLoading;
                 public final LazyLoadTrajectory loadingToRocketBack;
-                // public final LazyLoadTrajectory turn3ToRocketBack;
+                public final LazyLoadTrajectory turn3ToRocketBack;
                 public final LazyLoadTrajectory cargoFrontToTurn1;
                 public final LazyLoadTrajectory cargoFrontTurn1ToLoading;
                 public final LazyLoadTrajectory loadingToCargoFrontTrack2v2;
                 public final LazyLoadTrajectory track2v2PoseToCargo2;
-                // public final LazyLoadTrajectory cargoBackNearToLoading;
+                public final LazyLoadTrajectory cargoBackNearToLoading;
                 public final LazyLoadTrajectory cargoBackMidToLoading;
-                // public final LazyLoadTrajectory cargoBackFarToLoading;
+                public final LazyLoadTrajectory cargoBackFarToLoading;
                 public final LazyLoadTrajectory loadingToCargoSide;
                 public final LazyLoadTrajectory loadingToCargoSideLvl2;
 
                 public final LazyLoadTrajectory driveStraight;
-                // public final LazyLoadTrajectory driveStraightReversed;
-                // public final LazyLoadTrajectory platformToCargoSideReversed;
+                public final LazyLoadTrajectory driveStraightReversed;
+                public final LazyLoadTrajectory platformToCargoSideReversed;
                 public final LazyLoadTrajectory platformToCargoSide;
-                // public final LazyLoadTrajectory platformToRocketBack;
-                // public final LazyLoadTrajectory platformToRocketFront;
-                // public final LazyLoadTrajectory platformToCargoFront;
+                public final LazyLoadTrajectory platformToRocketBack;
+                public final LazyLoadTrajectory platformToRocketFront;
+                public final LazyLoadTrajectory platformToCargoFront;
 
                 private TrajectorySet() {
-                        // level1StartToRocketFront        = new LazyLoadTrajectory(()->getLevel1StartToRocketFront());
+                        level1StartToRocketFront        = new LazyLoadTrajectory(()->getLevel1StartToRocketFront());
                         level1StartReversedToRocketBack = new LazyLoadTrajectory(()->getLevel1SideStartToRocketBack());
                         level1StartReversedToCargoSide  = new LazyLoadTrajectory(()->getLevel1StartToCargoSideReversed());
                         level1StartToCargoFront         = new LazyLoadTrajectory(()->getLevel1StartToCargoFront());
-                        // rocketFrontToTurn1A             = new LazyLoadTrajectory(()->getRocketFrontToTurn1());
-                        // rocketFrontTurn1AToLoading      = new LazyLoadTrajectory(()->getRocketFrontTurnToLoading());
-                        // rocketFrontFaceWallToLoading    = new LazyLoadTrajectory(()->getRocketFaceWallToLoading());
+                        rocketFrontToTurn1A             = new LazyLoadTrajectory(()->getRocketFrontToTurn1());
+                        rocketFrontTurn1AToLoading      = new LazyLoadTrajectory(()->getRocketFrontTurnToLoading());
+                        rocketFrontFaceWallToLoading    = new LazyLoadTrajectory(()->getRocketFaceWallToLoading());
                         rocketBackToLoading             = new LazyLoadTrajectory(()->getRocketBackToLoading());
                         loadingToRocketBack             = new LazyLoadTrajectory(()->getLoadingToRocketBack());
-                        // turn3ToRocketBack               = new LazyLoadTrajectory(()->getTurn3ToRocketBack());
+                        turn3ToRocketBack               = new LazyLoadTrajectory(()->getTurn3ToRocketBack());
                         cargoFrontToTurn1               = new LazyLoadTrajectory(()->getCargoFrontToTurn1());
                         cargoFrontTurn1ToLoading        = new LazyLoadTrajectory(()->getCargoFrontTurn1ToLoading());
                         loadingToCargoFrontTrack2v2     = new LazyLoadTrajectory(()->getLoadingToCargoFrontTrack2());
                         track2v2PoseToCargo2            = new LazyLoadTrajectory(()->getCargoTrack2ToCargoScore2Pose());
-                        // cargoBackNearToLoading          = new LazyLoadTrajectory(()->getCargoNearBackToLoading());
+                        cargoBackNearToLoading          = new LazyLoadTrajectory(()->getCargoNearBackToLoading());
                         cargoBackMidToLoading           = new LazyLoadTrajectory(()->getCargoMidBackToLoading());
-                        // cargoBackFarToLoading        = new LazyLoadTrajectory(()->getCargoFarBackToLoading());
+                        cargoBackFarToLoading        = new LazyLoadTrajectory(()->getCargoFarBackToLoading());
                         loadingToCargoSide              = new LazyLoadTrajectory(()->getLoadingToCargoSide());
                         loadingToCargoSideLvl2          = new LazyLoadTrajectory(()->getLoadingToCargoSideLvl2());
 
 
                         driveStraight                   = new LazyLoadTrajectory(()->getLevel2StartDriveStraight());
-                        // driveStraightReversed           = new LazyLoadTrajectory(()->getLevel2StartDriveStraightReversed());
-                        // platformToCargoFront            = new LazyLoadTrajectory(()->getPlatformToCargoFront());
-                        // platformToCargoSideReversed     = new LazyLoadTrajectory(()->getPlatformToCargoSideReversed());
+                        driveStraightReversed           = new LazyLoadTrajectory(()->getLevel2StartDriveStraightReversed());
+                        platformToCargoFront            = new LazyLoadTrajectory(()->getPlatformToCargoFront());
+                        platformToCargoSideReversed     = new LazyLoadTrajectory(()->getPlatformToCargoSideReversed());
                         platformToCargoSide             = new LazyLoadTrajectory(()->getPlatformToCargoSide());
-                        // platformToRocketFront           = new LazyLoadTrajectory(()->getPlatformToRocketFront());
-                        // platformToRocketBack            = new LazyLoadTrajectory(()->getPlatformToRocketBackReversed());
+                        platformToRocketFront           = new LazyLoadTrajectory(()->getPlatformToRocketFront());
+                        platformToRocketBack            = new LazyLoadTrajectory(()->getPlatformToRocketBackReversed());
 
                 }
 

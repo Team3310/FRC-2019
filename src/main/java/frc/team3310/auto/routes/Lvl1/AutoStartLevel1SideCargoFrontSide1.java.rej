@@ -1,0 +1,9 @@
+diff a/src/main/java/frc/team3310/auto/routes/Lvl1/AutoStartLevel1SideCargoFrontSide1.java b/src/main/java/frc/team3310/auto/routes/Lvl1/AutoStartLevel1SideCargoFrontSide1.java	(rejected hunks)
+@@ -48,6 +48,6 @@
+                 addSequential(new DriveMotionCommand(registerTrajectory(
+                         TrajectoryGenerator.getInstance().getTrajectorySet().loadingToCargoSide), false));
+                 addSequential(new DriveAbsoluteTurnMP(90, 240, MPSoftwareTurnType.TANK));
+-                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY,Constants.finshedAtCargoUlt));
++                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtCargoLimeY,Constants.finishedAtCargoUlt));
+         }
+ }
