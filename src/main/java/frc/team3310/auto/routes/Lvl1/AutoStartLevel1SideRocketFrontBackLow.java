@@ -42,17 +42,18 @@ public class AutoStartLevel1SideRocketFrontBackLow extends LazyLoadCommandGroup 
                 addParallel(new AutoCameraTrackWhenCrossXBoundary(92, MovingXDirection.Negative, 0.5, Constants.finishedAtCargoLimeY, Constants.finishedAtCargoUlt), 5); // 100
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontTurn1AToLoading), false));
-                addSequential(new DriveVelocityWithDistance(-60, -5));
-                addParallel(new IntakeHatch());
-                addSequential(new DriveAbsoluteTurnMP(180, 240, MPSoftwareTurnType.TANK));
-                addParallel(new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.3, Constants.finshedAtLoadingLimeY, Constants.finishedAtLoadingUlt), 5); // 92
-                addSequential(new DriveMotionCommand(registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontFaceWallToLoading), false));
+//                addSequential(new DriveVelocityWithDistance(-60, -5));
+//                addParallel(new IntakeHatch());
+//                addSequential(new DriveAbsoluteTurnMP(180, 240, MPSoftwareTurnType.TANK));
+//                addParallel(new AutoCameraTrackWhenCrossXBoundary(100, MovingXDirection.Negative, 0.3, Constants.finshedAtLoadingLimeY, Constants.finishedAtLoadingUlt), 5); // 92
+//                addSequential(new DriveMotionCommand(registerTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().rocketFrontFaceWallToLoading), false));
                 addSequential(new IntakeHatchArms(HatchArmState.IN));
                 addSequential(new WaitCommand("Grab Break", .5));
 
                 addSequential(new DriveMotionCommand(registerTrajectory(
                                 TrajectoryGenerator.getInstance().getTrajectorySet().loadingToRocketBack), false));
-                addSequential(new DriveAbsoluteTurnMP(-150, 240, MPSoftwareTurnType.TANK));
-                addSequential(new DrivePathCameraTrackWithVelocity(2, Constants.finishedAtRocketLimeY, Constants.finishedAtRocketUlt));
+                addSequential(new DriveAbsoluteTurnMP(-152, 240, MPSoftwareTurnType.TANK));
+                addSequential(new DrivePathCameraTrackWithVelocity(1, Constants.finishedAtRocketLimeY, Constants.finishedAtRocketUlt));
+//                addSequential(new EjectHatch());
         }
 }

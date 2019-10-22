@@ -3,8 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="46d8d239-9f02-42be-ae22-ba4962e9305b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/FRC-2019.iws" beforeDir="false" afterPath="$PROJECT_DIR$/FRC-2019.iws" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/commands/DrivePathCameraTrack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/commands/DrivePathCameraTrack.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/commands/DrivePathCameraTrackWithVelocity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/commands/DrivePathCameraTrackWithVelocity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/routes/Lvl1/AutoStartLevel1SideRocketFrontBackLow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/routes/Lvl1/AutoStartLevel1SideRocketFrontBackLow.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/Robot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/paths/TrajectoryGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/paths/TrajectoryGenerator.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -91,7 +93,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="project.propDebugger" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -105,7 +107,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.C:/Users/Brian Selle/Documents/FRC2019/Software/FRC-2019 [build]">
+  <component name="RunManager" selected="Gradle.C:/Users/Brian Selle/Documents/FRC2019/Software/FRC-2019 [deploy]">
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
       <Port>5050</Port>

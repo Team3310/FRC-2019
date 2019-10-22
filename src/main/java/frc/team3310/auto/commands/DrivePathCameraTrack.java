@@ -32,14 +32,14 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 		resetExtraOneTimer();
 		resetExtraTwoTimer();
 		startExtraOneTimeout(PIPELINE_TIMEOUT);
-		Robot.drive.setPipeline(2);
+		Robot.drive.setPipeline(0);
 		Robot.drive.isLimeValid = true;
 	}
 
 	protected void execute() {
 		if (!isTracking && isExtraOneTimedOut()) {
-			// System.out.println("Start camera track");
-			// System.out.println("Velocity Scale " + velocityScale);
+			System.out.println("Start camera track");
+			System.out.println("Velocity Scale " + velocityScale);
 			Robot.drive.setCameraTrack(velocityScale);
 			isTracking = true;
 
@@ -56,7 +56,7 @@ public class DrivePathCameraTrack extends ExtraTimeoutCommand {
 			// isTrackFinished = Robot.drive.getUltrasonicDistance() < Constants.finishedAtCargoUlt;
 			//(Robot.drive.isLimeValid == false && invalidCounter > 50)
 	
-			// System.out.println(", valid = " + Robot.drive.isLimeValid + ", Ultrasonic Distance =" + Robot.drive.getUltrasonicDistance());
+			System.out.println(", valid = " + Robot.drive.isLimeValid + ", Ultrasonic Distance =" + Robot.drive.getUltrasonicDistance());
 
 			if (isTrackFinished == true) {
 				startExtraTwoTimeout(0.2);
