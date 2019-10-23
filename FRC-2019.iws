@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="46d8d239-9f02-42be-ae22-ba4962e9305b" name="Default Changelist" comment="Updated autons for Remix">
-      <change beforePath="$PROJECT_DIR$/FRC-2019.iws" beforeDir="false" afterPath="$PROJECT_DIR$/FRC-2019.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/routes/Lvl1/AutoStartLevel1RocketBack2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/routes/Lvl1/AutoStartLevel1RocketBack2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/Robot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/paths/TrajectoryGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/paths/TrajectoryGenerator.java" afterDir="false" />
-    </list>
+    <list default="true" id="46d8d239-9f02-42be-ae22-ba4962e9305b" name="Default Changelist" comment="Updated autons for Remix" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
