@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="46d8d239-9f02-42be-ae22-ba4962e9305b" name="Default Changelist" comment="">
+    <list default="true" id="46d8d239-9f02-42be-ae22-ba4962e9305b" name="Default Changelist" comment="Updated autons for Remix">
       <change beforePath="$PROJECT_DIR$/FRC-2019.iws" beforeDir="false" afterPath="$PROJECT_DIR$/FRC-2019.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/commands/DrivePathCameraTrack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/commands/DrivePathCameraTrack.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/commands/DrivePathCameraTrackWithVelocity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/commands/DrivePathCameraTrackWithVelocity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/routes/Lvl1/AutoStartLevel1SideRocketFrontBackLow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/routes/Lvl1/AutoStartLevel1SideRocketFrontBackLow.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/routes/Lvl1/AutoStartLevel1RocketBack2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/auto/routes/Lvl1/AutoStartLevel1RocketBack2.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/Robot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/paths/TrajectoryGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/team3310/robot/paths/TrajectoryGenerator.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -65,6 +64,11 @@
     </system>
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="BrianSelle &lt;bselle@cebridge.net&gt;" />
+      </list>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ModuleEditorState">
@@ -256,7 +260,8 @@
   <component name="VcsManagerConfiguration">
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="true" />
     <MESSAGE value="Added IntelliJ config files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added IntelliJ config files" />
+    <MESSAGE value="Updated autons for Remix" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated autons for Remix" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
 </project>

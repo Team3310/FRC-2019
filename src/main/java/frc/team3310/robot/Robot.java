@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
 
 		autonTaskChooser.addOption("L1 Rocket Front/Back Low", new AutoStartLevel1SideRocketFrontBackLow());
 
-		autonTaskChooser.addOption("L1 Rocket Back/Back", new AutoStartLevel1RocketBack2());
+		autonTaskChooser.addOption("L1 Rocket Back/Back Reversed", new AutoStartLevel1RocketBack2());
 
 		autonTaskChooser.addOption("L1 Cargo Side/Side Reversed", new AutoStartLevel1CargoSide2Reversed());
 

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.context.annotation.Lazy;
-
 import frc.team3310.robot.planners.DriveMotionPlanner;
 import frc.team3310.utility.lib.geometry.Pose2d;
 import frc.team3310.utility.lib.geometry.Pose2dWithCurvature;
@@ -100,7 +98,7 @@ public class TrajectoryGenerator {
 
         public static final Pose2d kStartReversedLevel2 = new Pose2d(42.25, -47.4, Rotation2d.fromDegrees(-180.0));
 
-        public static final Pose2d kFrontPlatfromPose = new Pose2d(new Translation2d(115, -48.4),
+        public static final Pose2d kFrontPlatfromPose = new Pose2d(new Translation2d(110, -48.4),
                         Rotation2d.fromDegrees(0.0));
 
         public static final Pose2d kReversedFrontPlatfromPose = new Pose2d(new Translation2d(115, -47.4),
@@ -169,7 +167,7 @@ public class TrajectoryGenerator {
 
         // Cargo Poses
         // Front
-        public static final Pose2d kCargoFrontPose = new Pose2d(new Translation2d(215, -14), // 207.7
+        public static final Pose2d kCargoFrontPose = new Pose2d(new Translation2d(205, -14), // 207.7
                         Rotation2d.fromDegrees(0.00));
 
         public static final Pose2d kCargoFrontTurn1Pose = new Pose2d(new Translation2d(175, -90),
